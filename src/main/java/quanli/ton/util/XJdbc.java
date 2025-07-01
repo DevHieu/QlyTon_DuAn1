@@ -25,7 +25,7 @@ public class XJdbc {
      * @return Kết nối đã sẵn sàng
      */
     public static Connection openConnection() {
-        var dburl = "jdbc:mysql://localhost:3306/polycafe";
+        var dburl = "jdbc:mysql://localhost:3306/qlyton";
         var username = "root";
         var password = "root";
        if (!XJdbc.isReady()) {

@@ -22,4 +22,5 @@ public class ProductType {
     private String id;
     private String name;
     private boolean hasThickness;
+    private double defaultLength;
 }
