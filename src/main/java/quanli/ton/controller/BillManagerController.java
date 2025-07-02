@@ -5,6 +5,7 @@
 package quanli.ton.controller;
 
 import quanli.ton.entity.Bills;
+import quanli.ton.entity.Customer;
 
 /**
  *
@@ -15,4 +16,6 @@ public interface BillManagerController extends CrudController<Bills> {
     void fillBillDetails(); // tải và hiển thị chi tiết phiếu
 
     void selectTimeRange(); // xử lý chọn khoảng thời gian trong cboTimeRanges
+    
+     void setForm(Bills bills, Customer customer);
 }
