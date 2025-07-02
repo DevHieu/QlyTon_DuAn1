@@ -23,7 +23,8 @@ public class BillDaoImpl implements BillDao {
     String findAllSql = "SELECT * FROM Bills";
     String findByIdSql = "SELECT * FROM Bills WHERE Id=?";
     String findByTimeRangeSql = "SELECT * FROM Bills WHERE Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
-
+    String findAllOfCustomerId = "SELECT * FROM Bills WHERE CustomerId = ?";
+    
     @Override
     public Bills create(Bills entity) {
         Object[] values = {
@@ -67,4 +68,9 @@ public class BillDaoImpl implements BillDao {
     public List<Bills> findByTimeRange(Date begin, Date end) {
         return XQuery.getBeanList(Bills.class, findByTimeRangeSql, begin, end);
     }
+    
+    @Override
+    public List<Bills> findAllOfCustomerId(long id) {
+        return XQuery.getBeanList(Bills.class, findAllOfCustomerId, id);
+    };
 }
