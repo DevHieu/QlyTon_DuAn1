@@ -26,7 +26,7 @@ public class Bills {
     private Date checkin = new Date();
     private Date checkout;
     private int status;
-    private Long customerId;
+    private String customerId;
 
     public static enum Status {
         PROCESSING,

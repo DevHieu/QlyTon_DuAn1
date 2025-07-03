@@ -72,7 +72,7 @@ public class BillDaoImpl implements BillDao {
     }
 
     @Override
-    public List<Bills> findAllOfCustomerId(long id) {
+    public List<Bills> findAllOfCustomerId(String id) {
         return XQuery.getBeanList(Bills.class, findAllOfCustomerId, id);
     }
 ;

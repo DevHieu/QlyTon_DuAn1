@@ -63,8 +63,6 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         btnMoveLast = new javax.swing.JButton();
         btnMovePrevious = new javax.swing.JButton();
         btnMoveFirst = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtId = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -72,8 +70,8 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         jLabel10 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblBills = new javax.swing.JTable();
-        txtAddress = new javax.swing.JFormattedTextField();
-        txtSdt = new javax.swing.JFormattedTextField();
+        txtPhoneNumber = new javax.swing.JFormattedTextField();
+        txtAddress = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -82,14 +80,14 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
             },
             new String [] {
-                "Mã khách hàng", "Tên khách hàng", "Số điện thoại", "Địa chỉ", ""
+                "Tên khách hàng", "Số điện thoại", "Địa chỉ", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -222,11 +220,6 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
             }
         });
 
-        jLabel1.setText("Mã khách hàng");
-
-        txtId.setEditable(false);
-        txtId.setEnabled(false);
-
         jLabel3.setText("Số điện thoại");
 
         jLabel4.setText("Địa chỉ");
@@ -253,9 +246,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         });
         jScrollPane3.setViewportView(tblBills);
 
-        txtAddress.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
-
-        txtSdt.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
+        txtPhoneNumber.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -287,17 +278,15 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                             .addComponent(jScrollPane3)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel10)
-                                    .addComponent(txtSdt, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
-                                    .addComponent(txtId))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel4)
                                     .addComponent(jLabel9)
-                                    .addComponent(txtFullName, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
-                                    .addComponent(txtAddress))))))
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel4)
+                                    .addComponent(txtFullName)
+                                    .addComponent(txtAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -306,38 +295,38 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFullName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtFullName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate)
-                    .addComponent(btnUpdate)
-                    .addComponent(btnDelete)
-                    .addComponent(btnClear)
-                    .addComponent(btnMoveNext)
-                    .addComponent(btnMoveLast)
-                    .addComponent(btnMovePrevious)
-                    .addComponent(btnMoveFirst))
-                .addGap(8, 8, 8))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnCreate)
+                            .addComponent(btnUpdate)
+                            .addComponent(btnDelete)
+                            .addComponent(btnClear)
+                            .addComponent(btnMoveNext)
+                            .addComponent(btnMoveLast)
+                            .addComponent(btnMovePrevious)
+                            .addComponent(btnMoveFirst))
+                        .addGap(8, 8, 8))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         tabs.addTab("Biểu mẫu", jPanel2);
@@ -478,7 +467,6 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     private javax.swing.JButton btnMovePrevious;
     private javax.swing.JButton btnUncheckAll;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -491,17 +479,16 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblBills;
     private javax.swing.JTable tblCustomer;
-    private javax.swing.JFormattedTextField txtAddress;
+    private javax.swing.JTextField txtAddress;
     private javax.swing.JTextField txtFullName;
-    private javax.swing.JTextField txtId;
-    private javax.swing.JFormattedTextField txtSdt;
+    private javax.swing.JFormattedTextField txtPhoneNumber;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void fillBillsTable() {
         DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
         model.setRowCount(0);
-        billItems = billDao.findAllOfCustomerId(Long.parseLong(txtId.getText()));
+        billItems = billDao.findAllOfCustomerId(txtPhoneNumber.getText());
         billItems.forEach(item -> {
             Object[] row = {
                 item.getId(),
@@ -520,20 +507,18 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public void setForm(Customer entity) {
-        txtId.setText(String.valueOf(entity.getId()));
         txtFullName.setText(entity.getFullName());
-        txtSdt.setText(entity.getSdt());
-        txtAddress.setText(entity.getDiaChi());
+        txtPhoneNumber.setText(entity.getPhoneNumber());
+        txtAddress.setText(entity.getAddress());
         this.fillBillsTable();
     }
 
     @Override
     public Customer getForm() {
         Customer customer = new Customer();
-        customer.setId(Long.parseLong(txtId.getText()));
         customer.setFullName(txtFullName.getText());
-        customer.setSdt(txtSdt.getText());
-        customer.setDiaChi(txtAddress.getText());
+        customer.setPhoneNumber(txtPhoneNumber.getText());
+        customer.setAddress(txtAddress.getText());
         return customer;
     }
 
@@ -544,10 +529,9 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         items = dao.findAll();
         items.forEach(item -> {
             Object[] row = {
-                item.getId(),
                 item.getFullName(),
-                item.getSdt(),
-                item.getDiaChi(),
+                item.getPhoneNumber(),
+                item.getAddress(),
                 false
             };
             model.addRow(row);
@@ -589,7 +573,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public void delete() {
-        dao.deleteById(Long.valueOf(txtId.getText()));
+        dao.deleteById(txtPhoneNumber.getText());
         this.fillToTable();
         this.clear();
     }
@@ -602,7 +586,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public void setEditable(boolean editable) {
-        txtId.setEnabled(!editable);
+        txtPhoneNumber.setEnabled(!editable);
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
@@ -634,7 +618,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
             for (int i = 0; i < tblCustomer.getRowCount(); i++) {
                 if ((Boolean) tblCustomer.getValueAt(i, 6)) {
-                    dao.deleteById(items.get(i).getId());
+                    dao.deleteById(items.get(i).getPhoneNumber());
                 }
             }
             this.fillToTable();

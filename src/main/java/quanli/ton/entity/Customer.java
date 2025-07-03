@@ -18,8 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Customer {
-    private long id;
+    private String phoneNumber;
     private String fullName;
-    private String sdt;
-    private String diaChi;
+    private String address;
 }

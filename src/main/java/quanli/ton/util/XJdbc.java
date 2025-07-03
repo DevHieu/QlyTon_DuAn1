@@ -72,12 +72,14 @@ public class XJdbc {
      * @throws RuntimeException không thực thi được câu lệnh SQL
      */
     public static int executeUpdate(String sql, Object... values) {
+        
         try {
             var stmt = XJdbc.getStmt(sql, values);
             return stmt.executeUpdate();
         } 
         catch (SQLIntegrityConstraintViolationException ex) {
             if (ex.getMessage().contains("foreign key")) {
+                System.out.println(sql);
                 XDialog.alert("Không thể xóa vì dữ liệu đang được dùng", "Lỗi khóa ngoại");
             } else {
                 XDialog.alert("Id đã tồn tại. Vui lòng chọn id khác", "Lỗi trùng khóa");

@@ -18,4 +18,8 @@ public interface BillManagerController extends CrudController<Bills> {
     void selectTimeRange(); // xử lý chọn khoảng thời gian trong cboTimeRanges
     
      void setForm(Bills bills, Customer customer);
+     
+     void findCustomer(String phoneNumber);
+     
+     Customer getCustomerForm();
 }
