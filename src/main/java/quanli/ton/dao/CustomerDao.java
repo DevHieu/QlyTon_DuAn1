@@ -10,6 +10,6 @@ import quanli.ton.entity.Customer;
  *
  * @author hieud
  */
-public interface CustomerDao extends CrudDAO<Customer, Long> {
-    
+public interface CustomerDao extends CrudDAO<Customer, String> {
+    boolean isCustomerExisted(String phoneNumber);
 }
