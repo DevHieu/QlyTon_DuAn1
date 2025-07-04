@@ -4,10 +4,14 @@
  */
 package quanli.ton.controller;
 
+import java.io.File;
+import quanli.ton.entity.User;
+
 /**
  *
- * @author Admin
+ * @author PhuongTram
  */
-public interface UserManagerController {
-    
+public interface UserManagerController extends CrudController<User>{
+    File chooseFile();
+    String saveFile(File selectedFile);
 }

@@ -4,11 +4,24 @@
  */
 package quanli.ton.ui.manager;
 
+import java.io.File;
+import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
+import quanli.ton.controller.UserManagerController;
+import quanli.ton.dao.UserDao;
+import quanli.ton.dao.impl.UserDAOImpl;
+import quanli.ton.entity.User;
+import quanli.ton.util.FileTypeFilter;
+import quanli.ton.util.XAuth;
+import quanli.ton.util.XDialog;
+import quanli.ton.util.XIcon;
+
 /**
  *
  * @author Admin
  */
-public class UserManager extends javax.swing.JDialog {
+public class UserManager extends javax.swing.JDialog implements UserManagerController{
 
     /**
      * Creates new form UserManager
@@ -16,8 +29,225 @@ public class UserManager extends javax.swing.JDialog {
     public UserManager(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.open();
+    }
+    
+    UserDao dao = (UserDao) new UserDAOImpl();
+    List<User> items = List.of();
+    File imageFile = null;
+    
+    @Override
+    public void open() {
+        this.setLocationRelativeTo(null);
+        this.fillToTable();
+        this.clear();
+    }
+    
+    @Override
+    public void setForm(User entity) {
+        txtUsername.setText(entity.getUsername());
+        txtFullname.setText(entity.getFullname());
+        txtPassword.setText(entity.getPassword());
+        txtRepeatPassword.setText(entity.getPassword());
+        txtSdt.setText(entity.getPhoneNumber()); // Added to handle phone number
+        System.out.println(entity.getPhoto());
+        XIcon.setIcon(lbAvatar, "images/users/" + entity.getPhoto());
+        imageFile = new File("images/users/" + entity.getPhoto());
+
+        if (entity.isManager()) {
+            rdoManager.setSelected(true);
+        } else {
+            rdoEmployee.setSelected(true);
+        }
+
+        if (entity.isEnabled()) {
+            rdoOperating.setSelected(true);
+        } else {
+            rdoStop.setSelected(true);
+        }
     }
 
+    @Override
+    public User getForm() {
+        User user = new User();
+        if (imageFile == null) {
+            imageFile = new File("images/users/" + user.getPhoto());
+        }
+        String imageName = this.saveFile(imageFile); // lưu ảnh vào project
+
+        user.setUsername(txtUsername.getText());
+        user.setFullname(txtFullname.getText());
+        user.setPassword(txtPassword.getText());
+        String sdt = txtSdt.getText().trim();
+        if (sdt.isEmpty()) {
+            XDialog.alert("Số điện thoại không được để trống!", "Lỗi");
+            return null; // Prevent saving if sdt is empty
+        }
+        user.setPhoneNumber(sdt);
+        user.setPhoto(imageName);
+        user.setManager(rdoManager.isSelected());
+        user.setEnabled(rdoOperating.isSelected());
+
+        return user;
+    }
+    
+    @Override
+    public void fillToTable() {
+        DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
+        model.setRowCount(0);
+
+        items = dao.findAll();
+        items.forEach(item -> {
+            Object[] row = {
+                item.getUsername(),
+                item.getFullname(),    // <-- Kiểm tra thứ tự cột trong JTable của bạn
+                item.getPassword(),
+                item.getPhoto(),
+                item.getPhoneNumber(),
+                item.isManager()? "Quản lí" : "Nhân viên", // <-- Truyền Boolean trực tiếp (true/false)
+                item.isEnabled() ? "Hoạt động" : "Tạm dừng", // <-- Truyền Boolean trực tiếp (true/false)
+                false
+            };
+            model.addRow(row);
+        });
+    }
+    
+    @Override
+    public void edit() {
+        User entity = items.get(tblUser.getSelectedRow());
+        this.setForm(entity);
+        this.setEditable(true);
+        tabs.setSelectedIndex(1);
+    }
+
+    @Override
+    public void checkAll() {
+        this.setCheckedAll(true);
+    }
+
+    @Override
+    public void uncheckAll() {
+        this.setCheckedAll(false);
+    }
+    private void setCheckedAll(boolean checked) {
+        for (int i = 0; i < tblUser.getRowCount(); i++) {
+            tblUser.setValueAt(checked, i, 6);
+        }
+    }
+
+    @Override
+    public void deleteCheckedItems() {
+    if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
+        for (int i = 0; i < tblUser.getRowCount(); i++) {
+            if ((Boolean) tblUser.getValueAt(i, 6)) {
+                String username = items.get(i).getUsername();
+
+                if (username.equals(XAuth.user.getUsername())) {
+                    XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+                    continue;
+                }
+
+                if (dao.hasTransaction(username)) {
+                    XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
+                    continue;
+                }
+
+                dao.deleteById(username);
+            }
+        }
+            this.fillToTable();
+        }
+    }
+    
+    @Override
+    public void create() {
+        User user = this.getForm();
+        dao.create(user);
+        this.fillToTable();
+        this.clear();
+    }
+
+    @Override
+    public void update() {
+        User user = this.getForm();
+        dao.update(user);
+        this.fillToTable();
+        this.clear();
+    }
+
+    @Override
+    public void delete() {
+        String username = txtUsername.getText();
+
+    if (username.equals(XAuth.user.getUsername())) {
+        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+        return;
+    }
+
+    if (dao.hasTransaction(username)) {
+        XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
+        return;
+    }
+
+        
+        dao.deleteById(txtUsername.getText());
+        this.fillToTable();
+        this.clear();
+    }
+
+    @Override
+    public void clear() {
+        this.setForm(new User());
+        this.setEditable(false);
+        imageFile = null;
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        txtUsername.setEnabled(!editable);
+        btnCreate.setEnabled(!editable);
+        btnUpdate.setEnabled(editable);
+        btnDelete.setEnabled(editable);
+
+        int rowCount = tblUser.getRowCount();
+        btnMoveFirst.setEnabled(editable && rowCount > 0);
+        btnMovePrevious.setEnabled(editable && rowCount > 0);
+        btnMoveNext.setEnabled(editable && rowCount > 0);
+        btnMoveLast.setEnabled(editable && rowCount > 0);
+    }
+
+    @Override
+    public void moveFirst() {
+        this.moveTo(0);
+    }
+
+    @Override
+    public void movePrevious() {
+        this.moveTo(tblUser.getSelectedRow() - 1);
+    }
+
+    @Override
+    public void moveNext() {
+        this.moveTo(tblUser.getSelectedRow() + 1);
+    }
+
+    @Override
+    public void moveLast() {
+        this.moveTo(tblUser.getRowCount() - 1);
+    }
+
+    @Override
+    public void moveTo(int index) {
+        if (index < 0) {
+            this.moveLast();
+        } else if (index >= tblUser.getRowCount()) {
+            this.moveFirst();
+        } else {
+            tblUser.clearSelection();
+            tblUser.setRowSelectionInterval(index, index);
+            this.edit();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,25 +259,22 @@ public class UserManager extends javax.swing.JDialog {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblUser = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        lblImage = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lbAvatar = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        txtId = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtFullName = new javax.swing.JTextField();
+        txtFullname = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txtPassword = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtRepeatPassword = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtPhoneNumber = new javax.swing.JTextField();
+        txtSdt = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         rdoManager = new javax.swing.JRadioButton();
@@ -67,25 +294,32 @@ public class UserManager extends javax.swing.JDialog {
 
         tblUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "Họ và tên", "Mật khẩu", "Hình ảnh", "SĐT", "Trạng thái", ""
+                "Tên đăng nhập", "Họ và tên", "Mật khẩu", "Hình ảnh", "SĐT", "Chức vụ", "Trạng thái", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         tblUser.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -105,19 +339,20 @@ public class UserManager extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(115, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        jTabbedPane1.addTab("DANH SÁCH", jPanel1);
+        tabs.addTab("DANH SÁCH", jPanel1);
 
-        lblImage.setText("jLabel1");
+        lbAvatar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lbAvatar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbAvatarMouseClicked(evt);
+            }
+        });
 
-        jLabel2.setText("jLabel2");
-
-        jLabel3.setText("Id");
-
-        jLabel4.setText("Username");
+        jLabel3.setText("Tên đăng nhập");
 
         jLabel5.setText("Số điện thoại");
 
@@ -214,27 +449,24 @@ public class UserManager extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnClear))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(lblImage, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(12, 12, 12)
+                        .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel8)
                                     .addComponent(jLabel6)
                                     .addComponent(jLabel9)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(rdoManager)
                                         .addGap(18, 18, 18)
-                                        .addComponent(rdoEmployee)))
+                                        .addComponent(rdoEmployee))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtPassword)
-                            .addComponent(txtFullName)
-                            .addComponent(txtId))))
+                            .addComponent(txtFullname)
+                            .addComponent(txtUsername))))
                 .addGap(65, 65, 65)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -245,7 +477,6 @@ public class UserManager extends javax.swing.JDialog {
                         .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel4)
                     .addComponent(jLabel5)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(rdoOperating)
@@ -253,8 +484,7 @@ public class UserManager extends javax.swing.JDialog {
                         .addComponent(rdoStop))
                     .addComponent(jLabel7)
                     .addComponent(jLabel10)
-                    .addComponent(txtUsername)
-                    .addComponent(txtPhoneNumber)
+                    .addComponent(txtSdt)
                     .addComponent(txtRepeatPassword))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
@@ -264,36 +494,32 @@ public class UserManager extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblImage, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel8))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(5, 5, 5)
-                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39)
-                                .addComponent(txtFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel6)))
+                        .addComponent(jLabel3)
                         .addGap(5, 5, 5)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel9))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel8)
+                                .addGap(11, 11, 11)
+                                .addComponent(txtFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel6)
+                                .addGap(5, 5, 5)
+                                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(rdoManager)
                             .addComponent(rdoEmployee)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(5, 5, 5)
-                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(jLabel5)
                         .addGap(5, 5, 5)
-                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSdt, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel7)
                         .addGap(5, 5, 5)
@@ -317,17 +543,17 @@ public class UserManager extends javax.swing.JDialog {
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("BIỂU MẪU", jPanel2);
+        tabs.addTab("BIỂU MẪU", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(tabs)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(tabs)
         );
 
         pack();
@@ -335,48 +561,53 @@ public class UserManager extends javax.swing.JDialog {
 
     private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
         // TODO add your handling code here:
-//        this.edit();
+        this.edit();
     }//GEN-LAST:event_tblUserMouseClicked
 
     private void btnMoveLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveLastActionPerformed
         // TODO add your handling code here:
-//        this.moveLast();
+        this.moveLast();
     }//GEN-LAST:event_btnMoveLastActionPerformed
 
     private void btnMoveNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveNextActionPerformed
         // TODO add your handling code here:
-//        this.moveNext();
+        this.moveNext();
     }//GEN-LAST:event_btnMoveNextActionPerformed
 
     private void btnMovePreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMovePreviousActionPerformed
         // TODO add your handling code here:
-//        this.movePrevious();
+        this.movePrevious();
     }//GEN-LAST:event_btnMovePreviousActionPerformed
 
     private void btnMoveFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveFirstActionPerformed
         // TODO add your handling code here:
-//        this.moveFirst();
+        this.moveFirst();
     }//GEN-LAST:event_btnMoveFirstActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         // TODO add your handling code here:
-//        this.clear();
+        this.clear();
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-//        this.delete();
+        this.delete();
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
-//        this.update();
+        this.update();
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // TODO add your handling code here:
-//        this.create();
+        this.create();
     }//GEN-LAST:event_btnCreateActionPerformed
+
+    private void lbAvatarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbAvatarMouseClicked
+        // TODO add your handling code here:
+        this.chooseFile();
+    }//GEN-LAST:event_lbAvatarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -432,9 +663,7 @@ public class UserManager extends javax.swing.JDialog {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -443,18 +672,46 @@ public class UserManager extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JLabel lblImage;
+    private javax.swing.JLabel lbAvatar;
     private javax.swing.JRadioButton rdoEmployee;
     private javax.swing.JRadioButton rdoManager;
     private javax.swing.JRadioButton rdoOperating;
     private javax.swing.JRadioButton rdoStop;
+    private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblUser;
-    private javax.swing.JTextField txtFullName;
-    private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtFullname;
     private javax.swing.JTextField txtPassword;
-    private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JTextField txtRepeatPassword;
+    private javax.swing.JTextField txtSdt;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public File chooseFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn ảnh"); //Set title của cửa sổ jFileChooser
+        fileChooser.setFileFilter(new FileTypeFilter(".png", "PNG File")); //Đặt các kiểu file có thể chọn
+        fileChooser.setFileFilter(new FileTypeFilter(".jpg", "JPG File"));
+        fileChooser.setFileFilter(new FileTypeFilter(".jpeg", "JPEG File"));
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            lbAvatar.setToolTipText(selectedFile.getName());
+            XIcon.setIcon(lbAvatar, selectedFile);
+            return selectedFile;
+        }
+        return null;
+    }
+
+    @Override
+    public String saveFile(File selectedFile) {
+        File file = XIcon.copyTo(selectedFile, "images/users/");
+        return file.getName();
+    }
+
+    @Override
+    public boolean isValidInput() {
+        return true;
+    }
 }

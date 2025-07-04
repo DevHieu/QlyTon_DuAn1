@@ -4,10 +4,12 @@
  */
 package quanli.ton.dao;
 
+import quanli.ton.entity.User;
+
 /**
  *
  * @author Admin
  */
-public interface UserDao {
-    
+public interface UserDao extends CrudDAO<User, String> {
+    boolean hasTransaction(String username);
 }

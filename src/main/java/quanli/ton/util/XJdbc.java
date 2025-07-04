@@ -25,16 +25,19 @@ public class XJdbc {
      * @return Kết nối đã sẵn sàng
      */
     public static Connection openConnection() {
-        var dburl = "jdbc:mysql://localhost:3306/qlyton";
+        var driver = "com.mysql.cj.jdbc.Driver";
+        var dburl = "jdbc:mysql://localhost:3306/qlyton?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=True";
         var username = "root";
-        var password = "root";
-       if (!XJdbc.isReady()) {
-            try {
+        var password = "Pt300606@";
+
+        try {
+            if (!XJdbc.isReady()) {
+                Class.forName(driver);
                 connection = DriverManager.getConnection(dburl, username, password);
-            } catch (SQLException ex) {
-                Logger.getLogger(XJdbc.class.getName()).log(Level.SEVERE, null, ex);
             }
-            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
         return connection;
     }
 
@@ -150,18 +153,27 @@ public class XJdbc {
         demo3();
     }
 
+//   
     private static void demo1() {
-        String sql = "SELECT * FROM Drinks WHERE UnitPrice BETWEEN ? AND ?";
-        var rs = XJdbc.executeQuery(sql, 1.5, 5.0);
+    String sql = "SELECT * FROM Products WHERE UnitPrice BETWEEN ? AND ?";
+    try (ResultSet rs = XJdbc.executeQuery(sql, 1.5, 5.0)) {
+        while (rs.next()) {
+            System.out.println(rs.getString("Name"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
 
-    private static void demo2() {
-        String sql = "SELECT max(UnitPrice) FROM Drinks WHERE UnitPrice > ?";
-        var maxPrice = XJdbc.getValue(sql, 1.5);
-    }
+private static void demo2() {
+    String sql = "SELECT MAX(UnitPrice) FROM Products WHERE UnitPrice > ?";
+    Number maxPrice = XJdbc.getValue(sql, 1.5);
+    System.out.println("Max Price: " + maxPrice.doubleValue());
+}
 
-    private static void demo3() {
-        String sql = "DELETE FROM Drinks WHERE UnitPrice < ?";
-        var count = XJdbc.executeUpdate(sql, 0.0);
-    }
+private static void demo3() {
+    String sql = "DELETE FROM Products WHERE UnitPrice < ?";
+    int count = XJdbc.executeUpdate(sql, 0.0);
+    System.out.println("Deleted rows: " + count);
+}
 }
