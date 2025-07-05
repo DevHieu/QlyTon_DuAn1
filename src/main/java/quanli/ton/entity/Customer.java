@@ -4,7 +4,6 @@
  */
 package quanli.ton.entity;
 
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,19 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Bills {
-
-    private long id;
-    private String username;
-    @Builder.Default
-    private Date checkin = new Date();
-    private Date checkout;
-    private int status;
-    private String customerId;
-
-    public static enum Status {
-        PROCESSING,
-        COMPLETED,
-        CANCELED
-    }
+public class Customer {
+    private String phoneNumber;
+    private String fullName;
+    private String address;
 }

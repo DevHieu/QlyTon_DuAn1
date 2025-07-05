@@ -98,7 +98,7 @@ public class XQuery {
         }
         return bean;
     }
-    
+
     public static <A> List<A> getEntityList(Class<A> aClass, String sql) {
         List<A> list = new ArrayList<>();
         try {

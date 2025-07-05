@@ -4,15 +4,12 @@
  */
 package quanli.ton.dao;
 
-import java.util.Date;
-import java.util.List;
-import quanli.ton.entity.Bills;
+import quanli.ton.entity.Customer;
 
 /**
  *
  * @author hieud
  */
-public interface BillDao extends CrudDAO<Bills, Long> {
-    public List<Bills> findByTimeRange(Date begin, Date end);
-    public List<Bills> findAllOfCustomerId(String id);
+public interface CustomerDao extends CrudDAO<Customer, String> {
+    boolean isCustomerExisted(String phoneNumber);
 }

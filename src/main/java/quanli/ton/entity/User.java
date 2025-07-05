@@ -23,7 +23,7 @@ public class User {
     private String password;
     private boolean enabled;
     private String fullname;
-    private String sdt;
+    private String phoneNumber;
     @Builder.Default
     private String photo  = "user.png";
     private boolean manager;
