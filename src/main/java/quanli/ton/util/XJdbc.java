@@ -27,7 +27,7 @@ public class XJdbc {
     public static Connection openConnection() {
         var dburl = "jdbc:mysql://localhost:3306/qlyton";
         var username = "root";
-        var password = "root";
+        var password = "1234vy";
        if (!XJdbc.isReady()) {
             try {
                 connection = DriverManager.getConnection(dburl, username, password);

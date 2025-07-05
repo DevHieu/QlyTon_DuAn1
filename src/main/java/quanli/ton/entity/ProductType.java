@@ -21,6 +21,6 @@ import lombok.NoArgsConstructor;
 public class ProductType {
     private String id;
     private String name;
-    private boolean hasThickness;
-    private double defaultLength;
+    private boolean requiresSize;
+    private Double defaultLength;
 }
