@@ -5,16 +5,20 @@
 package quanli.ton.ui.manager;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import quanli.ton.controller.BillManagerController;
 import quanli.ton.dao.BillDao;
 import quanli.ton.dao.BillDetailDao;
+import quanli.ton.dao.CustomerDao;
 import quanli.ton.dao.impl.BillDaoImpl;
 import quanli.ton.dao.impl.BillDetailDAOImpl;
+import quanli.ton.dao.impl.CustomerDaoImpl;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
+import quanli.ton.entity.Customer;
 import quanli.ton.util.TimeRange;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
@@ -29,6 +33,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     List<Bills> items = List.of(); // phiếu bán hàng
     BillDetailDao billDetailDao = new BillDetailDAOImpl();
     List<BillDetails> details = List.of(); // chi tiết phiếu bán hàng
+    List<Customer> customerItem = new ArrayList<Customer>();
+    ;
+    CustomerDao customerDao = new CustomerDaoImpl();
 
     /**
      * Creates new form BillJDialog
@@ -79,7 +86,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        rdoServicing = new javax.swing.JRadioButton();
+        rdoProcessing = new javax.swing.JRadioButton();
         rdoComplete = new javax.swing.JRadioButton();
         rdoCanceled = new javax.swing.JRadioButton();
         jLabel9 = new javax.swing.JLabel();
@@ -89,6 +96,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         tblBillDetails = new javax.swing.JTable();
         txtCheckout = new javax.swing.JFormattedTextField();
         txtCheckin = new javax.swing.JFormattedTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txtCustomerName = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtPhoneNumber = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtAddress = new javax.swing.JTextField();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -111,14 +124,14 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
             },
             new String [] {
-                "Mã phiếu", "Thời điểm tạo", "Thời điểm thanh toán", "Trạng thái", "Người tạo", ""
+                "Mã phiếu", "Tên khách hàng", "Thời điểm tạo", "Thời điểm thanh toán", "Trạng thái", "Người tạo", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -183,7 +196,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 797, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCheckAll)
@@ -219,8 +232,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                     .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDeleteCheckedItems)
                     .addComponent(btnUncheckAll)
@@ -297,8 +310,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         jLabel6.setText("Trạng thái");
 
-        groupStatus.add(rdoServicing);
-        rdoServicing.setText("Servicing");
+        groupStatus.add(rdoProcessing);
+        rdoProcessing.setText("Processing");
 
         groupStatus.add(rdoComplete);
         rdoComplete.setText("Completed");
@@ -332,55 +345,76 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         txtCheckin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
 
+        jLabel2.setText("Tên Khách hàng");
+
+        jLabel11.setText("Số điện thoại");
+
+        txtPhoneNumber.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPhoneNumberFocusLost(evt);
+            }
+        });
+
+        jLabel5.setText("Địa chỉ");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnCreate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnUpdate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDelete)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnClear)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 227, Short.MAX_VALUE)
-                        .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3)
                             .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnCreate)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnUpdate)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnClear)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                                .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel1)
-                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel10)
+                                    .addComponent(txtCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                                    .addComponent(txtId)
+                                    .addComponent(txtPhoneNumber)
+                                    .addComponent(jLabel11)
+                                    .addComponent(jLabel5)
+                                    .addComponent(txtAddress))
+                                .addGap(23, 23, 23)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(rdoServicing)
+                                        .addComponent(rdoProcessing)
                                         .addGap(18, 18, 18)
                                         .addComponent(rdoComplete)
                                         .addGap(18, 18, 18)
                                         .addComponent(rdoCanceled))
-                                    .addComponent(jLabel10)
-                                    .addComponent(txtCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
-                                    .addComponent(txtId))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel9)
-                                    .addComponent(txtUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
-                                    .addComponent(txtCheckout))))))
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel9)
+                                        .addComponent(txtUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                                        .addComponent(txtCheckout)
+                                        .addComponent(jLabel2)
+                                        .addComponent(txtCustomerName)
+                                        .addComponent(jLabel6)))
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -404,18 +438,29 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCheckin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rdoServicing)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rdoProcessing)
                     .addComponent(rdoComplete)
-                    .addComponent(rdoCanceled))
-                .addGap(18, 18, 18)
+                    .addComponent(rdoCanceled)
+                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -438,8 +483,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabs)
-                .addContainerGap())
+                .addComponent(tabs))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -519,6 +563,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         this.selectTimeRange();
     }//GEN-LAST:event_btnFilterActionPerformed
 
+    private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
+        // TODO add your handling code here:
+        findCustomer(txtPhoneNumber.getText());
+    }//GEN-LAST:event_txtPhoneNumberFocusLost
+
     /**
      * @param args the command line arguments
      */
@@ -585,8 +634,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     private javax.swing.ButtonGroup groupStatus;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -600,15 +652,18 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     private javax.swing.JTable jTable1;
     private javax.swing.JRadioButton rdoCanceled;
     private javax.swing.JRadioButton rdoComplete;
-    private javax.swing.JRadioButton rdoServicing;
+    private javax.swing.JRadioButton rdoProcessing;
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblBillDetails;
     private javax.swing.JTable tblBills;
+    private javax.swing.JTextField txtAddress;
     private javax.swing.JFormattedTextField txtBegin;
     private javax.swing.JFormattedTextField txtCheckin;
     private javax.swing.JFormattedTextField txtCheckout;
+    private javax.swing.JTextField txtCustomerName;
     private javax.swing.JFormattedTextField txtEnd;
     private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
@@ -667,6 +722,16 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     }
 
     @Override
+    public void findCustomer(String phoneNumber) {
+        Customer customer = customerDao.findById(phoneNumber);
+
+        if (customer != null) {
+            txtCustomerName.setText(customer.getFullName());
+            txtAddress.setText(customer.getAddress());
+        }
+    }
+
+    @Override
     public void open() {
         this.setLocationRelativeTo(null);
         this.selectTimeRange();
@@ -674,20 +739,23 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     }
 
     @Override
-    public void setForm(Bills entity) {
-        txtId.setText(String.valueOf(entity.getId()));
-        txtCheckin.setText(XDate.format(entity.getCheckin(), "HH:mm:ss dd-MM-yyyy"));
-        txtUsername.setText(entity.getUsername());
+    public void setForm(Bills bill, Customer customer) {
+        txtId.setText(String.valueOf(bill.getId()));
+        txtUsername.setText(bill.getUsername());
+        txtCustomerName.setText(customer.getFullName());
+        txtPhoneNumber.setText(customer.getPhoneNumber());
+        txtAddress.setText(customer.getAddress());
 
-        if (entity.getCheckout() != null) {
-            txtCheckout.setText(XDate.format(entity.getCheckout(), "HH:mm:ss dd-MM-yyyy"));
+        txtCheckin.setText(XDate.format(bill.getCheckin(), "HH:mm:ss dd-MM-yyyy"));
+        if (bill.getCheckout() != null) {
+            txtCheckout.setText(XDate.format(bill.getCheckout(), "HH:mm:ss dd-MM-yyyy"));
         } else {
             txtCheckout.setText("");
         }
 
-        switch (entity.getStatus()) {
+        switch (bill.getStatus()) {
             case 0 ->
-                rdoServicing.setSelected(true);
+                rdoProcessing.setSelected(true);
             case 1 ->
                 rdoComplete.setSelected(true);
             default ->
@@ -709,28 +777,43 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             return null;
         }
 
-        bill.setId(Long.parseLong(txtId.getText()));
+        bill.setCustomerId(txtPhoneNumber.getText());
         bill.setCheckin(checkIn);
         bill.setCheckout(checkOut);
         bill.setUsername(txtUsername.getText());
-        bill.setStatus(rdoServicing.isSelected() ? 0 : rdoComplete.isSelected() ? 1 : 2);
-
+        bill.setStatus(rdoProcessing.isSelected() ? 0 : rdoComplete.isSelected() ? 1 : 2);
         return bill;
+    }
+
+    @Override
+    public Customer getCustomerForm() {
+        Customer customer = new Customer();
+        customer.setFullName(txtCustomerName.getText());
+        customer.setPhoneNumber(txtPhoneNumber.getText());
+        customer.setAddress(txtAddress.getText());
+        return customer;
     }
 
     @Override
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
         model.setRowCount(0);
+        customerItem.clear(); // Làm mới mảng trước khi thêm customer
+
         Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
         Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
         items = dao.findByTimeRange(begin, end);
+        
         items.forEach(item -> {
+            Customer customer = customerDao.findById(item.getCustomerId()); // Lấy Customer từ id
+            
+            customerItem.add(customer); 
             Object[] row = {
                 item.getId(),
+                customer.getFullName(),
                 item.getCheckin(),
                 item.getCheckout(),
-                item.getStatus() == 0 ? "Servicing" : item.getStatus() == 1 ? "Complete" : "Canceled",
+                item.getStatus() == 0 ? "Processing" : item.getStatus() == 1 ? "Complete" : "Canceled",
                 item.getUsername(),
                 false
             };
@@ -741,8 +824,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public void edit() {
-        Bills entity = items.get(tblBills.getSelectedRow());
-        this.setForm(entity);
+        Bills bill = items.get(tblBills.getSelectedRow());
+        Customer customer = customerItem.get(tblBills.getSelectedRow());
+        this.setForm(bill, customer);
         this.setEditable(true);
         tabs.setSelectedIndex(1);
     }
@@ -753,8 +837,16 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             return;
         }
 
+        Customer customer = this.getCustomerForm();
+        if (!customerDao.isCustomerExisted(customer.getPhoneNumber())) { // Nếu như customer chưa tồn tại sẽ tạo customer mới
+            customerDao.create(customer);
+        } else {
+            customerDao.update(customer);
+        }
+
         Bills bill = this.getForm();
         dao.create(bill);
+
         this.fillToTable();
         this.clear();
     }
@@ -767,6 +859,10 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         Bills bill = this.getForm();
         dao.update(bill);
+
+        Customer customer = this.getCustomerForm();
+        customerDao.update(customer);
+
         this.fillToTable();
         this.clear();
     }
@@ -780,12 +876,14 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public void clear() {
-        this.setForm(new Bills());
+        this.setForm(new Bills(), new Customer());
         this.setEditable(false);
     }
 
     @Override
     public void setEditable(boolean editable) {
+        txtId.setEnabled(!editable);
+        txtPhoneNumber.setEnabled(!editable);
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
@@ -867,4 +965,27 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         return true;
     }
 
+    @Override
+    public void setForm(Bills bill) {
+        txtId.setText(String.valueOf(bill.getId()));
+        txtCheckin.setText(XDate.format(bill.getCheckin(), "HH:mm:ss dd-MM-yyyy"));
+        txtUsername.setText(bill.getUsername());
+
+        if (bill.getCheckout() != null) {
+            txtCheckout.setText(XDate.format(bill.getCheckout(), "HH:mm:ss dd-MM-yyyy"));
+        } else {
+            txtCheckout.setText("");
+        }
+
+        switch (bill.getStatus()) {
+            case 0 ->
+                rdoProcessing.setSelected(true);
+            case 1 ->
+                rdoComplete.setSelected(true);
+            default ->
+                rdoCanceled.setSelected(true);
+        }
+
+        this.fillBillDetails();
+    }
 }
