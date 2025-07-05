@@ -33,23 +33,30 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
 
     @Override
     public void save() {
-        String username = txtUsername.getText();
-        String password = new String(txtCurrentPassword.getPassword());
-        String newpass = new String(txtNewPassword.getPassword());
-        String confirm = new String(txtConfirm.getPassword());
-         System.out.print(XAuth.user.getUsername());
-        if (!newpass.equals(confirm)) {
-            XDialog.alert("Xác nhận mật khẩu không đúng!");
-        } else if (!username.equals(XAuth.user.getUsername())) {
-            XDialog.alert("Sai tên đăng nhập!");
-        } else if (!password.equals(XAuth.user.getPassword())) {
-            XDialog.alert("Sai mật khẩu!");
-        } else {
-            XAuth.user.setPassword(newpass);
-            dao.update(XAuth.user);
-            XDialog.alert("Đổi mật khẩu thành công!");
-        }
+    String username = txtUsername.getText();
+    String password = new String(txtCurrentPassword.getPassword());
+    String newpass = new String(txtNewPassword.getPassword());
+    String confirm = new String(txtConfirm.getPassword());
+    
+    // Dòng này kiểm tra tên đăng nhập nhập vào có khớp với người dùng đang đăng nhập không
+    System.out.print(XAuth.user.getUsername()); 
+    if (!newpass.equals(confirm)) {
+        XDialog.alert("Xác nhận mật khẩu không đúng!");
+    } 
+    // Dòng này so sánh tên đăng nhập nhập vào với tên đăng nhập của người dùng HIỆN TẠI
+    else if (!username.equals(XAuth.user.getUsername())) { 
+        XDialog.alert("Sai tên đăng nhập!");
+    } 
+    // Dòng này so sánh mật khẩu hiện tại nhập vào với mật khẩu của người dùng HIỆN TẠI
+    else if (!password.equals(XAuth.user.getPassword())) { 
+        XDialog.alert("Sai mật khẩu!");
+    } else {
+        // Dòng này cập nhật mật khẩu cho đối tượng người dùng HIỆN TẠI
+        XAuth.user.setPassword(newpass); 
+        dao.update(XAuth.user); // Cập nhật vào cơ sở dữ liệu
+        XDialog.alert("Đổi mật khẩu thành công!");
     }
+}
     /**
      * Creates new form ChangePassword
      */
