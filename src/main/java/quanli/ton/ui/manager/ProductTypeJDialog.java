@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package quanli.ton.ui;
+package quanli.ton.ui.manager;
 
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import quanli.ton.controller.ProductTypeController;
 import quanli.ton.dao.ProductTypeDAO;
@@ -37,6 +36,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void open() {
         this.setLocationRelativeTo(null);
         this.fillToTable();
+        this.setSize(630, 350);
         this.clear();
     }
 
@@ -44,17 +44,20 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblProductType.getModel();
         model.setRowCount(0);
-
+        
         items = dao.findAll();
         items.forEach(item -> {
+            
             Object[] rowData = {
                 item.getId(),
                 item.getName(),
                 item.getDefaultLength(),
+                item.getUnit(),
                 false
             };
             model.addRow(rowData);
         });
+ 
     }
 
     @Override
@@ -76,7 +79,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     }
     private void setCheckedAll(boolean checked) {
         for (int i = 0; i < tblProductType.getRowCount(); i++) {
-            tblProductType.setValueAt(checked, i, 3);
+            tblProductType.setValueAt(checked, i, 4);
         }
     }
 
@@ -84,7 +87,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void deleteCheckedItems() {
         if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
             for (int i = 0; i < tblProductType.getRowCount(); i++) {
-                if ((Boolean) tblProductType.getValueAt(i, 3)) {
+                if ((Boolean) tblProductType.getValueAt(i, 4)) {
                     dao.deleteById(items.get(i).getId());
                 }
             }
@@ -96,7 +99,8 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void setForm(ProductType entity) {
         txtId.setText(entity.getId());
         txtName.setText(entity.getName());
-        txtSize.setText(String.valueOf(entity.getDefaultLength()));
+        txtUnit.setText(entity.getName()); //new
+        txtSize.setText(entity.getDefaultLength() != null ? String.valueOf(entity.getDefaultLength()) : "");
     }
 
     @Override
@@ -104,12 +108,14 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         ProductType entity = new ProductType();
         entity.setId(txtId.getText());
         entity.setName(txtName.getText());
-        entity.setRequiresSize(rdbYes.isSelected());
-        if (rdbYes.isSelected()) {
-            entity.setDefaultLength(Double.parseDouble(txtSize.getText()));
+        entity.setUnit(txtUnit.getText()); //new
+        entity.setRequiresSize(ckbDoDayMacDinh.isSelected());
+        if (ckbDoDayMacDinh.isSelected()) {
+            entity.setDefaultLength(Float.parseFloat(txtSize.getText()));
         } else {
             entity.setDefaultLength(null);
         }
+        entity.setHasThickness(ckbCoPhanLoai.isSelected());
         return entity;
     }
 
@@ -119,6 +125,10 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         dao.create(entity);
         this.fillToTable();
         this.clear();
+        
+        ckbCoPhanLoai.setSelected(false);
+        ckbDoDayMacDinh.setSelected(false);
+        ckbNhapDoDay.setSelected(false);
     }
 
     @Override
@@ -126,6 +136,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         ProductType entity = this.getForm();
         dao.update(entity);
         this.fillToTable();
+        this.clear();
     }
 
     @Override
@@ -147,10 +158,48 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     @Override
     public void setEditable(boolean editable) {
         txtId.setEnabled(!editable);
+        txtName.setEnabled(true);
+        txtSize.setEditable(true);
+        txtUnit.setEnabled(true);
+        ckbDoDayMacDinh.setEnabled(true);
+        ckbCoPhanLoai.setEnabled(true);
+        ckbNhapDoDay.setEnabled(true);
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
+    }
+    
+    @Override
+    public void moveFirst() {
+        this.moveTo(0);
+    }
 
+    @Override
+    public void movePrevious() {
+        this.moveTo(tblProductType.getSelectedRow() - 1);
+    }
+
+    @Override
+    public void moveNext() {
+        this.moveTo(tblProductType.getSelectedRow() + 1);
+    }
+
+    @Override
+    public void moveLast() {
+        this.moveTo(tblProductType.getRowCount() - 1);
+    }
+
+    @Override
+    public void moveTo(int index) {
+        if (index < 0) {
+            this.moveLast();
+        } else if (index >= tblProductType.getRowCount()) {
+            this.moveFirst();
+        } else {
+            tblProductType.clearSelection();
+            tblProductType.setRowSelectionInterval(index, index);
+            this.edit();
+        }
     }
 
     /**
@@ -181,25 +230,42 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
-        rdbYes = new javax.swing.JRadioButton();
-        rdbNo = new javax.swing.JRadioButton();
         txtSize = new javax.swing.JTextField();
+        ckbCoPhanLoai = new javax.swing.JCheckBox();
+        ckbNhapDoDay = new javax.swing.JCheckBox();
+        ckbDoDayMacDinh = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        txtUnit = new javax.swing.JTextField();
+        btnMoveFirst = new javax.swing.JButton();
+        btnMoveNext = new javax.swing.JButton();
+        btnMovePrevious = new javax.swing.JButton();
+        btnMoveLast = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        jScrollPane1.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jScrollPane1AncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
         tblProductType.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Mã loại", "Tên loại", "Kích thước", ""
+                "Mã loại", "Tên loại", "Kích thước", "Đơn vị tính", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -238,27 +304,25 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(btnCheckAll)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUncheckAll)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDeleteCheckedItems)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(btnDeleteCheckedItems))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDeleteCheckedItems)
                     .addComponent(btnUncheckAll)
-                    .addComponent(btnCheckAll)))
+                    .addComponent(btnCheckAll))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         tabs.addTab("Danh sách", jPanel1);
@@ -297,24 +361,68 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             }
         });
 
-        buttonGroup1.add(rdbYes);
-        rdbYes.setText("Có");
-        rdbYes.addActionListener(new java.awt.event.ActionListener() {
+        txtSize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rdbYesActionPerformed(evt);
+                txtSizeActionPerformed(evt);
             }
         });
 
-        buttonGroup1.add(rdbNo);
-        rdbNo.setSelected(true);
-        rdbNo.setText("Không");
-        rdbNo.addActionListener(new java.awt.event.ActionListener() {
+        ckbCoPhanLoai.setText("Có phân loại độ dày");
+        ckbCoPhanLoai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rdbNoActionPerformed(evt);
+                ckbCoPhanLoaiActionPerformed(evt);
             }
         });
 
-        txtSize.setEnabled(false);
+        ckbNhapDoDay.setText("Cần nhập độ dài khi mua");
+        ckbNhapDoDay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ckbNhapDoDayActionPerformed(evt);
+            }
+        });
+
+        ckbDoDayMacDinh.setText("Độ dài mặc định của sản phẩm");
+        ckbDoDayMacDinh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ckbDoDayMacDinhActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Đơn vị tính");
+
+        txtUnit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUnitActionPerformed(evt);
+            }
+        });
+
+        btnMoveFirst.setText("|<");
+        btnMoveFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveFirstActionPerformed(evt);
+            }
+        });
+
+        btnMoveNext.setText(">>");
+        btnMoveNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveNextActionPerformed(evt);
+            }
+        });
+
+        btnMovePrevious.setText("<<");
+        btnMovePrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMovePreviousActionPerformed(evt);
+            }
+        });
+
+        btnMoveLast.setText(">|");
+        btnMoveLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveLastActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -323,60 +431,87 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtId, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                            .addComponent(txtUnit, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtId, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(27, 27, 27)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnCreate)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnUpdate)
-                                .addGap(4, 4, 4)
-                                .addComponent(btnDelete)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnClear))
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
+                                .addComponent(ckbDoDayMacDinh)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(rdbYes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(rdbNo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSize, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(txtName))
-                .addContainerGap())
+                                .addComponent(txtSize, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(ckbCoPhanLoai, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ckbNhapDoDay))
+                        .addGap(31, 31, 31))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnCreate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnUpdate)
+                        .addGap(4, 4, 4)
+                        .addComponent(btnDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnClear)
+                        .addGap(42, 42, 42)
+                        .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(8, 8, 8)
-                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnCreate)
-                            .addComponent(btnUpdate)
-                            .addComponent(btnClear)
-                            .addComponent(btnDelete)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rdbYes))
+                        .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rdbNo)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(8, 8, 8)
+                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(12, 12, 12)
+                        .addComponent(ckbCoPhanLoai, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(38, 38, 38)
+                                .addComponent(txtSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(ckbNhapDoDay)
+                                .addGap(12, 12, 12)
+                                .addComponent(ckbDoDayMacDinh)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnMoveFirst)
+                    .addComponent(btnMovePrevious)
+                    .addComponent(btnMoveNext)
+                    .addComponent(btnMoveLast)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnCreate)
+                        .addComponent(btnUpdate)
+                        .addComponent(btnClear)
+                        .addComponent(btnDelete)))
+                .addGap(15, 15, 15))
         );
 
         tabs.addTab("Biểu mẫu", jPanel2);
@@ -387,14 +522,14 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabs)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -443,15 +578,50 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         }
     }//GEN-LAST:event_tblProductTypeMouseClicked
 
-    private void rdbYesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbYesActionPerformed
+    private void txtSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSizeActionPerformed
         // TODO add your handling code here:
-        this.hasSize(true);
-    }//GEN-LAST:event_rdbYesActionPerformed
+    }//GEN-LAST:event_txtSizeActionPerformed
 
-    private void rdbNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbNoActionPerformed
+    private void ckbCoPhanLoaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbCoPhanLoaiActionPerformed
         // TODO add your handling code here:
-        this.hasSize(false);
-    }//GEN-LAST:event_rdbNoActionPerformed
+    }//GEN-LAST:event_ckbCoPhanLoaiActionPerformed
+
+    private void ckbNhapDoDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbNhapDoDayActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ckbNhapDoDayActionPerformed
+
+    private void ckbDoDayMacDinhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbDoDayMacDinhActionPerformed
+        // TODO add your handling code here:
+        hasSize(ckbDoDayMacDinh.isSelected());
+    }//GEN-LAST:event_ckbDoDayMacDinhActionPerformed
+
+    private void jScrollPane1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jScrollPane1AncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane1AncestorAdded
+
+    private void txtUnitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUnitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUnitActionPerformed
+
+    private void btnMoveFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveFirstActionPerformed
+        // TODO add your handling code here:
+        this.moveFirst();
+    }//GEN-LAST:event_btnMoveFirstActionPerformed
+
+    private void btnMoveNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveNextActionPerformed
+        // TODO add your handling code here:
+        this.moveNext();
+    }//GEN-LAST:event_btnMoveNextActionPerformed
+
+    private void btnMovePreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMovePreviousActionPerformed
+        // TODO add your handling code here:
+        this.movePrevious();
+    }//GEN-LAST:event_btnMovePreviousActionPerformed
+
+    private void btnMoveLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveLastActionPerformed
+        // TODO add your handling code here:
+        this.moveLast();
+    }//GEN-LAST:event_btnMoveLastActionPerformed
 
     /**
      * @param args the command line arguments
@@ -502,49 +672,32 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDeleteCheckedItems;
+    private javax.swing.JButton btnMoveFirst;
+    private javax.swing.JButton btnMoveLast;
+    private javax.swing.JButton btnMoveNext;
+    private javax.swing.JButton btnMovePrevious;
     private javax.swing.JButton btnUncheckAll;
     private javax.swing.JButton btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JCheckBox ckbCoPhanLoai;
+    private javax.swing.JCheckBox ckbDoDayMacDinh;
+    private javax.swing.JCheckBox ckbNhapDoDay;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JRadioButton rdbNo;
-    private javax.swing.JRadioButton rdbYes;
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblProductType;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtSize;
+    private javax.swing.JTextField txtUnit;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void moveFirst() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void movePrevious() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void moveNext() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void moveLast() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public void moveTo(int rowIndex) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 
     @Override
     public boolean isValidInput() {

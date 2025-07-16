@@ -4,6 +4,7 @@
  */
 package quanli.ton.dao;
 
+import java.util.List;
 import quanli.ton.entity.ProductType;
 
 
@@ -13,5 +14,6 @@ import quanli.ton.entity.ProductType;
  * @author USER
  */
 public interface ProductTypeDAO extends CrudDAO<ProductType, String>{
-    
+    public String findNameById(String id);
+    public List<ProductType> findHasThicknessTrue();
 }

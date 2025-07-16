@@ -16,17 +16,21 @@ import quanli.ton.util.XQuery;
  * @author USER
  */
 public class ProductTypeDAOImpl implements ProductTypeDAO{
-    String createSql = "INSERT INTO ProductType(Id, Name, RequiresSize, DefaultLength) VALUES(?, ?, ?, ?)";
-    String updateSql = "UPDATE ProductType SET Name=?, RequiresSize=?, DefaultLength=? WHERE Id=?";
+    String createSql = "INSERT INTO ProductType(Id, Name, Unit, HasThickness, RequiresSize, DefaultLength) VALUES(?, ?, ?, ?, ?, ?)";
+    String updateSql = "UPDATE ProductType SET Name=?, Unit=?, HasThickness=?, RequiresSize=?, DefaultLength=? WHERE Id=?";
     String deleteSql = "DELETE FROM ProductType WHERE Id=?";
     String findAllSql = "SELECT * FROM ProductType";
     String findByIdSql = "SELECT * FROM ProductType WHERE Id=?";
-    
+    String findNameByIdSql = "SELECT Name FROM ProductType WHERE Id=?";
+    String findHasThicknessTrue = "SELECT * FROM ProductType WHERE HasThickness=?" ;
+
     @Override
     public ProductType create(ProductType entity) {
         Object[] values = {
             entity.getId(),
             entity.getName(),
+            entity.getUnit(),
+            entity.isHasThickness(),
             entity.isRequiresSize(),
             entity.getDefaultLength()
         };
@@ -37,10 +41,12 @@ public class ProductTypeDAOImpl implements ProductTypeDAO{
     @Override
     public void update(ProductType entity) {
         Object[] values = {
-            entity.getId(),
             entity.getName(),
+            entity.getUnit(),
+            entity.isHasThickness(),
             entity.isRequiresSize(),
-            entity.getDefaultLength()
+            entity.getDefaultLength(),
+            entity.getId(),
         };
         XJdbc.executeUpdate(updateSql, values);
     }
@@ -58,6 +64,16 @@ public class ProductTypeDAOImpl implements ProductTypeDAO{
     @Override
     public ProductType findById(String id) {
         return XQuery.getSingleBean(ProductType.class, findByIdSql, id);
+    }
+    
+    @Override
+    public String findNameById(String id) {
+        return XQuery.getSingleBean(String.class, findNameByIdSql, id);
+    }
+    
+    @Override
+    public List<ProductType> findHasThicknessTrue() {
+        return XQuery.getBeanList(ProductType.class, findHasThicknessTrue, true);
     }
     
 }

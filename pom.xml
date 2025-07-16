@@ -8,8 +8,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Use source/target properties for consistency and explicit control -->
-        <maven.compiler.source>24</maven.compiler.source>
-        <maven.compiler.target>24</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <!-- Retain maven.compiler.release if you prefer it, but source/target are more explicit -->
         <!-- <maven.compiler.release>21</maven.compiler.release> -->
         <exec.mainClass>com.mycompany.duan.DUAN</exec.mainClass>

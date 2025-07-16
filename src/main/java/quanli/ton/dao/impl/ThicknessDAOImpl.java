@@ -6,7 +6,6 @@ package quanli.ton.dao.impl;
 
 import java.util.List;
 import quanli.ton.dao.ThicknessDAO;
-import quanli.ton.entity.ProductType;
 import quanli.ton.entity.Thickness;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
@@ -37,9 +36,9 @@ public class ThicknessDAOImpl implements ThicknessDAO{
     @Override
     public void update(Thickness entity) {
         Object[] values = {
-            entity.getId(),
             entity.getThick(),
-            entity.getTypeId()
+            entity.getTypeId(),
+            entity.getId(),
         };
         XJdbc.executeUpdate(updateSql, values);
     }
