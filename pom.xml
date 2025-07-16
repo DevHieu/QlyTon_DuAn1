@@ -1,61 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
-    <artifactId>DUAN</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>quanli.ton</groupId>
+    <artifactId>QLBanHang_DuAn1</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Use source/target properties for consistency and explicit control -->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <!-- Retain maven.compiler.release if you prefer it, but source/target are more explicit -->
-        <!-- <maven.compiler.release>21</maven.compiler.release> -->
-        <exec.mainClass>com.mycompany.duan.DUAN</exec.mainClass>
+        <exec.mainClass>quanli.ton.qlbanhang_duan1.QLBanHang_DuAn1</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.20</version>
+            <version>8.0.33</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.38</version>
-            <scope>provided</scope> <!-- Change scope to 'provided' as Lombok is only needed at compile time -->
-            </dependency>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE250</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version> <!-- Đảm bảo phiên bản này được dùng -->
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.38</version> <!-- PHẢI KHỚP VỚI PHIÊN BẢN CỦA LOMBOK TRONG DEPENDENCY -->
-                        </path>
-                    </annotationProcessorPaths>
-                    <!-- Thêm các đối số compiler này để giải quyết các cảnh báo liên quan đến module của JDK 9+ -->
-                    <compilerArgs>
-                        <arg>--add-opens</arg>
-                        <arg>java.base/java.lang=ALL-UNNAMED</arg>
-                        <arg>--add-opens</arg>
-                        <arg>java.base/java.util=ALL-UNNAMED</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
