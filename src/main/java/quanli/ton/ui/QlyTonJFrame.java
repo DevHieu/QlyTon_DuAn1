@@ -151,7 +151,6 @@ public class QlyTonJFrame extends javax.swing.JFrame {
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel23.setIcon(new javax.swing.ImageIcon("D:\\duan1\\QlyTon_DuAn1\\images\\icons\\logo_200px.png")); // NOI18N
         jLabel23.setText("NKD");
 
         lblCloseMenu.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
@@ -251,7 +250,6 @@ public class QlyTonJFrame extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setText("Tìm");
 
-        jLabel29.setIcon(new javax.swing.ImageIcon("D:\\duan1\\QlyTon_DuAn1\\images\\icons\\menu.png")); // NOI18N
         jLabel29.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel29MouseClicked(evt);

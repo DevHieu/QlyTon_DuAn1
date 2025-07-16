@@ -128,9 +128,6 @@
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Times New Roman" size="14" style="1"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="2" name="D:\duan1\QlyTon_DuAn1\images\icons\logo_200px.png"/>
-                    </Property>
                     <Property name="text" type="java.lang.String" value="NKD"/>
                   </Properties>
                 </Component>
@@ -361,11 +358,6 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel29">
-              <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="D:\duan1\QlyTon_DuAn1\images\icons\menu.png"/>
-                </Property>
-              </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel29MouseClicked"/>
               </Events>
