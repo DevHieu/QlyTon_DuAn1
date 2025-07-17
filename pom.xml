@@ -7,7 +7,9 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>21</maven.compiler.release>
+        <!-- Use source/target properties for consistency and explicit control -->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>quanli.ton.qlbanhang_duan1.QLBanHang_DuAn1</exec.mainClass>
     </properties>
     <dependencies>

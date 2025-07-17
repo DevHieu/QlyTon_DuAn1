@@ -378,11 +378,14 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel29">
+<<<<<<< HEAD
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="2" name="D:\Study\DuAn1\QLBanHang_DuAn1\src\main\java\quanli\ton\icons\menu.png"/>
                 </Property>
               </Properties>
+=======
+>>>>>>> 1fb5c629890a8188cfd5a01f4f44ccaa6f23d65d
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel29MouseClicked"/>
               </Events>

@@ -98,13 +98,13 @@ public class XQuery {
         }
         return bean;
     }
-    
-    public static <B> List<B> getEntityList(Class<B> beanClass, String sql) {
-        List<B> list = new ArrayList<>();
+
+    public static <A> List<A> getEntityList(Class<A> aClass, String sql) {
+        List<A> list = new ArrayList<>();
         try {
             ResultSet resultSet = XJdbc.executeQuery(sql);
             while (resultSet.next()) {
-                list.add(XQuery.readBean(resultSet, beanClass));
+                list.add(XQuery.readBean(resultSet, aClass));
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
