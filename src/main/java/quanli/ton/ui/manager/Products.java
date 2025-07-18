@@ -4,18 +4,303 @@
  */
 package quanli.ton.ui.manager;
 
+import java.io.File;
+import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import quanli.ton.controller.ProductsController;
+import quanli.ton.dao.ProductsDAO;
+import quanli.ton.dao.impl.ProductsDAOimpl;
+import quanli.ton.entity.Product;
+import quanli.ton.entity.ProductType;
+
 /**
  *
  * @author huynhtrunghieu
  */
-public class Products extends javax.swing.JFrame {
+public class Products extends javax.swing.JFrame implements ProductsController {
+    
+    private ProductsDAO productsDAO;
+    private int currentIndex = 0; 
+    private List<Product> productList; 
+    ProductsDAO dao = new ProductsDAOimpl();
 
     /**
      * Creates new form Products
      */
     public Products() {
         initComponents();
+        this.open();
     }
+
+    @Override
+    public void fillBillDetails() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void selectTimeRange() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    /**
+     * Creates new form Products
+     */
+
+
+    private void fillComboBox() {
+    System.out.println("hiihih");
+    cboModel.removeAllItems();
+    cboModel.addItem(""); // Mục trống để người dùng có thể không chọn
+    List<Product> types = productsDAO.selectAll(); // Giả sử có phương thức này
+    for (Product type : types) {
+        cboModel.addItem(type.getId());
+    }
+}
+
+    private void setForm(Product product) {
+    txtId.setText(product.getId());
+    txtName.setText(product.getName());
+    txtUnitPrice.setText(String.valueOf(product.getUnitPrice()));
+    slGiamGia.setValue((int) product.getDiscount());
+    txtDiscountPercent.setText(product.getDiscount() + "%");
+
+    cboModel.setSelectedItem(product.getTypeId());
+    jTextField1.setText(product.getTypeId());
+    jTextField2.setText(String.valueOf(product.getThickId())); // thickId là số nguyên
+    jTextField3.setText(String.valueOf(product.getQuantity()));
+
+    if (product.getPhoto() != null && !product.getPhoto().isEmpty()) {
+        try {
+            ImageIcon icon = new ImageIcon(product.getPhoto());
+            lblImage.setIcon(icon);
+            lblImage.setText(""); // Xóa bất kỳ văn bản nào
+        } catch (Exception e) {
+            lblImage.setIcon(null);
+            lblImage.setText("Không có hình ảnh");
+            e.printStackTrace();
+        }
+    } else {
+        lblImage.setIcon(null);
+        lblImage.setText("Không có hình ảnh");
+    }
+}
+
+private Product getForm() {
+    Product product = new Product();
+    product.setId(txtId.getText());
+    product.setName(txtName.getText());
+
+    try {
+        product.setUnitPrice(Double.parseDouble(txtUnitPrice.getText()));
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Đơn giá không hợp lệ. Vui lòng nhập một số.");
+        return null;
+    }
+
+    product.setDiscount(slGiamGia.getValue());
+
+    product.setTypeId((String) cboModel.getSelectedItem());
+    // hoặc lấy lại từ text field nếu cần:
+    // product.setTypeId(jTextField1.getText());
+
+    try {
+        product.setThickId(Integer.parseInt(jTextField2.getText()));
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Độ dày không hợp lệ. Vui lòng nhập số.");
+        return null;
+    }
+
+    try {
+        product.setQuantity(Integer.parseInt(jTextField3.getText()));
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ. Vui lòng nhập một số.");
+        return null;
+    }
+
+    // Nếu bạn có ô chọn ảnh, thêm vào:
+    // product.setPhoto(fileName); hoặc set từ lblImage nếu cần
+
+    return product;
+}
+
+    private void edit() {
+        int selectedRow = tblCategories.getSelectedRow();
+        if (selectedRow >= 0 && selectedRow < productList.size()) {
+            Product product = productList.get(selectedRow);
+            setForm(product);
+            jTabbedPane1.setSelectedIndex(1); // Chuyển sang tab form (tab2)
+            currentIndex = selectedRow;
+            updateNavigationButtons();
+        }
+    }
+
+    public void open() {
+    // TODO: Hiển thị dữ liệu từ DB ra bảng
+        productsDAO = new ProductsDAOimpl(); 
+        fillComboBox();
+        fillToTable(); 
+        fillCategories();
+        updateNavigationButtons(); 
+    }
+    
+    private void fillToTable() {
+        System.out.println("llololol");
+    DefaultTableModel model = (DefaultTableModel)tblModel.getModel();
+    model.setRowCount(0);
+    List<Product> list = dao.selectAll(); 
+    for (Product p : list) {
+        Object[] row = {
+            p.getId(), p.getName(), p.getUnitPrice(), p.getDiscount(),
+            p.getTypeId(), p.getThickId(), p.getQuantity()
+        };
+        model.addRow(row);
+    }
+}
+     private void fillCategories() {
+        System.out.println("llololol");
+    DefaultTableModel model = (DefaultTableModel)tblCategories.getModel();
+    model.setRowCount(0);
+    List<Product> list = dao.selectAll(); 
+    for (Product p : list) {
+        Object[] row = {
+            p.getId(), p.getName(), p.getUnitPrice(), p.getDiscount(),
+            p.getTypeId(), p.getThickId(), p.getQuantity()
+        };
+        model.addRow(row);
+    }
+}
+    private void create() {
+        Product newProduct = getForm();
+        if (newProduct != null) {
+            try {
+                productsDAO.insert(newProduct); 
+                JOptionPane.showMessageDialog(this, "Sản phẩm đã được tạo thành công!");
+                fillToTable(); 
+                clear(); 
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi tạo sản phẩm: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void update() {
+        Product updatedProduct = getForm();
+        if (updatedProduct != null) {
+            try {
+                productsDAO.update(updatedProduct); // Cập nhật sản phẩm
+                JOptionPane.showMessageDialog(this, "Sản phẩm đã được cập nhật thành công!");
+                fillToTable(); // Làm mới bảng
+            }  catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void delete() {
+        String productIdToDelete = txtId.getText();
+        if (productIdToDelete.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã Sản Phẩm để xóa.");
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa sản phẩm này không?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                productsDAO.delete(productIdToDelete); // Xóa sản phẩm
+                JOptionPane.showMessageDialog(this, "Sản phẩm đã được xóa thành công!");
+                fillToTable(); // Làm mới bảng
+                clear(); // Xóa form
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi xóa sản phẩm: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void clear() {
+        txtId.setText("");
+        txtName.setText("");
+        txtUnitPrice.setText("");
+        slGiamGia.setValue(0);
+        txtDiscountPercent.setText("0%");
+        cboModel.setSelectedIndex(0); // Đặt lại combo box
+        jTextField1.setText(""); // Xóa trường ID danh mục
+        jTextField2.setText(""); // Xóa trường ID độ dày
+        jTextField3.setText(""); // Xóa trường số lượng
+        lblImage.setIcon(null);
+        lblImage.setText("Nhấp để chọn hình ảnh");
+        currentIndex = -1; // Không có sản phẩm nào được chọn
+        updateNavigationButtons();
+    }
+
+    private void moveFirst() {
+        if (!productList.isEmpty()) {
+            currentIndex = 0;
+            setForm(productList.get(currentIndex));
+            updateNavigationButtons();
+        }
+    }
+
+    private void movePrevious() {
+        if (!productList.isEmpty() && currentIndex > 0) {
+            currentIndex--;
+            setForm(productList.get(currentIndex));
+            updateNavigationButtons();
+        }
+    }
+
+    private void moveNext() {
+        if (!productList.isEmpty() && currentIndex < productList.size() - 1) {
+            currentIndex++;
+            setForm(productList.get(currentIndex));
+            updateNavigationButtons();
+        }
+    }
+
+    private void moveLast() {
+        if (!productList.isEmpty()) {
+            currentIndex = productList.size() - 1;
+            setForm(productList.get(currentIndex));
+            updateNavigationButtons();
+        }
+    }
+
+    private void updateNavigationButtons() {
+        boolean enableNav = productList != null && !productList.isEmpty();
+        btnMoveFirst.setEnabled(enableNav && currentIndex > 0);
+        btnMovePrevious.setEnabled(enableNav && currentIndex > 0);
+        btnMoveNext.setEnabled(enableNav && currentIndex < productList.size() - 1);
+        btnMoveLast.setEnabled(enableNav && currentIndex < productList.size() - 1);
+    }
+
+    private void chooseFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            // Lưu đường dẫn vào đối tượng sản phẩm của bạn hoặc một biến tạm thời
+            // Hiện tại, chỉ hiển thị nó.
+            try {
+                ImageIcon icon = new ImageIcon(selectedFile.getAbsolutePath());
+                lblImage.setIcon(icon);
+                lblImage.setText(""); // Xóa bất kỳ văn bản nào
+                // Bạn có thể muốn lưu selectedFile.getAbsolutePath() vào một biến
+                // sẽ được lưu cùng với sản phẩm.
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi tải hình ảnh: " + e.getMessage());
+                lblImage.setIcon(null);
+                lblImage.setText("Không có hình ảnh");
+                e.printStackTrace();
+            }
+        }
+    }
+    /**
+     * Creates new form Products
+     */
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -26,21 +311,345 @@ public class Products extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblCategories = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblModel = new javax.swing.JTable();
+        jButton6 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        lblImage = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        cboModel = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        txtId = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
+        txtUnitPrice = new javax.swing.JTextField();
+        txtDiscountPercent = new javax.swing.JLabel();
+        slGiamGia = new javax.swing.JSlider();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        btnClear1 = new javax.swing.JButton();
+        btnMoveFirst = new javax.swing.JButton();
+        btnMovePrevious = new javax.swing.JButton();
+        btnMoveNext = new javax.swing.JButton();
+        btnMoveLast = new javax.swing.JButton();
+        btnCreate1 = new javax.swing.JButton();
+        btnUpdate1 = new javax.swing.JButton();
+        btnDelete1 = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jButton7.setText("Bỏ chọn tất cả");
+
+        jButton8.setText("Bỏ các mục chọn");
+
+        tblCategories.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Mã Sản Phẩm", "Tên Sản Phẩm", "PhoTo", "Số Lượng Sản Phẩm", "Đơn Giá", "Giảm Giá", "Mã Độ Dày", ""
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        tblCategories.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCategoriesMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(tblCategories);
+
+        tblModel.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Loại Sản Phẩm"
+            }
+        ));
+        tblModel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblModelMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblModel);
+
+        jButton6.setText("Chọn tất cả");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 463, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton8)
+                        .addGap(2, 2, 2))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton6)
+                    .addComponent(jButton7)
+                    .addComponent(jButton8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Danh Sách ", jPanel1);
+
+        lblImage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblImageMouseClicked(evt);
+            }
+        });
+
+        jLabel2.setText("Mã Sản Phẩm");
+
+        jLabel3.setText("Tên Sản Phẩm");
+
+        jLabel4.setText("Đơn giá");
+
+        txtDiscountPercent.setText("Giảm giá");
+
+        slGiamGia.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                slGiamGiaStateChanged(evt);
+            }
+        });
+
+        jLabel6.setText("Loại");
+
+        jLabel1.setText("Mã Loại Sản Phẩm");
+
+        jLabel5.setText("Mã Độ Dày");
+
+        jLabel8.setText("Nhập Thêm");
+
+        btnClear1.setText("Nhập Mới");
+
+        btnMoveFirst.setText("|<");
+        btnMoveFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveFirstActionPerformed(evt);
+            }
+        });
+
+        btnMovePrevious.setText("<<");
+
+        btnMoveNext.setText(">>");
+
+        btnMoveLast.setText(">|");
+
+        btnCreate1.setText("Tạo Mới");
+
+        btnUpdate1.setText("Cập Nhật");
+
+        btnDelete1.setText("Xoá");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblImage, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnCreate1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnUpdate1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnDelete1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtId, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                                .addComponent(txtUnitPrice, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(cboModel, javax.swing.GroupLayout.Alignment.LEADING, 0, 138, Short.MAX_VALUE)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDiscountPercent)
+                            .addComponent(jLabel5)
+                            .addComponent(slGiamGia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnClear1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                        .addComponent(btnMoveFirst)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMovePrevious)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnMoveLast)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMoveNext)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(txtDiscountPercent))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(slGiamGia, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cboModel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(lblImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnMoveLast)
+                        .addComponent(btnMoveNext)
+                        .addComponent(btnMovePrevious)
+                        .addComponent(btnMoveFirst))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnCreate1)
+                        .addComponent(btnUpdate1)
+                        .addComponent(btnDelete1)
+                        .addComponent(btnClear1)))
+                .addGap(64, 64, 64))
+        );
+
+        jTabbedPane1.addTab("Biểu Mẫu", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tblCategoriesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriesMouseClicked
+        // TODO add your handling code here:
+        this.edit();
+    }//GEN-LAST:event_tblCategoriesMouseClicked
+
+    private void tblModelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblModelMouseClicked
+        // TODO add your handling code here:
+        this.fillToTable();
+    }//GEN-LAST:event_tblModelMouseClicked
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void lblImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImageMouseClicked
+        // TODO add your handling code here:
+        this.chooseFile();
+    }//GEN-LAST:event_lblImageMouseClicked
+
+    private void slGiamGiaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_slGiamGiaStateChanged
+        // TODO add your handling code here:
+        txtDiscountPercent.setText(slGiamGia.getValue() + "%");
+    }//GEN-LAST:event_slGiamGiaStateChanged
+
+    private void btnMoveFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveFirstActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnMoveFirstActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +687,41 @@ public class Products extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClear1;
+    private javax.swing.JButton btnCreate1;
+    private javax.swing.JButton btnDelete1;
+    private javax.swing.JButton btnMoveFirst;
+    private javax.swing.JButton btnMoveLast;
+    private javax.swing.JButton btnMoveNext;
+    private javax.swing.JButton btnMovePrevious;
+    private javax.swing.JButton btnUpdate1;
+    private javax.swing.JComboBox<String> cboModel;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JLabel lblImage;
+    private javax.swing.JSlider slGiamGia;
+    private javax.swing.JTable tblCategories;
+    private javax.swing.JTable tblModel;
+    private javax.swing.JLabel txtDiscountPercent;
+    private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
+
 }

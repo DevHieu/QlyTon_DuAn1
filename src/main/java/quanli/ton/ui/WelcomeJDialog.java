@@ -4,11 +4,13 @@
  */
 package quanli.ton.ui;
 
+import quanli.ton.controller.WelcomeController;
+
 /**
  *
  * @author hieud
  */
-public class WelcomeJDialog extends javax.swing.JDialog {
+public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeController {
 
     /**
      * Creates new form WelcomeJDialog
@@ -16,7 +18,25 @@ public class WelcomeJDialog extends javax.swing.JDialog {
     public WelcomeJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.waiting();
     }
+    
+    @Override 
+    public void waiting() {
+    this.setLocationRelativeTo(null);
+    new Thread(() -> {
+        try {
+            for (var i = 0; i <= 100; i++) {
+                progressBar.setValue(i);
+                Thread.sleep(10);
+            }
+            WelcomeJDialog.this.dispose();
+        } catch (InterruptedException ex) {
+            System.exit(0);
+        }
+    }).start();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,17 +47,49 @@ public class WelcomeJDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel2 = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
+        jLabel1 = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 36)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 204, 51));
+        jLabel2.setText("Tôn Hoa Mai");
+
+        progressBar.setFont(new java.awt.Font("Helvetica Neue", 1, 10)); // NOI18N
+        progressBar.setForeground(new java.awt.Color(0, 204, 204));
+        progressBar.setValue(40);
+        progressBar.setStringPainted(true);
+
+        jLabel1.setIcon(new javax.swing.ImageIcon("/Users/huynhtrunghieu/QlyTon_DuAn1/src/main/java/quanli/ton/icons/z6816758011204_8b27f39ba951572a027777ba41410b04.jpg")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(140, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(128, 128, 128))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(155, 155, 155))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -86,5 +138,8 @@ public class WelcomeJDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JProgressBar progressBar;
     // End of variables declaration//GEN-END:variables
 }
