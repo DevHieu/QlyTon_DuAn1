@@ -82,8 +82,8 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Admin\\Downloads\\logoTonHoaMai.png")); // NOI18N
-        jLabel1.setText("jLabel1");
+        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\hieud\\Downloads\\logo_128.png")); // NOI18N
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel2.setText("ĐĂNG NHẬP");
@@ -118,8 +118,9 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtUsername)
                     .addGroup(layout.createSequentialGroup()
@@ -171,8 +172,8 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
 
     private void cbShowPassword5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbShowPassword5ActionPerformed
         // TODO add your handling code here:
-        cbShowPassword.addActionListener(e -> {
-            char c = cbShowPassword.isSelected() ? (char) 0 : '*';
+        cbShowPassword5.addActionListener(e -> {
+            char c = cbShowPassword5.isSelected() ? (char) 0 : '*';
             txtPassword.setEchoChar(c);
         });
     }//GEN-LAST:event_cbShowPassword5ActionPerformed
@@ -232,11 +233,6 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnLogin;
-    private javax.swing.JCheckBox cbShowPassword;
-    private javax.swing.JCheckBox cbShowPassword1;
-    private javax.swing.JCheckBox cbShowPassword2;
-    private javax.swing.JCheckBox cbShowPassword3;
-    private javax.swing.JCheckBox cbShowPassword4;
     private javax.swing.JCheckBox cbShowPassword5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

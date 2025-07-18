@@ -23,5 +23,8 @@ public class Thickness {
     private String thick;
     private String typeId;
     
-    
+        @Override
+    public String toString() {
+        return this.thick;
+    }
 }

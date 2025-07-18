@@ -12,4 +12,9 @@ import quanli.ton.entity.Bills;
  */
 public interface QlyTonController extends CrudController<Bills> {
     void fillProductList();
+    void fillTypeCbo();
+    void fillThicknesCbo(String typeId);
+    
+    void fillBillDetail(long billId);
+    void fillCustomer(String customerId);
 }

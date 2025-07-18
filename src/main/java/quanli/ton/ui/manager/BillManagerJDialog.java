@@ -682,7 +682,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             if (d.getLength() == 0) { // Những thứ không có tính bằng độ dài (phụ kiện, ...)
                 price = d.getUnitPrice();
             } else { // Tính giá tiền theo độ dài
-                price = (d.getUnitPrice() / d.getDefaultLength()) * d.getLength();
+                price = (d.getUnitPrice()) * d.getLength();
             }
 
             // Tính tổng tiền
