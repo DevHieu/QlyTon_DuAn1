@@ -378,6 +378,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         buttonGroup2.add(rdoStop);
         rdoStop.setText("Tạm dừng");
 
+        btnMoveLast.setBackground(new java.awt.Color(64, 189, 203));
         btnMoveLast.setText(">|");
         btnMoveLast.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -385,6 +386,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnMoveNext.setBackground(new java.awt.Color(64, 189, 203));
         btnMoveNext.setText(">>");
         btnMoveNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -392,6 +394,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnMovePrevious.setBackground(new java.awt.Color(64, 189, 203));
         btnMovePrevious.setText("<<");
         btnMovePrevious.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -399,6 +402,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnMoveFirst.setBackground(new java.awt.Color(64, 189, 203));
         btnMoveFirst.setText("|<");
         btnMoveFirst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -406,6 +410,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnClear.setBackground(new java.awt.Color(64, 189, 203));
         btnClear.setText("Nhập mới");
         btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -413,6 +418,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnDelete.setBackground(new java.awt.Color(64, 189, 203));
         btnDelete.setText("Xóa");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -420,6 +426,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnUpdate.setBackground(new java.awt.Color(64, 189, 203));
         btnUpdate.setText("Cập nhật");
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,6 +434,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnCreate.setBackground(new java.awt.Color(64, 189, 203));
         btnCreate.setText("Tạo mới");
         btnCreate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
