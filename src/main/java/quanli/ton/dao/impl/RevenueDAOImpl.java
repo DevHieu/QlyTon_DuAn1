@@ -20,7 +20,7 @@ public class RevenueDAOImpl implements RevenueDAO {
     public List<Revenue.ByCategory> getByCategory(Date begin, Date end) {
         String revenueByCategorySql
                 = "SELECT productType.Name AS Category, "
-                + "   SUM(detail.UnitPrice * detail.Quantity * (1 - detail.Discount)) AS Revenue, "
+                + "   SUM(detail.UnitPrice * detail.Quantity * (1 - detail.Discount/100.0)) AS Revenue, "
                 + "   CAST(SUM(detail.Quantity) AS SIGNED) AS Quantity, "
                 + "   MIN(detail.UnitPrice) AS MinPrice, "
                 + "   MAX(detail.UnitPrice) AS MaxPrice, "
@@ -41,7 +41,7 @@ public class RevenueDAOImpl implements RevenueDAO {
     public List<Revenue.ByUser> getByUser(Date begin, Date end) {
         String revenueByUserSql
                 = "SELECT bill.Username AS `User`, "
-                + "   SUM(detail.UnitPrice * detail.Quantity * (1 - detail.Discount)) AS Revenue, "
+                + "   SUM(detail.UnitPrice * detail.Quantity * (1 - detail.Discount/100.0)) AS Revenue, "
                 + "   CAST(COUNT(DISTINCT detail.BillId) AS SIGNED) AS Quantity, "
                 + "   MIN(bill.Checkin) AS FirstTime, "
                 + "   MAX(bill.Checkin) AS LastTime "
