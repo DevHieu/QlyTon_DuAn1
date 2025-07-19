@@ -26,6 +26,6 @@ public class BillDetails {
     private double discount;
     private int quantity;
     private double length;
-    private double defaultLength;
+    private Double defaultLength;
     private String productName;
 }
