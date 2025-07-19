@@ -186,6 +186,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         });
 
         cboTimeRanges.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay" }));
+        cboTimeRanges.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTimeRangesActionPerformed(evt);
+            }
+        });
 
         txtEnd.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
 
@@ -567,6 +572,10 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         // TODO add your handling code here:
         findCustomer(txtPhoneNumber.getText());
     }//GEN-LAST:event_txtPhoneNumberFocusLost
+
+    private void cboTimeRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cboTimeRangesActionPerformed
 
     /**
      * @param args the command line arguments
