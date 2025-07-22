@@ -19,7 +19,7 @@ public interface BillManagerController extends CrudController<Bills> {
     
      void setForm(Bills bills, Customer customer);
      
-     void findCustomer(String phoneNumber);
+     Customer findCustomer(String phoneNumber);
      
      Customer getCustomerForm();
 }

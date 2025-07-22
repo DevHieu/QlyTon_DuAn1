@@ -4,7 +4,9 @@
  */
 package quanli.ton.controller;
 
+import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
+import quanli.ton.entity.Customer;
 
 /**
  *
@@ -13,28 +15,24 @@ import quanli.ton.entity.Bills;
 public interface QlyTonController {
         void open(); // Xử lý mở cửa sổ
     
-        void setForm(Bills entity); // Hiển thị thực thể lên form
-        Bills getForm(); // Tạo thực thể từ dữ liệu form
-
-        void fillToTable(); // Tải dữ liệu và đổ lên bảng
-        void edit(); // Hiển thị dữ liệu của hàng được chọn lên form
-
-        void create(); // Tạo thực thể mới
-        void update(); // Cập nhật thực thể đang xem
-        void delete(); // Xóa thực thể đang xem
-        void clear();  // Xóa trắng form
-        void setEditable(boolean editable); // Thay đổi trạng thái form
-
-        void checkAll(); // Tích chọn tất cả các hàng trên bảng
-        void uncheckAll(); // Bỏ tích chọn tất cả các hàng trên bảng
-        void deleteCheckedItems(); // Xóa các thực thể được tích chọn 
+        void fillBill(Bills entity);
+        void fillBillDetail();
+        void fillCustomer(String customerId);
         
+        Bills getBillsForm();
+        Customer getCustomerForm();
+        
+        void fillToTable(); 
+        void save(); // Cập nhật thực thể đang xem
+        void cancle(); // Xóa thực thể đang xem
+        void print();
+        void clear();  // Xóa trắng form
+        void setEditable(int status); // Thay đổi trạng thái form
+
         boolean isValidInput();
         
         void fillProductList();
         void fillTypeCbo();
         void fillThicknesCbo(String typeId);
 
-        void fillBillDetail(long billId);
-        void fillCustomer(String customerId);
 }

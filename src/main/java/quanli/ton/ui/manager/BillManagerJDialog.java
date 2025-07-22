@@ -570,7 +570,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
         // TODO add your handling code here:
-        findCustomer(txtPhoneNumber.getText());
+        Customer customer  = this.findCustomer(txtPhoneNumber.getText());
+        
+        if (customer != null) {
+            txtCustomerName.setText(customer.getFullName());
+            txtAddress.setText(customer.getAddress());
+        }
     }//GEN-LAST:event_txtPhoneNumberFocusLost
 
     private void cboTimeRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangesActionPerformed
@@ -731,13 +736,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     }
 
     @Override
-    public void findCustomer(String phoneNumber) {
-        Customer customer = customerDao.findById(phoneNumber);
-
-        if (customer != null) {
-            txtCustomerName.setText(customer.getFullName());
-            txtAddress.setText(customer.getAddress());
-        }
+    public Customer findCustomer(String phoneNumber) {
+        return(customerDao.findById(phoneNumber));
     }
 
     @Override
