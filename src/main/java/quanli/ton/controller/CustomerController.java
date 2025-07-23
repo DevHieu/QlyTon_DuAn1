@@ -11,5 +11,5 @@ import quanli.ton.entity.Customer;
  * @author hieud
  */
 public interface CustomerController extends CrudController<Customer> {
-    void fillBillsTable();
+//    void fillBillsTable();
 }
