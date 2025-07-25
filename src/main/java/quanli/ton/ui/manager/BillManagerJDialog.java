@@ -812,6 +812,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
         Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
         items = dao.findByTimeRange(begin, end);
+    
         
         items.forEach(item -> {
             Customer customer = customerDao.findById(item.getCustomerId()); // Lấy Customer từ id

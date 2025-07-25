@@ -5,7 +5,6 @@
 package quanli.ton.dao;
 
 import java.util.List;
-import quanli.ton.entity.ProductType;
 import quanli.ton.entity.Thickness;
 
 /**

@@ -29,5 +29,4 @@ public interface RevenueDAO {
      * @return kết quả truy vấn
      */
     List<Revenue.ByUser> getByUser(Date begin, Date end);
-
 }

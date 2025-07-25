@@ -142,13 +142,13 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         cboProductType = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTextField2 = new javax.swing.JTextField();
+        cboTimeRange = new javax.swing.JComboBox<>();
+        txtBegin = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        txtEnd = new javax.swing.JTextField();
+        btnFilter = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblBills = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jComboBox3 = new javax.swing.JComboBox<>();
@@ -631,22 +631,22 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel3.setText("Từ ngày:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay", " " }));
+        cboTimeRange.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay", " " }));
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txtBegin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txtBeginActionPerformed(evt);
             }
         });
 
         jLabel4.setText("Đến ngày:");
 
-        jButton3.setBackground(new java.awt.Color(64, 189, 203));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton3.setText("Lọc");
-        jButton3.setRolloverEnabled(false);
+        btnFilter.setBackground(new java.awt.Color(64, 189, 203));
+        btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnFilter.setText("Lọc");
+        btnFilter.setRolloverEnabled(false);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblBills.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -672,16 +672,16 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblBills);
 
         jLabel6.setText("Tìm kiếm");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng", " " }));
+        cboSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng", " " }));
 
-        jButton4.setBackground(new java.awt.Color(64, 189, 203));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton4.setText("Tìm kiếm");
-        jButton4.setRolloverEnabled(false);
+        btnSearch.setBackground(new java.awt.Color(64, 189, 203));
+        btnSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnSearch.setText("Tìm kiếm");
+        btnSearch.setRolloverEnabled(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -695,18 +695,18 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                             .addComponent(jLabel3)
                             .addComponent(jLabel4)
                             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtEnd, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtBegin, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(cboTimeRange, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox3, 0, 220, Short.MAX_VALUE))))
+                                .addComponent(txtSearch, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(cboSearch, 0, 220, Short.MAX_VALUE))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(70, 70, 70)
-                        .addComponent(jButton4))
+                        .addComponent(btnSearch))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(73, 73, 73)
-                        .addComponent(jButton3)))
+                        .addComponent(btnFilter)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 909, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
@@ -719,23 +719,23 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4)
+                        .addComponent(btnSearch)
                         .addGap(8, 8, 8)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboTimeRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3)
+                        .addComponent(btnFilter)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE))
                 .addContainerGap())
@@ -825,7 +825,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         txtDiscountPercent.setText(sldDiscount.getValue() + "%");
     }//GEN-LAST:event_sldDiscountStateChanged
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtBeginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBeginActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
@@ -951,7 +951,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cboProductType;
+    private javax.swing.JComboBox<String> cboSearch;
     private javax.swing.JComboBox<String> cboThickness;
+    private javax.swing.JComboBox<String> cboTimeRange;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -995,9 +997,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JPanel jplSlideMenu;
     private javax.swing.JLabel lblCloseMenu;
     private javax.swing.JLabel lblOpenMenu;
@@ -1006,10 +1005,13 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JSlider sldDiscount;
     private javax.swing.JTabbedPane tabMain;
     private javax.swing.JTable tblBillDetails;
+    private javax.swing.JTable tblBills;
     private javax.swing.JTextField txtAddress;
+    private javax.swing.JTextField txtBegin;
     private javax.swing.JTextField txtCustomerName;
     private javax.swing.JFormattedTextField txtDeposit;
     private javax.swing.JLabel txtDiscountPercent;
+    private javax.swing.JTextField txtEnd;
     private javax.swing.JTextArea txtNote;
     private javax.swing.JLabel txtOverall;
     private javax.swing.JTextField txtPhoneNumber;

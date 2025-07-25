@@ -211,7 +211,7 @@
                                       <Component id="txtSize" min="-2" pref="78" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="ckbCoPhanLoai" alignment="0" min="-2" pref="130" max="-2" attributes="0"/>
-                                  <Component id="ckbNhapDoDay" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ckbNhapDoDai" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                           </Group>
@@ -266,7 +266,7 @@
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                                      <Component id="ckbNhapDoDay" min="-2" max="-2" attributes="0"/>
+                                      <Component id="ckbNhapDoDai" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                       <Component id="ckbDoDayMacDinh" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -358,12 +358,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ckbCoPhanLoaiActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="ckbNhapDoDay">
+            <Component class="javax.swing.JCheckBox" name="ckbNhapDoDai">
               <Properties>
                 <Property name="text" type="java.lang.String" value="C&#x1ea7;n nh&#x1ead;p &#x111;&#x1ed9; d&#xe0;i khi mua"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ckbNhapDoDayActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ckbNhapDoDaiActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="ckbDoDayMacDinh">
