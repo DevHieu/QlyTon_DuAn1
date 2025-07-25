@@ -90,19 +90,23 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         lblCloseMenu = new javax.swing.JLabel();
-        jLabel24 = new javax.swing.JLabel();
-        lblTrangChu = new javax.swing.JLabel();
-        lblTaiKhoan = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        jLabel26 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        jLabel28 = new javax.swing.JLabel();
+        pnlAdmin = new javax.swing.JPanel();
+        lbProductType = new javax.swing.JLabel();
+        lbUser = new javax.swing.JLabel();
+        lbProduct = new javax.swing.JLabel();
+        lbBills = new javax.swing.JLabel();
+        lbThickness = new javax.swing.JLabel();
+        lbRevenue = new javax.swing.JLabel();
+        lbCustomer = new javax.swing.JLabel();
+        lbLogout = new javax.swing.JLabel();
+        lbHistory = new javax.swing.JLabel();
+        lbExit = new javax.swing.JLabel();
+        lbChangePassword = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        btnProductSearch = new javax.swing.JButton();
         lblOpenMenu = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         tabMain = new javax.swing.JTabbedPane();
@@ -136,7 +140,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         btnPrint = new javax.swing.JButton();
         btnCancle = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
-        jPanel11 = new javax.swing.JPanel();
+        pnlProducts = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         cboThickness = new javax.swing.JComboBox<>();
         cboProductType = new javax.swing.JComboBox<>();
@@ -189,9 +193,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(30, Short.MAX_VALUE)
+                .addContainerGap(24, Short.MAX_VALUE)
                 .addComponent(jLabel22)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel23)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblCloseMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -205,59 +209,106 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(57, 57, 57))
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jplSlideMenu.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 150));
+        jplSlideMenu.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 170));
 
-        jLabel24.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel24.setText("Thống Kê");
-        jplSlideMenu.add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 210, 30));
+        pnlAdmin.setBackground(new java.awt.Color(255, 255, 255));
+        pnlAdmin.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        lblTrangChu.setBackground(new java.awt.Color(255, 255, 255));
-        lblTrangChu.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        lblTrangChu.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTrangChu.setText("Trang Chủ");
-        lblTrangChu.addMouseListener(new java.awt.event.MouseAdapter() {
+        lbProductType.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbProductType.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbProductType.setText("Quản lý Loại sản phẩm");
+
+        lbUser.setBackground(new java.awt.Color(255, 255, 255));
+        lbUser.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbUser.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbUser.setText("Quản lý Nhân viên");
+
+        lbProduct.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbProduct.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbProduct.setText("Quản lý Sản phẩm");
+
+        lbBills.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbBills.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbBills.setText("Quản lý Hóa đơn");
+        lbBills.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblTrangChuMouseClicked(evt);
+                lbBillsMouseClicked(evt);
             }
         });
-        jplSlideMenu.add(lblTrangChu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 210, 30));
 
-        lblTaiKhoan.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        lblTaiKhoan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblTaiKhoan.setText("Tài Khoản");
-        lblTaiKhoan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblTaiKhoanMouseClicked(evt);
-            }
-        });
-        jplSlideMenu.add(lblTaiKhoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 210, 30));
+        lbThickness.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbThickness.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbThickness.setText("Quản lý Độ dày sản phẩm");
 
-        jLabel25.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel25.setText("Hóa Đơn");
-        jplSlideMenu.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 210, 30));
-        jplSlideMenu.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 452, 210, 10));
+        lbRevenue.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbRevenue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbRevenue.setText("Quản lý Doanh thu");
 
-        jLabel26.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("Đăng Xuất");
-        jplSlideMenu.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 560, 210, 30));
+        lbCustomer.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbCustomer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbCustomer.setText("Quản lý Khách hàng");
 
-        jLabel27.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel27.setText("Giới Thiệu");
-        jplSlideMenu.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 520, 210, 30));
+        javax.swing.GroupLayout pnlAdminLayout = new javax.swing.GroupLayout(pnlAdmin);
+        pnlAdmin.setLayout(pnlAdminLayout);
+        pnlAdminLayout.setHorizontalGroup(
+            pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAdminLayout.createSequentialGroup()
+                .addGroup(pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbBills, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbProductType, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbRevenue, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        pnlAdminLayout.setVerticalGroup(
+            pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlAdminLayout.createSequentialGroup()
+                .addGap(52, 52, 52)
+                .addComponent(lbRevenue, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbBills, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbProductType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(142, Short.MAX_VALUE))
+        );
 
-        jLabel28.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel28.setText("Trợ Giúp");
-        jplSlideMenu.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 480, 210, 30));
+        jplSlideMenu.add(pnlAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 210, 480));
+
+        lbLogout.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbLogout.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbLogout.setText("Đăng xuất");
+        jplSlideMenu.add(lbLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 740, 210, 30));
+
+        lbHistory.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbHistory.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbHistory.setText("Lịch sử");
+        jplSlideMenu.add(lbHistory, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 660, 210, 30));
+
+        lbExit.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbExit.setText("Thoát");
+        jplSlideMenu.add(lbExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 780, 210, 30));
+
+        lbChangePassword.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        lbChangePassword.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbChangePassword.setText("Đổi mật khẩu");
+        jplSlideMenu.add(lbChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, 210, 30));
 
         jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 830));
 
@@ -270,9 +321,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jTextField1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
 
-        jButton2.setBackground(new java.awt.Color(64, 189, 203));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setText("Tìm");
+        btnProductSearch.setBackground(new java.awt.Color(64, 189, 203));
+        btnProductSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnProductSearch.setText("Tìm");
 
         lblOpenMenu.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\menu.png")); // NOI18N
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -564,17 +615,17 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                         .addContainerGap())))
         );
 
-        jPanel11.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlProducts.setBackground(new java.awt.Color(255, 255, 255));
+        pnlProducts.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout pnlProductsLayout = new javax.swing.GroupLayout(pnlProducts);
+        pnlProducts.setLayout(pnlProductsLayout);
+        pnlProductsLayout.setHorizontalGroup(
+            pnlProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 735, Short.MAX_VALUE)
         );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        pnlProductsLayout.setVerticalGroup(
+            pnlProductsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 290, Short.MAX_VALUE)
         );
 
@@ -595,7 +646,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlProducts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -621,7 +672,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                             .addComponent(cboThickness, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cboProductType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(pnlProducts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -672,6 +723,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(jTable1);
 
         jLabel6.setText("Tìm kiếm");
@@ -757,7 +809,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 314, Short.MAX_VALUE)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(7, 7, 7)
-                .addComponent(jButton2)
+                .addComponent(btnProductSearch)
                 .addGap(36, 36, 36))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -773,7 +825,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                         .addGap(14, 14, 14)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2)))
+                            .addComponent(btnProductSearch)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -902,19 +954,13 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.print();
     }//GEN-LAST:event_btnPrintActionPerformed
 
+    private void lbBillsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBillsMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lbBillsMouseClicked
+
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblCloseMenuMouseClicked
         closeMenu();
     }// GEN-LAST:event_lblCloseMenuMouseClicked
-
-    private void lblTrangChuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblTrangChuMouseClicked
-        // cardTrangChu.setVisible(true);
-        // cardTaiKhoan.setVisible(false);
-    }// GEN-LAST:event_lblTrangChuMouseClicked
-
-    private void lblTaiKhoanMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblTaiKhoanMouseClicked
-        // cardTrangChu.setVisible(false);
-        // cardTaiKhoan.setVisible(true);
-    }// GEN-LAST:event_lblTaiKhoanMouseClicked
 
     /**
      * @param args the command line arguments
@@ -948,11 +994,11 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancle;
     private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnProductSearch;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cboProductType;
     private javax.swing.JComboBox<String> cboThickness;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
@@ -968,11 +1014,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
@@ -983,7 +1024,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel8;
@@ -991,7 +1031,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
@@ -999,10 +1038,21 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JPanel jplSlideMenu;
+    private javax.swing.JLabel lbBills;
+    private javax.swing.JLabel lbChangePassword;
+    private javax.swing.JLabel lbCustomer;
+    private javax.swing.JLabel lbExit;
+    private javax.swing.JLabel lbHistory;
+    private javax.swing.JLabel lbLogout;
+    private javax.swing.JLabel lbProduct;
+    private javax.swing.JLabel lbProductType;
+    private javax.swing.JLabel lbRevenue;
+    private javax.swing.JLabel lbThickness;
+    private javax.swing.JLabel lbUser;
     private javax.swing.JLabel lblCloseMenu;
     private javax.swing.JLabel lblOpenMenu;
-    private javax.swing.JLabel lblTaiKhoan;
-    private javax.swing.JLabel lblTrangChu;
+    private javax.swing.JPanel pnlAdmin;
+    private javax.swing.JPanel pnlProducts;
     private javax.swing.JSlider sldDiscount;
     private javax.swing.JTabbedPane tabMain;
     private javax.swing.JTable tblBillDetails;
