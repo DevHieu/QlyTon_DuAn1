@@ -306,7 +306,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         lbChangePassword.setText("Đổi mật khẩu");
         jplSlideMenu.add(lbChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, 210, 30));
 
-        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 830));
+        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 830));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -854,6 +854,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCloseMenuMouseClicked
         // TODO add your handling code here:
+        this.closeMenu();
     }//GEN-LAST:event_lblCloseMenuMouseClicked
 
     private void lbBillsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBillsMouseClicked
