@@ -13,7 +13,7 @@ import quanli.ton.entity.User;
  */
 public class XAuth {
      public static User user = User.builder()
-            .username("user1@gmail.com")
+            .username("admin")
             .password("123")
             .enabled(true)
             .manager(true)

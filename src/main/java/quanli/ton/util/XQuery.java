@@ -111,6 +111,20 @@ public class XQuery {
         }
         return list;
     }
+    
+    public static String getSingleValue(String sql, Object... args) {
+        try {
+            ResultSet rs = XJdbc.executeQuery(sql, args);
+            if (rs.next()) {
+                return rs.getString(1); // trả về giá trị cột đầu tiên
+            }
+            rs.getStatement().getConnection().close();
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 //
 //    public static void main(String[] args) {
 //        demo1();

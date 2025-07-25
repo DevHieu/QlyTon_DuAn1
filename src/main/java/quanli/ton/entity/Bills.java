@@ -26,6 +26,8 @@ public class Bills {
     private Date checkin = new Date();
     private Date checkout;
     private String note;
+    private double discount;
+    private double deposit;
     private int status;
     private String customerId;
 

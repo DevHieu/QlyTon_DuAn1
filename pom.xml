@@ -24,17 +24,24 @@
             <version>1.18.38</version>
             <type>jar</type>
         </dependency>
-      
+
         <dependency>
             <groupId>org.netbeans.external</groupId>
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE250</version>
         </dependency>
+
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.5.5</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.5.3</version>
+        </dependency> 
     </dependencies>
 </project>

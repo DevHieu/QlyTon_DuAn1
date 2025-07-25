@@ -4,7 +4,11 @@
  */
 package quanli.ton.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import quanli.ton.dao.BillDetailDao;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.util.XJdbc;
@@ -32,6 +36,7 @@ public class BillDetailDAOImpl implements BillDetailDao {
             + "JOIN Products p ON p.Id = bd.ProductId "
             + "JOIN ProductType pt ON pt.Id = p.TypeId "
             + "WHERE bd.BillId = ?";
+    String isBillDetailExistedSql = "SELECT True FROM BillDetails WHERE Id = ?";
 
     @Override
     public List<BillDetails> findByBillId(Long billId) {
@@ -43,9 +48,11 @@ public class BillDetailDAOImpl implements BillDetailDao {
         Object[] values = {
             entity.getId(),
             entity.getBillId(),
+            entity.getProductId(),
             entity.getUnitPrice(),
             entity.getDiscount(),
-            entity.getQuantity()
+            entity.getQuantity(),
+            entity.getLength()
         };
         XJdbc.executeUpdate(createSql, values);
         return entity;
@@ -55,9 +62,11 @@ public class BillDetailDAOImpl implements BillDetailDao {
     public void update(BillDetails entity) {
         Object[] values = {
             entity.getBillId(),
+            entity.getProductId(),
             entity.getUnitPrice(),
             entity.getDiscount(),
             entity.getQuantity(),
+            entity.getLength(),
             entity.getId()
         };
         XJdbc.executeUpdate(updateSql, values);
@@ -79,5 +88,17 @@ public class BillDetailDAOImpl implements BillDetailDao {
     public BillDetails findById(Long id) {
         return XQuery.getSingleBean(BillDetails.class, findByIdSql, id);
     }
-
+    
+    @Override
+    public boolean isBillDetailExisted(Long id){
+        ResultSet rs = XJdbc.executeQuery(isBillDetailExistedSql, id);
+        try {
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BillDetailDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

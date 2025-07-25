@@ -456,16 +456,17 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cboType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate)
-                    .addComponent(btnUpdate)
-                    .addComponent(btnClear)
-                    .addComponent(btnDelete)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnMoveFirst)
                         .addComponent(btnMovePrevious)
                         .addComponent(btnMoveNext)
-                        .addComponent(btnMoveLast)))
+                        .addComponent(btnMoveLast))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnCreate)
+                        .addComponent(btnUpdate)
+                        .addComponent(btnClear)
+                        .addComponent(btnDelete)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
@@ -477,7 +478,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
+                .addComponent(tabs)
                 .addContainerGap())
         );
         layout.setVerticalGroup(

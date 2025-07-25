@@ -570,7 +570,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
         // TODO add your handling code here:
-        findCustomer(txtPhoneNumber.getText());
+        Customer customer  = this.findCustomer(txtPhoneNumber.getText());
+        
+        if (customer != null) {
+            txtCustomerName.setText(customer.getFullName());
+            txtAddress.setText(customer.getAddress());
+        }
     }//GEN-LAST:event_txtPhoneNumberFocusLost
 
     private void cboTimeRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangesActionPerformed
@@ -691,7 +696,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             if (d.getLength() == 0) { // Những thứ không có tính bằng độ dài (phụ kiện, ...)
                 price = d.getUnitPrice();
             } else { // Tính giá tiền theo độ dài
-                price = (d.getUnitPrice() / d.getDefaultLength()) * d.getLength();
+                price = (d.getUnitPrice()) * d.getLength();
             }
 
             // Tính tổng tiền
@@ -731,13 +736,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     }
 
     @Override
-    public void findCustomer(String phoneNumber) {
-        Customer customer = customerDao.findById(phoneNumber);
-
-        if (customer != null) {
-            txtCustomerName.setText(customer.getFullName());
-            txtAddress.setText(customer.getAddress());
-        }
+    public Customer findCustomer(String phoneNumber) {
+        return(customerDao.findById(phoneNumber));
     }
 
     @Override
@@ -812,6 +812,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
         Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
         items = dao.findByTimeRange(begin, end);
+    
         
         items.forEach(item -> {
             Customer customer = customerDao.findById(item.getCustomerId()); // Lấy Customer từ id
