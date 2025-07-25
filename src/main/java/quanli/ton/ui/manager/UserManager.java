@@ -50,7 +50,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         txtPassword.setText(entity.getPassword());
         txtRepeatPassword.setText(entity.getPassword());
         txtSdt.setText(entity.getPhoneNumber()); // Added to handle phone number
-        System.out.println(entity.getPhoto());
+
         XIcon.setIcon(lbAvatar, "images/users/" + entity.getPhoto());
         imageFile = new File("images/users/" + entity.getPhoto());
 
@@ -643,7 +643,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
 
     private void lbAvatarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbAvatarMouseClicked
         // TODO add your handling code here:
-        this.chooseFile();
+        imageFile = this.chooseFile();
     }//GEN-LAST:event_lbAvatarMouseClicked
 
     private void btnCheckAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckAllActionPerformed
