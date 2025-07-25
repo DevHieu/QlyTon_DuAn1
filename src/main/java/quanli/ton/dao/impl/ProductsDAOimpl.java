@@ -22,15 +22,7 @@ public class ProductsDAOimpl implements ProductsDAO {
     String deleteSql = "DELETE FROM Products WHERE Id=?";
     String findAllSql = "SELECT * FROM Products";
     String findByIdSql = "SELECT * FROM Products WHERE Id=?";
-
-    @Override
-    public void insert(Product product) {
-        Object[] args = {
-            product.getId(), product.getName(), product.getPhoto(), product.getQuantity(),
-            product.getUnitPrice(), product.getDiscount(), product.getTypeId(),product.getThickId()
-        };
-        XJdbc.executeUpdate(insertSql, args);
-    }
+    String importProduct =  "{CALL ImportProduct(?, ?)}";
 
     @Override
     public void update(Product product) {
@@ -43,24 +35,33 @@ public class ProductsDAOimpl implements ProductsDAO {
     }
 
     @Override
-    public void delete(String id) {
+    public Product create(Product product) {
+    Object[] args = {
+            product.getId(), product.getName(), product.getPhoto(), product.getQuantity(),
+            product.getUnitPrice(), product.getDiscount(), product.getTypeId(),product.getThickId()
+        };
+        XJdbc.executeUpdate(insertSql, args);
+        return product;
+    }
+
+    @Override
+    public void deleteById(String id) {
         XJdbc.executeUpdate(deleteSql, id);
     }
 
     @Override
-    public List<Products> findAll() {
-        return XQuery.getBeanList(Products.class, findAllSql);
+    public List<Product> findAll() {
+        return XQuery.getBeanList(Product.class, findAllSql);
     }
 
     @Override
-    public Products findById(String id) {
-        return XQuery.getSingleBean(Products.class, findByIdSql, id);
+    public Product findById(String id) {
+        return XQuery.getSingleBean(Product.class, findByIdSql, id);
     }
-
-    @Override
-    public List<Product> selectAll() {
-    return XQuery.getBeanList(Product.class, findAllSql);
-    }
+//    
+//    public void importProduct(String id, long quantity) {
+//        XJdbc.executeUpdate(insertSql, id, quantity);
+//    }
 
 }
 

@@ -27,9 +27,9 @@ public class XJdbc {
     public static Connection openConnection() {
 
         var driver = "com.mysql.cj.jdbc.Driver";
-        var dburl = "jdbc:mysql://localhost:3306/QLyTon?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=True";
-        var username = "root";
-        var password = "1234vy";
+        var dburl = "jdbc:mysql://localhost:3306/QLyTon?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=True"; // <--- SỬA LẠI CHỖ NÀY
+        var username = "huynhtrunghieu";
+        var password = "123";
 
         try {
             if (!XJdbc.isReady()) {

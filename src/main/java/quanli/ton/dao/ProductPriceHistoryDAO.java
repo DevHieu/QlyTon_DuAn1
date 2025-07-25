@@ -5,12 +5,12 @@
 package quanli.ton.dao;
 
 import java.util.List;
-import quanli.ton.entity.Product;
-import quanli.ton.ui.manager.Products;
+import quanli.ton.entity.ProductPriceHistory;
+
 /**
  *
  * @author huynhtrunghieu
  */
-public interface ProductsDAO extends CrudDAO<Product , String> {
-    
+public interface ProductPriceHistoryDAO {
+    List<ProductPriceHistory> findAllById(String id);
 }
