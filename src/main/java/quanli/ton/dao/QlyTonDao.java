@@ -2,14 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package quanli.ton.controller;
+package quanli.ton.dao;
 
-import quanli.ton.entity.Customer;
+import java.util.Date;
+import java.util.List;
+import quanli.ton.entity.Bills;
 
 /**
  *
  * @author hieud
  */
-public interface CustomerController extends CrudController<Customer> {
-//    void fillBillsTable();
+public interface QlyTonDao extends CrudDAO<Bills, Long>{
+        public List<Bills> findByTimeRange(Date begin, Date end);
 }

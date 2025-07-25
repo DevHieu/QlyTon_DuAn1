@@ -4,12 +4,12 @@
  */
 package quanli.ton.controller;
 
-import quanli.ton.entity.Customer;
+import quanli.ton.entity.Bills;
 
 /**
  *
  * @author hieud
  */
-public interface CustomerController extends CrudController<Customer> {
-//    void fillBillsTable();
+public interface QlyTonController extends CrudController<Bills> {
+    void fillProductList();
 }

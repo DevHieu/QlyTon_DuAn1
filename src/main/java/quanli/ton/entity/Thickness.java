@@ -22,4 +22,6 @@ public class Thickness {
     private int id;
     private String thick;
     private String typeId;
+    
+    
 }
