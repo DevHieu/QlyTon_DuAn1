@@ -81,7 +81,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jLayeredPane1 = new javax.swing.JLayeredPane();
@@ -209,7 +208,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
         jplSlideMenu.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 150));
 
         jLabel24.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
@@ -265,8 +263,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Admin 1");
-
-        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+r(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jTextField1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
 
@@ -276,10 +273,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         lblOpenMenu.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\menu.png")); // NOI18N
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblOpenMenuMouseClicked(evt);
-            }
-        });
+
 
         tabMain.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -577,7 +571,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 290, Short.MAX_VALUE)
         );
-
         jLabel21.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel21.setText("Danh sách sản phẩm:");
 
@@ -802,9 +795,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1018,7 +1011,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JLabel txtRemaining;
     private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
-
+                                     
+                                     
     private void addTabPanelListener() {
         tabMain.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
             int selectedIndex = tabMain.getSelectedIndex();
@@ -1312,14 +1306,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     @Override
     public boolean isValidInput() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from
-        // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public void fillProductList() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
     @Override
     public void fillTypeCbo() {
         typeList = typeDao.findAll();
