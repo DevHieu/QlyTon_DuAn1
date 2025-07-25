@@ -128,7 +128,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         
         ckbCoPhanLoai.setSelected(false);
         ckbDoDayMacDinh.setSelected(false);
-        ckbNhapDoDay.setSelected(false);
+        ckbNhapDoDai.setSelected(false);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         txtUnit.setEnabled(true);
         ckbDoDayMacDinh.setEnabled(true);
         ckbCoPhanLoai.setEnabled(true);
-        ckbNhapDoDay.setEnabled(true);
+        ckbNhapDoDai.setEnabled(true);
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
@@ -232,7 +232,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         btnClear = new javax.swing.JButton();
         txtSize = new javax.swing.JTextField();
         ckbCoPhanLoai = new javax.swing.JCheckBox();
-        ckbNhapDoDay = new javax.swing.JCheckBox();
+        ckbNhapDoDai = new javax.swing.JCheckBox();
         ckbDoDayMacDinh = new javax.swing.JCheckBox();
         jLabel4 = new javax.swing.JLabel();
         txtUnit = new javax.swing.JTextField();
@@ -374,10 +374,10 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             }
         });
 
-        ckbNhapDoDay.setText("Cần nhập độ dài khi mua");
-        ckbNhapDoDay.addActionListener(new java.awt.event.ActionListener() {
+        ckbNhapDoDai.setText("Cần nhập độ dài khi mua");
+        ckbNhapDoDai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ckbNhapDoDayActionPerformed(evt);
+                ckbNhapDoDaiActionPerformed(evt);
             }
         });
 
@@ -450,7 +450,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txtSize, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(ckbCoPhanLoai, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ckbNhapDoDay))
+                            .addComponent(ckbNhapDoDai))
                         .addGap(31, 31, 31))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(btnCreate)
@@ -497,7 +497,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
                                 .addComponent(txtSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(ckbNhapDoDay)
+                                .addComponent(ckbNhapDoDai)
                                 .addGap(12, 12, 12)
                                 .addComponent(ckbDoDayMacDinh)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
@@ -587,9 +587,9 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         // TODO add your handling code here:
     }//GEN-LAST:event_ckbCoPhanLoaiActionPerformed
 
-    private void ckbNhapDoDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbNhapDoDayActionPerformed
+    private void ckbNhapDoDaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbNhapDoDaiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ckbNhapDoDayActionPerformed
+    }//GEN-LAST:event_ckbNhapDoDaiActionPerformed
 
     private void ckbDoDayMacDinhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbDoDayMacDinhActionPerformed
         // TODO add your handling code here:
@@ -683,7 +683,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JCheckBox ckbCoPhanLoai;
     private javax.swing.JCheckBox ckbDoDayMacDinh;
-    private javax.swing.JCheckBox ckbNhapDoDay;
+    private javax.swing.JCheckBox ckbNhapDoDai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

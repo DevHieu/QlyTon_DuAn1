@@ -24,6 +24,7 @@ public class QlyTonDaoImpl implements QlyTonDao{
     String findByIdSql = "SELECT * FROM Bills WHERE Id=?";
     String findByTimeRangeSql = "SELECT * FROM Bills WHERE Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
     String findAllOfCustomerId = "SELECT * FROM Bills WHERE CustomerId = ?";
+    String findBillsSql = "Select Bills.*, Customers.fullname from bills join customers on bills.CustomerId = customers.PhoneNumber";
 
     @Override
     public Bills create(Bills entity) {

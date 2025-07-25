@@ -27,6 +27,7 @@ public class Revenue {
         private double minPrice; // Giá bán cao nhất
         private double maxPrice; // Giá bán thấp nhất
         private double avgPrice; // Giá bán trung bình
+        private double cost;
     }
     
     @AllArgsConstructor
