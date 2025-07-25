@@ -25,6 +25,7 @@ public class Bills {
     @Builder.Default
     private Date checkin = new Date();
     private Date checkout;
+    private String note;
     private int status;
     private String customerId;
 

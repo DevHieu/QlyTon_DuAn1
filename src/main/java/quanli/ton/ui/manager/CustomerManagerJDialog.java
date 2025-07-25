@@ -4,17 +4,12 @@
  */
 package quanli.ton.ui.manager;
 
-import java.util.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import quanli.ton.controller.CustomerController;
-import quanli.ton.dao.BillDao;
 import quanli.ton.dao.CustomerDao;
-import quanli.ton.dao.impl.BillDaoImpl;
 import quanli.ton.dao.impl.CustomerDaoImpl;
-import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
-import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
 
 /**
@@ -23,10 +18,8 @@ import quanli.ton.util.XDialog;
  */
 public class CustomerManagerJDialog extends javax.swing.JDialog implements CustomerController {
 
-    List<Customer> items = List.of();
-    List<Bills> billItems = List.of();
-    CustomerDao dao = new CustomerDaoImpl();
-    BillDao billDao = new BillDaoImpl();
+    CustomerDao customerDao = new CustomerDaoImpl();
+    List<Customer> customerList = List.of();
 
     /**
      * Creates new form CustomerManagerJDialog
@@ -63,14 +56,11 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         btnMoveLast = new javax.swing.JButton();
         btnMovePrevious = new javax.swing.JButton();
         btnMoveFirst = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        txtFullName = new javax.swing.JTextField();
-        jLabel10 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tblBills = new javax.swing.JTable();
-        txtPhoneNumber = new javax.swing.JFormattedTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txtCustomerName = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtPhoneNumber = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         txtAddress = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -80,7 +70,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
             },
             new String [] {
-                "Tên khách hàng", "Số điện thoại", "Địa chỉ", ""
+                "Số điện thoại", "Tên khách hàng", "Địa chỉ", ""
             }
         ) {
             Class[] types = new Class [] {
@@ -132,37 +122,33 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 804, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(3, 3, 3)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 797, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addGap(0, 0, Short.MAX_VALUE)
-                            .addComponent(btnCheckAll)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(btnUncheckAll)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(btnDeleteCheckedItems)))
-                    .addGap(4, 4, 4)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnCheckAll)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnUncheckAll)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDeleteCheckedItems)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 447, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(38, 38, 38)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnDeleteCheckedItems)
-                        .addComponent(btnUncheckAll)
-                        .addComponent(btnCheckAll))
-                    .addGap(39, 39, 39)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnDeleteCheckedItems)
+                    .addComponent(btnUncheckAll)
+                    .addComponent(btnCheckAll))
+                .addGap(20, 20, 20))
         );
 
-        tabs.addTab("Danh sách", jPanel1);
+        tabs.addTab("DANH SÁCH", jPanel1);
 
         btnCreate.setText("Tạo mới");
         btnCreate.addActionListener(new java.awt.event.ActionListener() {
@@ -220,33 +206,17 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
             }
         });
 
-        jLabel3.setText("Số điện thoại");
+        jLabel2.setText("Tên Khách hàng");
 
-        jLabel4.setText("Địa chỉ");
+        jLabel11.setText("Số điện thoại");
 
-        jLabel9.setText("Tên khách hàng");
-
-        jLabel10.setText("Các đơn hàng");
-
-        tblBills.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Mã đơn hàng", "Người lập đơn", "Ngày lập đơn", "Ngày thanh toán", "Trạng thái"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+        txtPhoneNumber.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPhoneNumberFocusLost(evt);
             }
         });
-        jScrollPane3.setViewportView(tblBills);
 
-        txtPhoneNumber.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
+        jLabel5.setText("Địa chỉ");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -255,81 +225,66 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
             .addComponent(jSeparator1)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnCreate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnUpdate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDelete)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnClear)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE)
-                        .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jLabel4)
-                                    .addComponent(txtFullName)
-                                    .addComponent(txtAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))))))
+                .addComponent(btnCreate)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUpdate)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDelete)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClear)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel5)
+                    .addComponent(txtAddress))
+                .addGap(23, 23, 23)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(txtCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFullName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnCreate)
-                            .addComponent(btnUpdate)
-                            .addComponent(btnDelete)
-                            .addComponent(btnClear)
-                            .addComponent(btnMoveNext)
-                            .addComponent(btnMoveLast)
-                            .addComponent(btnMovePrevious)
-                            .addComponent(btnMoveFirst))
-                        .addGap(8, 8, 8))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(39, 39, 39)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCreate)
+                    .addComponent(btnUpdate)
+                    .addComponent(btnDelete)
+                    .addComponent(btnClear)
+                    .addComponent(btnMoveNext)
+                    .addComponent(btnMoveLast)
+                    .addComponent(btnMovePrevious)
+                    .addComponent(btnMoveFirst))
+                .addGap(8, 8, 8))
         );
 
-        tabs.addTab("Biểu mẫu", jPanel2);
+        tabs.addTab("BIỂU MẪU", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -337,8 +292,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabs)
-                .addContainerGap())
+                .addComponent(tabs))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -413,6 +367,10 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         this.moveFirst();
     }//GEN-LAST:event_btnMoveFirstActionPerformed
 
+    private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPhoneNumberFocusLost
+
     /**
      * @param args the command line arguments
      */
@@ -467,81 +425,64 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     private javax.swing.JButton btnMovePrevious;
     private javax.swing.JButton btnUncheckAll;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane tabs;
-    private javax.swing.JTable tblBills;
     private javax.swing.JTable tblCustomer;
     private javax.swing.JTextField txtAddress;
-    private javax.swing.JTextField txtFullName;
-    private javax.swing.JFormattedTextField txtPhoneNumber;
+    private javax.swing.JTextField txtCustomerName;
+    private javax.swing.JTextField txtPhoneNumber;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void fillBillsTable() {
-        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
-        model.setRowCount(0);
-        billItems = billDao.findAllOfCustomerId(txtPhoneNumber.getText());
-        billItems.forEach(item -> {
-            Object[] row = {
-                item.getId(),
-                item.getUsername(),
-                item.getCheckin(),
-                item.getCheckout(),
-                item.getStatus() == 0 ? "Processing" : item.getStatus() == 1 ? "Complete" : "Canceled",};
-            model.addRow(row);
-        });
-    }
-
-    @Override
     public void open() {
+        this.setLocationRelativeTo(null);
         this.fillToTable();
+        this.clear();
     }
 
     @Override
     public void setForm(Customer entity) {
-        txtFullName.setText(entity.getFullName());
         txtPhoneNumber.setText(entity.getPhoneNumber());
-        txtAddress.setText(entity.getAddress());
-        this.fillBillsTable();
+        txtCustomerName.setText(entity.getFullName());
+        txtAddress.setText(entity.getAddress()); //new
     }
 
     @Override
     public Customer getForm() {
-        Customer customer = new Customer();
-        customer.setFullName(txtFullName.getText());
-        customer.setPhoneNumber(txtPhoneNumber.getText());
-        customer.setAddress(txtAddress.getText());
-        return customer;
+        Customer entity = new Customer();
+        entity.setPhoneNumber(txtPhoneNumber.getText());
+        entity.setFullName(txtCustomerName.getText());
+        entity.setAddress(txtAddress.getText());
+        return entity;
     }
 
     @Override
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblCustomer.getModel();
         model.setRowCount(0);
-        items = dao.findAll();
-        items.forEach(item -> {
-            Object[] row = {
-                item.getFullName(),
+
+        customerList = customerDao.findAll();
+        customerList.forEach(item -> {
+
+            Object[] rowData = {
                 item.getPhoneNumber(),
+                item.getFullName(),
                 item.getAddress(),
                 false
             };
-            model.addRow(row);
+            model.addRow(rowData);
         });
-        this.clear();
     }
 
     @Override
     public void edit() {
-        Customer entity = items.get(tblCustomer.getSelectedRow());
+        Customer entity = customerList.get(tblCustomer.getSelectedRow());
         this.setForm(entity);
         this.setEditable(true);
         tabs.setSelectedIndex(1);
@@ -549,33 +490,28 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public void create() {
-        if (!isValidInput()) {
-            return;
-        }
-
-        Customer customer = this.getForm();
-        dao.create(customer);
+        Customer entity = this.getForm();
+        customerDao.create(entity);
         this.fillToTable();
         this.clear();
     }
 
     @Override
     public void update() {
-        if (!isValidInput()) {
-            return;
-        }
-
-        Customer customer = this.getForm();
-        dao.update(customer);
+        Customer entity = this.getForm();
+        customerDao.update(entity);
         this.fillToTable();
         this.clear();
     }
 
     @Override
     public void delete() {
-        dao.deleteById(txtPhoneNumber.getText());
-        this.fillToTable();
-        this.clear();
+        if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
+            String id = txtPhoneNumber.getText();
+            customerDao.deleteById(id);
+            this.fillToTable();
+            this.clear();
+        }
     }
 
     @Override
@@ -590,41 +526,8 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
-
-        int rowCount = tblBills.getRowCount();
-        btnMoveFirst.setEnabled(editable && rowCount > 0);
-        btnMovePrevious.setEnabled(editable && rowCount > 0);
-        btnMoveNext.setEnabled(editable && rowCount > 0);
-        btnMoveLast.setEnabled(editable && rowCount > 0);
     }
-
-    @Override
-    public void checkAll() {
-        this.setCheckedAll(true);
-    }
-
-    @Override
-    public void uncheckAll() {
-        this.setCheckedAll(false);
-    }
-
-    public void setCheckedAll(boolean checked) {
-        for (int i = 0; i < tblCustomer.getRowCount(); i++) {
-            tblCustomer.setValueAt(checked, i, 6);
-        }
-    }
-
-    public void deleteCheckedItems() {
-        if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
-            for (int i = 0; i < tblCustomer.getRowCount(); i++) {
-                if ((Boolean) tblCustomer.getValueAt(i, 6)) {
-                    dao.deleteById(items.get(i).getPhoneNumber());
-                }
-            }
-            this.fillToTable();
-        }
-    }
-
+    
     @Override
     public void moveFirst() {
         this.moveTo(0);
@@ -660,6 +563,36 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public boolean isValidInput() {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    
+    @Override
+    public void checkAll() {
+        this.setCheckedAll(true);
+    }
+
+    @Override
+    public void uncheckAll() {
+        this.setCheckedAll(false);
+    }
+    
+    private void setCheckedAll(boolean checked) {
+        for (int i = 0; i < tblCustomer.getRowCount(); i++) {
+            tblCustomer.setValueAt(checked, i, 4);
+        }
+    }
+
+    @Override
+    public void deleteCheckedItems() {
+        if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
+            for (int i = 0; i < tblCustomer.getRowCount(); i++) {
+                if ((Boolean) tblCustomer.getValueAt(i, 4)) {
+                    customerDao.deleteById(customerList.get(i).getPhoneNumber());
+                }
+            }
+            this.fillToTable();
+        }
+    }
+    
+    
 }
