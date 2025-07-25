@@ -263,6 +263,9 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblUser = new javax.swing.JTable();
+        btnCheckAll = new javax.swing.JButton();
+        btnDeleteCheckedItems = new javax.swing.JButton();
+        btnUncheckAll = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         lbAvatar = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -329,18 +332,52 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         });
         jScrollPane1.setViewportView(tblUser);
 
+        btnCheckAll.setText("Chọn tất cả");
+        btnCheckAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckAllActionPerformed(evt);
+            }
+        });
+
+        btnDeleteCheckedItems.setText("Xóa các mục đã chọn");
+        btnDeleteCheckedItems.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteCheckedItemsActionPerformed(evt);
+            }
+        });
+
+        btnUncheckAll.setText("Bỏ chọn tất cả");
+        btnUncheckAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUncheckAllActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCheckAll)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUncheckAll)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDeleteCheckedItems, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnDeleteCheckedItems)
+                    .addComponent(btnUncheckAll)
+                    .addComponent(btnCheckAll))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         tabs.addTab("DANH SÁCH", jPanel1);
@@ -378,6 +415,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         buttonGroup2.add(rdoStop);
         rdoStop.setText("Tạm dừng");
 
+        btnMoveLast.setBackground(new java.awt.Color(64, 189, 203));
         btnMoveLast.setText(">|");
         btnMoveLast.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -385,6 +423,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnMoveNext.setBackground(new java.awt.Color(64, 189, 203));
         btnMoveNext.setText(">>");
         btnMoveNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -392,6 +431,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnMovePrevious.setBackground(new java.awt.Color(64, 189, 203));
         btnMovePrevious.setText("<<");
         btnMovePrevious.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -399,6 +439,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnMoveFirst.setBackground(new java.awt.Color(64, 189, 203));
         btnMoveFirst.setText("|<");
         btnMoveFirst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -406,6 +447,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnClear.setBackground(new java.awt.Color(64, 189, 203));
         btnClear.setText("Nhập mới");
         btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -413,6 +455,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnDelete.setBackground(new java.awt.Color(64, 189, 203));
         btnDelete.setText("Xóa");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -420,6 +463,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnUpdate.setBackground(new java.awt.Color(64, 189, 203));
         btnUpdate.setText("Cập nhật");
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,6 +471,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        btnCreate.setBackground(new java.awt.Color(64, 189, 203));
         btnCreate.setText("Tạo mới");
         btnCreate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -540,7 +585,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
                     .addComponent(btnMovePrevious)
                     .addComponent(btnMoveNext)
                     .addComponent(btnMoveLast))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         tabs.addTab("BIỂU MẪU", jPanel2);
@@ -609,6 +654,21 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         imageFile = this.chooseFile();
     }//GEN-LAST:event_lbAvatarMouseClicked
 
+    private void btnCheckAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckAllActionPerformed
+        // TODO add your handling code here:
+        this.checkAll();
+    }//GEN-LAST:event_btnCheckAllActionPerformed
+
+    private void btnDeleteCheckedItemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCheckedItemsActionPerformed
+        // TODO add your handling code here:
+        this.deleteCheckedItems();
+    }//GEN-LAST:event_btnDeleteCheckedItemsActionPerformed
+
+    private void btnUncheckAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUncheckAllActionPerformed
+        // TODO add your handling code here:
+        this.uncheckAll();
+    }//GEN-LAST:event_btnUncheckAllActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -652,13 +712,16 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCheckAll;
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDeleteCheckedItems;
     private javax.swing.JButton btnMoveFirst;
     private javax.swing.JButton btnMoveLast;
     private javax.swing.JButton btnMoveNext;
     private javax.swing.JButton btnMovePrevious;
+    private javax.swing.JButton btnUncheckAll;
     private javax.swing.JButton btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
