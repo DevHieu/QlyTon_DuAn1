@@ -7,16 +7,17 @@ package quanli.ton.ui.components;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import javax.swing.border.LineBorder;
 
 public class ButtonRenderer extends JButton implements TableCellRenderer {
 
     public ButtonRenderer() {
         setText("Xoá");
-        setBackground(new Color(244, 67, 54));  // Đỏ
+        setBackground(new Color(234,84,60));  // Đỏ
         setForeground(Color.WHITE);             // Chữ trắng
         setFont(new Font("Segoe UI", Font.BOLD, 12)); // Font đậm đẹp
         setFocusPainted(false);                // Bỏ viền xanh khi focus
-        setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Padding
+        setBorder(new LineBorder(new Color(200,50,40), 2, true)); // Padding
     }
 
     @Override
