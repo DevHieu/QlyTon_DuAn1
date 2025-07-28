@@ -9,6 +9,10 @@ import javax.swing.JFrame;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
+import quanli.ton.ui.ChangePassword;
+import quanli.ton.ui.History;
+import quanli.ton.ui.LoginJDialog;
+import quanli.ton.ui.WelcomeJDialog;
 import quanli.ton.util.XDialog;
 
 /**
@@ -44,11 +48,11 @@ public interface QlyTonController {
         }
     }
     
-//    default void showJDialog(JDialog dialog){
-//        dialog.setLocationRelativeTo(null);
-//        dialog.setVisible(true);
-//    }
-//    
+    default void showJDialog(JDialog dialog){
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
+    
 //    default boolean showWelcomeJDialog(JFrame frame){
 //        WelcomeJDialog dialog = new WelcomeJDialog(frame, true);
 //        dialog.setLocationRelativeTo(null);
@@ -64,17 +68,17 @@ public interface QlyTonController {
 //    }
 //    
 //    default void showChangePasswordJDialog(JFrame frame){
-//        this.showJDialog(new ChangePasswordJDialog(frame, true));
+//        this.showJDialog(new ChangePassword(frame, true));
 //    }
 //    
 //    default void showSalesJDialog(JFrame frame){
 //        this.showJDialog(new SalesJDialog(frame, true));
 //    }
-//    
+    
 //    default void showHistoryJDialog(JFrame frame){
-//        this.showJDialog(new HistoryJDialog(frame, true));
+//        this.showJDialog(new History(frame, true));
 //    }
-//    
+    
 //    default void showDrinkManagerJDialog(JFrame frame){
 //        this.showJDialog(new DrinkManagerJDialog(frame, true));
 //    }
