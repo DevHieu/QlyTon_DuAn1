@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -54,7 +55,9 @@ import quanli.ton.entity.Thickness;
 import quanli.ton.ui.components.ButtonEditor;
 import quanli.ton.ui.components.ButtonRenderer;
 import quanli.ton.ui.components.SpinnerEditor;
+import quanli.ton.util.TimeRange;
 import quanli.ton.util.XAuth;
+import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
 
 /**
@@ -86,6 +89,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     List<Thickness> thickList = List.of();
     List<Product> productList = List.of();
 
+    List<Bills> billList = List.of();
     /**
      * Creates new form MainJForm
      */
@@ -183,14 +187,14 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jScrollPane4 = new javax.swing.JScrollPane();
         pnlProducts = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
+        cboTimeRange = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTextField2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtBegin = new javax.swing.JTextField();
+        txtEnd = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable() {
+        tblBills = new javax.swing.JTable() {
             @Override
             public JTableHeader getTableHeader() {
                 JTableHeader header = super.getTableHeader();
@@ -203,9 +207,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         };
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jButton4 = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+        cboSearchType = new javax.swing.JComboBox<>();
+        btnSearch = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -224,7 +228,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel23.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\logo_128.png")); // NOI18N
 
         lblCloseMenu.setFont(new java.awt.Font("Tw Cen MT", 1, 18)); // NOI18N
         lblCloseMenu.setForeground(new java.awt.Color(0, 150, 136));
@@ -379,16 +382,19 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jTextField1.setForeground(new java.awt.Color(0, 0, 0));
         jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        btnProductSearch.setBackground(new java.awt.Color(0, 150, 136));
+        btnProductSearch.setBackground(new java.awt.Color(0, 102, 102));
         btnProductSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnProductSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnProductSearch.setText("Tìm");
         btnProductSearch.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true));
+        btnProductSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProductSearchActionPerformed(evt);
+            }
+        });
 
-        lblOpenMenu.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\menu.png")); // NOI18N
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblOpenMenuMouseClicked(evt);
@@ -396,7 +402,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         });
 
         tabMain.setBackground(new java.awt.Color(255, 255, 255));
-        tabMain.setForeground(new java.awt.Color(0, 0, 0));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -455,13 +460,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel30.setText("Địa chỉ:");
 
-        txtPhoneNumber.setForeground(new java.awt.Color(0, 0, 0));
         txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        txtCustomerName.setForeground(new java.awt.Color(0, 0, 0));
         txtCustomerName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        txtAddress.setForeground(new java.awt.Color(0, 0, 0));
         txtAddress.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
@@ -742,30 +744,45 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel3.setText("Từ ngày:");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay", " " }));
-
-        jTextField2.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        cboTimeRange.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboTimeRange.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay", " " }));
+        cboTimeRange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                cboTimeRangeActionPerformed(evt);
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Từ ngày:");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Đến ngày:");
 
-        jTextField3.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtBegin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtBegin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBeginActionPerformed(evt);
+            }
+        });
 
-        jButton3.setBackground(new java.awt.Color(255, 193, 7));
+        txtEnd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+
+        jButton3.setBackground(new java.awt.Color(0, 102, 102));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Lọc");
         jButton3.setRolloverEnabled(false);
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jScrollPane1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblBills.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -791,21 +808,29 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowSelectionAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
+        tblBills.setRowSelectionAllowed(false);
+        jScrollPane1.setViewportView(tblBills);
 
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Tìm kiếm");
 
-        jTextField4.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtSearch.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtSearch.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng", " " }));
+        cboSearchType.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboSearchType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng", " " }));
+        cboSearchType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboSearchTypeActionPerformed(evt);
+            }
+        });
 
-        jButton4.setBackground(new java.awt.Color(0, 150, 136));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Tìm kiếm");
-        jButton4.setRolloverEnabled(false);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnSearch.setBackground(new java.awt.Color(0, 102, 102));
+        btnSearch.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSearch.setForeground(new java.awt.Color(255, 255, 255));
+        btnSearch.setText("Tìm kiếm");
+        btnSearch.setRolloverEnabled(false);
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
@@ -816,57 +841,52 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtSearch)
+                    .addComponent(cboSearchType, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField2)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox3, 0, 220, Short.MAX_VALUE)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 921, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                    .addComponent(txtEnd)
+                    .addComponent(txtBegin)
+                    .addComponent(cboTimeRange, 0, 214, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 914, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 277, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(26, 26, 26)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(cboSearchType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(cboTimeRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(296, 296, 296))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(400, 400, 400)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1)
         );
+
+        jButton3.getAccessibleContext().setAccessibleName("");
+        btnSearch.getAccessibleContext().setAccessibleName("");
 
         tabMain.addTab("HÓA ĐƠN", jPanel3);
 
@@ -913,10 +933,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tabMain, javax.swing.GroupLayout.PREFERRED_SIZE, 713, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addContainerGap())
         );
 
-        jLayeredPane1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 1190, 820));
+        jLayeredPane1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 1190, 800));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -928,7 +948,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 802, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -955,6 +975,49 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        String keyWord = txtSearch.getText();
+        Integer cboSearch = cboSearchType.getSelectedIndex();
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+        model.setRowCount(0);
+
+        List<Bills> items = List.of();
+
+        switch (cboSearch) {
+            case 0:
+                items = billDao.findAll();
+                items = billDao.findBillId(keyWord);
+
+                items.forEach(item -> {
+                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+                    Object[] rowData = {
+                        item.getId(),
+                        item.getUsername(),
+                        name,
+                        item.getCheckin(),
+                        item.getCheckout()
+                    };
+                    model.addRow(rowData);
+                });
+                break;
+            case 1:
+                items = billDao.findAll();
+                items = billDao.findPhoneNumber(keyWord);
+
+                items.forEach(item -> {
+                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+                    Object[] rowData = {
+                        item.getId(),
+                        item.getUsername(),
+                        name,
+                        item.getCheckin(),
+                        item.getCheckout()
+                    };
+                    model.addRow(rowData);
+                });
+                break;
+            default:
+                throw new AssertionError();
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblCloseMenuMouseClicked
@@ -1035,14 +1098,80 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
     }// GEN-LAST:event_cboProductTypeActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtBeginActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtBeginActionPerformed
         // TODO add your handling code here:
-    }// GEN-LAST:event_jTextField2ActionPerformed
+    }// GEN-LAST:event_txtBeginActionPerformed
 
     private void jLayeredPane1MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jLayeredPane1MouseClicked
         // TODO add your handling code here:
         System.out.println(tabMain.getSelectedIndex());
     }// GEN-LAST:event_jLayeredPane1MouseClicked
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+//        String keyWord = txtSearch.getText();
+//        Integer cboSearch = cboSearchType.getSelectedIndex();
+//        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+//        model.setRowCount(0);
+//
+//        List<Bills> items = List.of();
+//
+//        switch (cboSearch) {
+//            case 0:
+//                items = billDao.findAll();
+//                items = billDao.findBillId(keyWord);
+//
+//                items.forEach(item -> {
+//                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+//                    Object[] rowData = {
+//                        item.getId(),
+//                        item.getUsername(),
+//                        name,
+//                        item.getCheckin(),
+//                        item.getCheckout()
+//                    };
+//                    model.addRow(rowData);
+//                });
+//                break;
+//            case 1:
+//                items = billDao.findAll();
+//                items = billDao.findPhoneNumber(keyWord);
+//
+//                items.forEach(item -> {
+//                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+//                    Object[] rowData = {
+//                        item.getId(),
+//                        item.getUsername(),
+//                        name,
+//                        item.getCheckin(),
+//                        item.getCheckout()
+//                    };
+//                    model.addRow(rowData);
+//                });
+//                break;
+//            default:
+//                throw new AssertionError();
+//        }
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void cboTimeRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangeActionPerformed
+        // TODO add your handling code here:
+        this.selectTimeRange();
+    }//GEN-LAST:event_cboTimeRangeActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        this.fillBillsByTimeRange();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void cboSearchTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSearchTypeActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_cboSearchTypeActionPerformed
+
+    private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnProductSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1082,12 +1211,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JButton btnProductSearch;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox<String> cboProductType;
+    private javax.swing.JComboBox<String> cboSearchType;
     private javax.swing.JComboBox<String> cboThickness;
+    private javax.swing.JComboBox<String> cboTimeRange;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1118,11 +1247,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JPanel jplSlideMenu;
     private javax.swing.JLabel lbBills;
     private javax.swing.JLabel lbChangePassword;
@@ -1142,14 +1267,18 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JSlider sldDiscount;
     private javax.swing.JTabbedPane tabMain;
     private javax.swing.JTable tblBillDetails;
+    private javax.swing.JTable tblBills;
     private javax.swing.JTextField txtAddress;
+    private javax.swing.JTextField txtBegin;
     private javax.swing.JTextField txtCustomerName;
     private javax.swing.JFormattedTextField txtDeposit;
     private javax.swing.JLabel txtDiscountPercent;
+    private javax.swing.JTextField txtEnd;
     private javax.swing.JTextArea txtNote;
     private javax.swing.JLabel txtOverall;
     private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JLabel txtRemaining;
+    private javax.swing.JTextField txtSearch;
     private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
@@ -1272,6 +1401,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.fillTypeCbo();
         this.fillProductList(false, false);
         isBillChanging = false;
+        fillBillsToTable(billList);
+        selectTimeRange();
     }
 
     @Override
@@ -1351,7 +1482,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         txtOverall.setText(moneyFormat.format(overallTotal));
         this.billTotalChange(overallTotal);
-        isBillChanging = true;
     }
 
     @Override
@@ -1680,5 +1810,111 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         billDetailsList.add(details);
         this.fillBillDetail();
+        isBillChanging = true;
+    }
+ 
+    @Override 
+    public void fillBillsToTable(List<Bills> billsList){
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+        model.setRowCount(0);
+        
+        List<Bills> items = List.of();
+        
+        items = billDao.findAll();
+        
+        items.forEach(item -> {
+            String name = billDao.findNameByCustomerId(item.getCustomerId());
+            
+            Object[] rowData = {
+                item.getId(),
+                item.getUsername(),
+                name,
+                item.getCheckin(),
+                item.getCheckout()
+            };
+            model.addRow(rowData);
+        });
+ 
+    }
+
+    @Override 
+    public void fillTimeRange(){
+        Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+        Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+    }
+    
+    @Override
+    public void selectTimeRange() {
+        TimeRange range = TimeRange.today();
+        switch (cboTimeRange.getSelectedIndex()) {
+            case 0 -> range = TimeRange.today();
+            case 1 -> range = TimeRange.thisWeek();
+            case 2 -> range = TimeRange.thisMonth();
+            case 3 -> range = TimeRange.thisQuarter();
+            case 4 -> range = TimeRange.thisYear();
+        }
+        txtBegin.setText(XDate.format(range.getBegin(), "MM/dd/yyyy"));
+        txtEnd.setText(XDate.format(range.getEnd(), "MM/dd/yyyy"));
+
+        this.fillTimeRange();
+    }
+
+
+    
+    private void fillBillsByTimeRange() {
+        
+        Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+        Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+
+        List<Bills> items = billDao.findByTimeRange(begin, end);
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+        model.setRowCount(0);
+        items.forEach(item -> {
+            String name = billDao.findNameByCustomerId(item.getCustomerId());
+            Object[] row = {
+                item.getId(),
+                item.getUsername(),
+                name,
+                item.getCheckin(),
+                item.getCheckout()
+            };
+            model.addRow(row);
+        });
+    }
+    
+    private void fillBillBySearch(){
+        switch(String.valueOf(cboSearchType.getSelectedIndex())){
+            case "Theo số hóa đơn":
+                
+                break;
+            case "Theo số điện thoại khách hàng":
+                break;
+        }
+        
+        
+    }
+
+    @Override
+    public void fillTableBySearch() {
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+                model.setRowCount(0);
+
+                List<Bills> items = List.of();
+
+                items = billDao.findAll();
+                items = billDao.findPhoneNumber(txtSearch.getText());
+
+                items.forEach(item -> {
+                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+                    Object[] rowData = {
+                        item.getId(),
+                        item.getUsername(),
+                        name,
+                        item.getCheckin(),
+                        item.getCheckout()
+                    };
+                    model.addRow(rowData);
+                });
+        
     }
 }

@@ -6,6 +6,7 @@ package quanli.ton.controller;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import java.util.List;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
@@ -41,6 +42,11 @@ public interface QlyTonController {
         void fillProductList(boolean isType, boolean isThickness);
         void fillTypeCbo();
         void fillThicknesCbo(String typeId);
+        
+        void fillBillsToTable(List<Bills> billsList);
+        void fillTimeRange();
+        void selectTimeRange();
+        void fillTableBySearch();
 
         default void exit(){
         if(XDialog.confirm("Bạn muốn kết thúc?")){
