@@ -13,19 +13,20 @@ import lombok.NoArgsConstructor;
  *
  * @author hieud
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Product {
-     private String id;
+    private String id;
     private String name;
     private String photo = "products.jpg";
     private double unitPrice;
+    private double importPrice;
     private double discount;
     private String typeId;
     private Integer thickId;
     private int quantity;
 }
+
 
