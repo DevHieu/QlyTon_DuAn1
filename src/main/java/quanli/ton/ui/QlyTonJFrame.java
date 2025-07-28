@@ -187,10 +187,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jScrollPane4 = new javax.swing.JScrollPane();
         pnlProducts = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
         cboTimeRange = new javax.swing.JComboBox<>();
-        txtBegin = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        txtBegin = new javax.swing.JTextField();
         txtEnd = new javax.swing.JTextField();
         jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -384,11 +384,16 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        btnProductSearch.setBackground(new java.awt.Color(0, 150, 136));
+        btnProductSearch.setBackground(new java.awt.Color(0, 102, 102));
         btnProductSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnProductSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnProductSearch.setText("Tìm");
         btnProductSearch.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true));
+        btnProductSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProductSearchActionPerformed(evt);
+            }
+        });
 
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -739,32 +744,32 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel3.setText("Từ ngày:");
-        jPanel3.add(jLabel3);
-
+        cboTimeRange.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cboTimeRange.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay", " " }));
         cboTimeRange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboTimeRangeActionPerformed(evt);
             }
         });
-        jPanel3.add(cboTimeRange);
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Từ ngày:");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setText("Đến ngày:");
+
+        txtBegin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtBegin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBeginActionPerformed(evt);
             }
         });
-        jPanel3.add(txtBegin);
 
-        jLabel4.setText("Đến ngày:");
-        jPanel3.add(jLabel4);
-
+        txtEnd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        jPanel3.add(txtEnd);
 
-        jButton3.setBackground(new java.awt.Color(255, 193, 7));
+        jButton3.setBackground(new java.awt.Color(0, 102, 102));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Lọc");
@@ -774,7 +779,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel3.add(jButton3);
 
         jScrollPane1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true));
 
@@ -807,23 +811,21 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         tblBills.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(tblBills);
 
-        jPanel3.add(jScrollPane1);
-
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Tìm kiếm");
-        jPanel3.add(jLabel6);
 
+        txtSearch.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtSearch.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        jPanel3.add(txtSearch);
 
+        cboSearchType.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cboSearchType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng", " " }));
         cboSearchType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboSearchTypeActionPerformed(evt);
             }
         });
-        jPanel3.add(cboSearchType);
 
-        btnSearch.setBackground(new java.awt.Color(0, 150, 136));
+        btnSearch.setBackground(new java.awt.Color(0, 102, 102));
         btnSearch.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnSearch.setText("Tìm kiếm");
@@ -833,7 +835,58 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 jButton4ActionPerformed(evt);
             }
         });
-        jPanel3.add(btnSearch);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtSearch)
+                    .addComponent(cboSearchType, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtEnd)
+                    .addComponent(txtBegin)
+                    .addComponent(cboTimeRange, 0, 214, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 914, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(cboSearchType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(cboTimeRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(296, 296, 296))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(400, 400, 400)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1)
+        );
+
+        jButton3.getAccessibleContext().setAccessibleName("");
+        btnSearch.getAccessibleContext().setAccessibleName("");
 
         tabMain.addTab("HÓA ĐƠN", jPanel3);
 
@@ -880,10 +933,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tabMain, javax.swing.GroupLayout.PREFERRED_SIZE, 713, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addContainerGap())
         );
 
-        jLayeredPane1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 1190, 820));
+        jLayeredPane1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 1190, 800));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -895,7 +948,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 802, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -922,6 +975,49 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        String keyWord = txtSearch.getText();
+        Integer cboSearch = cboSearchType.getSelectedIndex();
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+        model.setRowCount(0);
+
+        List<Bills> items = List.of();
+
+        switch (cboSearch) {
+            case 0:
+                items = billDao.findAll();
+                items = billDao.findBillId(keyWord);
+
+                items.forEach(item -> {
+                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+                    Object[] rowData = {
+                        item.getId(),
+                        item.getUsername(),
+                        name,
+                        item.getCheckin(),
+                        item.getCheckout()
+                    };
+                    model.addRow(rowData);
+                });
+                break;
+            case 1:
+                items = billDao.findAll();
+                items = billDao.findPhoneNumber(keyWord);
+
+                items.forEach(item -> {
+                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+                    Object[] rowData = {
+                        item.getId(),
+                        item.getUsername(),
+                        name,
+                        item.getCheckin(),
+                        item.getCheckout()
+                    };
+                    model.addRow(rowData);
+                });
+                break;
+            default:
+                throw new AssertionError();
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblCloseMenuMouseClicked
@@ -1013,49 +1109,49 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
-        String keyWord = txtSearch.getText();
-        Integer cboSearch = cboSearchType.getSelectedIndex();
-        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
-        model.setRowCount(0);
-
-        List<Bills> items = List.of();
-
-        switch (cboSearch) {
-            case 0:
-                items = billDao.findAll();
-                items = billDao.findBillId(keyWord);
-
-                items.forEach(item -> {
-                    String name = billDao.findNameByCustomerId(item.getCustomerId());
-                    Object[] rowData = {
-                        item.getId(),
-                        item.getUsername(),
-                        name,
-                        item.getCheckin(),
-                        item.getCheckout()
-                    };
-                    model.addRow(rowData);
-                });
-                break;
-            case 1:
-                items = billDao.findAll();
-                items = billDao.findPhoneNumber(keyWord);
-
-                items.forEach(item -> {
-                    String name = billDao.findNameByCustomerId(item.getCustomerId());
-                    Object[] rowData = {
-                        item.getId(),
-                        item.getUsername(),
-                        name,
-                        item.getCheckin(),
-                        item.getCheckout()
-                    };
-                    model.addRow(rowData);
-                });
-                break;
-            default:
-                throw new AssertionError();
-        }
+//        String keyWord = txtSearch.getText();
+//        Integer cboSearch = cboSearchType.getSelectedIndex();
+//        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+//        model.setRowCount(0);
+//
+//        List<Bills> items = List.of();
+//
+//        switch (cboSearch) {
+//            case 0:
+//                items = billDao.findAll();
+//                items = billDao.findBillId(keyWord);
+//
+//                items.forEach(item -> {
+//                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+//                    Object[] rowData = {
+//                        item.getId(),
+//                        item.getUsername(),
+//                        name,
+//                        item.getCheckin(),
+//                        item.getCheckout()
+//                    };
+//                    model.addRow(rowData);
+//                });
+//                break;
+//            case 1:
+//                items = billDao.findAll();
+//                items = billDao.findPhoneNumber(keyWord);
+//
+//                items.forEach(item -> {
+//                    String name = billDao.findNameByCustomerId(item.getCustomerId());
+//                    Object[] rowData = {
+//                        item.getId(),
+//                        item.getUsername(),
+//                        name,
+//                        item.getCheckin(),
+//                        item.getCheckout()
+//                    };
+//                    model.addRow(rowData);
+//                });
+//                break;
+//            default:
+//                throw new AssertionError();
+//        }
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void cboTimeRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangeActionPerformed
@@ -1072,6 +1168,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         // TODO add your handling code here:
         
     }//GEN-LAST:event_cboSearchTypeActionPerformed
+
+    private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnProductSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1302,6 +1402,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.fillProductList(false, false);
         isBillChanging = false;
         fillBillsToTable(billList);
+        selectTimeRange();
     }
 
     @Override
@@ -1381,7 +1482,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         txtOverall.setText(moneyFormat.format(overallTotal));
         this.billTotalChange(overallTotal);
-        isBillChanging = true;
     }
 
     @Override
@@ -1710,12 +1810,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         billDetailsList.add(details);
         this.fillBillDetail();
+        isBillChanging = true;
     }
-  
-    
  
-
-    
     @Override 
     public void fillBillsToTable(List<Bills> billsList){
         DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
@@ -1739,31 +1836,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         });
  
     }
-    
-    
-    
-//    @Override 
-//public void fillBillsToTable() {
-//    DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
-//    model.setRowCount(0);
-//
-//    List<Bills> items = billDao.findAll();
-//
-//    for (Bills item : items) {
-//        String name = billDao.findNameByCustomerId(item.getCustomerId());
-//
-//        Object[] rowData = {
-//            item.getId(),
-//            item.getUsername(),
-//            name,
-//            item.getCheckin(),
-//            item.getCheckout()
-//        };
-//
-//        model.addRow(rowData);
-//    }
-//}
-
 
     @Override 
     public void fillTimeRange(){
