@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Product {
-     private String id;
+    private String id;
     private String name;
     private String photo = "products.jpg";
     private double unitPrice;

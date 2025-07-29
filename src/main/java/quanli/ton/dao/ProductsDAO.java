@@ -12,5 +12,4 @@ import quanli.ton.ui.manager.Products;
  * @author huynhtrunghieu
  */
 public interface ProductsDAO extends CrudDAO<Product , String> {
-    
-}
+    }
