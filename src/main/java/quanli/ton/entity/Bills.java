@@ -14,18 +14,22 @@ import lombok.NoArgsConstructor;
  *
  * @author hieud
  */
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Bills {
+
     private long id;
     private String username;
     @Builder.Default
     private Date checkin = new Date();
     private Date checkout;
+    private String note;
+    private double discount;
+    private double deposit;
     private int status;
+    private String customerId;
 
     public static enum Status {
         PROCESSING,

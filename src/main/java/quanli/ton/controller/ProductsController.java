@@ -8,6 +8,7 @@ package quanli.ton.controller;
  *
  * @author huynhtrunghieu
  */
+
 public interface ProductsController {
      void fillBillDetails(); // tải và hiển thị chi tiết phiếu
     void selectTimeRange();

@@ -4,11 +4,13 @@
  */
 package quanli.ton.ui;
 
+import quanli.ton.controller.WelcomeController;
+
 /**
  *
  * @author hieud
  */
-public class WelcomeJDialog extends javax.swing.JDialog {
+public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeController {
 
     /**
      * Creates new form WelcomeJDialog
@@ -16,7 +18,25 @@ public class WelcomeJDialog extends javax.swing.JDialog {
     public WelcomeJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.waiting();
     }
+    
+    @Override 
+    public void waiting() {
+    this.setLocationRelativeTo(null);
+    new Thread(() -> {
+        try {
+            for (var i = 0; i <= 100; i++) {
+                progressBar.setValue(i);
+                Thread.sleep(10);
+            }
+            WelcomeJDialog.this.dispose();
+        } catch (InterruptedException ex) {
+            System.exit(0);
+        }
+    }).start();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,18 +47,42 @@ public class WelcomeJDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        progressBar = new javax.swing.JProgressBar();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        progressBar.setBackground(new java.awt.Color(0, 204, 204));
+        progressBar.setFont(new java.awt.Font("Helvetica Neue", 1, 10)); // NOI18N
+        progressBar.setForeground(new java.awt.Color(0, 0, 0));
+        progressBar.setOpaque(true);
+        progressBar.setStringPainted(true);
+        getContentPane().add(progressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 279, 323, 22));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon("/Users/huynhtrunghieu/QlyTon_DuAn1/src/main/java/quanli/ton/icons/z6816758011205_1002525727dde2a5eeee839b1073f6cc.jpg")); // NOI18N
+        jLabel1.setToolTipText("");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(125, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 30, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 590, 320));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -86,5 +130,8 @@ public class WelcomeJDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JProgressBar progressBar;
     // End of variables declaration//GEN-END:variables
 }

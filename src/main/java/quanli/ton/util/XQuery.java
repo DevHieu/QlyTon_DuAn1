@@ -98,6 +98,33 @@ public class XQuery {
         }
         return bean;
     }
+
+    public static <A> List<A> getEntityList(Class<A> aClass, String sql) {
+        List<A> list = new ArrayList<>();
+        try {
+            ResultSet resultSet = XJdbc.executeQuery(sql);
+            while (resultSet.next()) {
+                list.add(XQuery.readBean(resultSet, aClass));
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return list;
+    }
+    
+    public static String getSingleValue(String sql, Object... args) {
+        try {
+            ResultSet rs = XJdbc.executeQuery(sql, args);
+            if (rs.next()) {
+                return rs.getString(1); // trả về giá trị cột đầu tiên
+            }
+            rs.getStatement().getConnection().close();
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 //
 //    public static void main(String[] args) {
 //        demo1();
