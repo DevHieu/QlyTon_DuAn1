@@ -224,7 +224,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel23.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\logo_128.png")); // NOI18N
 
         lblCloseMenu.setFont(new java.awt.Font("Tw Cen MT", 1, 18)); // NOI18N
         lblCloseMenu.setForeground(new java.awt.Color(0, 150, 136));
@@ -379,7 +378,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jTextField1.setForeground(new java.awt.Color(0, 0, 0));
         jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         btnProductSearch.setBackground(new java.awt.Color(0, 150, 136));
@@ -388,7 +386,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         btnProductSearch.setText("Tìm");
         btnProductSearch.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true));
 
-        lblOpenMenu.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\menu.png")); // NOI18N
+        lblOpenMenu.setIcon(new javax.swing.ImageIcon("D:\\duan1\\QlyTon_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\menu.png")); // NOI18N
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblOpenMenuMouseClicked(evt);
@@ -396,7 +394,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         });
 
         tabMain.setBackground(new java.awt.Color(255, 255, 255));
-        tabMain.setForeground(new java.awt.Color(0, 0, 0));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -455,13 +452,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel30.setText("Địa chỉ:");
 
-        txtPhoneNumber.setForeground(new java.awt.Color(0, 0, 0));
         txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        txtCustomerName.setForeground(new java.awt.Color(0, 0, 0));
         txtCustomerName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        txtAddress.setForeground(new java.awt.Color(0, 0, 0));
         txtAddress.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
