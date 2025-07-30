@@ -6,7 +6,6 @@ package quanli.ton.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -17,7 +16,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -54,8 +55,11 @@ import quanli.ton.entity.Thickness;
 import quanli.ton.ui.components.ButtonEditor;
 import quanli.ton.ui.components.ButtonRenderer;
 import quanli.ton.ui.components.SpinnerEditor;
+import quanli.ton.util.TimeRange;
 import quanli.ton.util.XAuth;
+import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
+import quanli.ton.util.XIcon;
 
 /**
  *
@@ -85,19 +89,42 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     List<ProductType> typeList = List.of();
     List<Thickness> thickList = List.of();
     List<Product> productList = List.of();
+    List<Bills> billList = List.of();
 
     /**
      * Creates new form MainJForm
      */
     public QlyTonJFrame() {
         initComponents();
-        tblBillDetails.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(this));
-        tblBillDetails.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer()); // Cột nút xoá
-        tblBillDetails.getColumnModel().getColumn(8).setCellEditor(new ButtonEditor(this));
-
+        this.init();
         this.addTabPanelListener();
         this.createSlideMenu();
         this.open();
+    }
+
+    @Override
+    public void init() {
+        setLocationRelativeTo(null); // căn giữa màn hình
+        this.setIconImage(XIcon.getIcon("logo_512.png").getImage());
+
+//        if (!this.showWelcomeJDialog(this)) {  // Để khi user nhấn nút tắt thì sẽ tắt luôn chương trình thay vì hiện tiếp login
+//            System.exit(0);
+//        }
+//        if (!this.showLoginJDialog(this)) {  // Để khi user nhấn nút tắt thì sẽ tắt luôn chương trình thay vì hiện tiếp trang chính
+//            System.exit(0);
+//        }
+        XIcon.setIcon(lbAvatar, "img/avatars/" + XAuth.user.getPhoto());
+        lbFullname.setText(XAuth.user.getFullname());
+
+        System.out.println(XAuth.user.isManager());
+        if (!XAuth.user.isManager()) {
+            jplSlideMenu.remove(pnlAdmin);
+        }
+
+        //config table
+        tblBillDetails.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(this));
+        tblBillDetails.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer());
+        tblBillDetails.getColumnModel().getColumn(8).setCellEditor(new ButtonEditor(this));
     }
 
     /**
@@ -113,9 +140,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jplSlideMenu = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
+        lblCloseMenu = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
-        lblCloseMenu = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
         pnlAdmin = new javax.swing.JPanel();
         lbProductType = new javax.swing.JLabel();
         lbUser = new javax.swing.JLabel();
@@ -128,9 +156,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         lbHistory = new javax.swing.JLabel();
         lbExit = new javax.swing.JLabel();
         lbChangePassword = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lbFullname = new javax.swing.JLabel();
+        lbAvatar = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         btnProductSearch = new javax.swing.JButton();
         lblOpenMenu = new javax.swing.JLabel();
@@ -180,17 +209,19 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jLabel21 = new javax.swing.JLabel();
         cboThickness = new javax.swing.JComboBox<>();
         cboProductType = new javax.swing.JComboBox<>();
-        jScrollPane4 = new javax.swing.JScrollPane();
+        jScrollPane4 = jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane1.getVerticalScrollBar().setUnitIncrement(20);
+        ;
         pnlProducts = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
+        cboTimeRange = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTextField2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
+        txtBegin = new javax.swing.JTextField();
+        txtEnd = new javax.swing.JTextField();
+        btnFilter = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable() {
+        tblBills = new javax.swing.JTable() {
             @Override
             public JTableHeader getTableHeader() {
                 JTableHeader header = super.getTableHeader();
@@ -203,12 +234,19 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         };
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jButton4 = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+        cboSearchType = new javax.swing.JComboBox<>();
+        btnSearch = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Tôn Hoa Mai");
+        setBackground(new java.awt.Color(255, 255, 255));
+        setPreferredSize(new java.awt.Dimension(1180, 850));
+        setResizable(false);
 
+        jLayeredPane1.setBackground(new java.awt.Color(255, 255, 255));
+        jLayeredPane1.setForeground(new java.awt.Color(255, 255, 255));
+        jLayeredPane1.setPreferredSize(new java.awt.Dimension(1200, 850));
         jLayeredPane1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLayeredPane1MouseClicked(evt);
@@ -217,76 +255,80 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jLayeredPane1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jplSlideMenu.setBackground(new java.awt.Color(255, 255, 255));
-        jplSlideMenu.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jplSlideMenu.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 1, new java.awt.Color(153, 153, 153)));
+        jplSlideMenu.setPreferredSize(new java.awt.Dimension(210, 820));
         jplSlideMenu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel9.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel23.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\logo_128.png")); // NOI18N
+        jPanel9.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 1, new java.awt.Color(153, 153, 153)));
+        jPanel9.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblCloseMenu.setFont(new java.awt.Font("Tw Cen MT", 1, 18)); // NOI18N
-        lblCloseMenu.setForeground(new java.awt.Color(0, 150, 136));
+        lblCloseMenu.setForeground(new java.awt.Color(0, 102, 102));
         lblCloseMenu.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCloseMenu.setText("X");
+        lblCloseMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lblCloseMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblCloseMenuMouseClicked(evt);
             }
         });
+        jPanel9.add(lblCloseMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(172, 2, 30, 30));
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(24, Short.MAX_VALUE)
-                .addComponent(jLabel22)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel23)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblCloseMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(lblCloseMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57))
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanli/ton/icons/logo_256.png"))); // NOI18N
+        jPanel9.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(-20, 10, 220, 150));
+
+        jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jPanel9.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(166, 20, -1, 114));
+
+        jSeparator1.setBackground(new java.awt.Color(0, 102, 102));
+        jSeparator1.setForeground(new java.awt.Color(0, 102, 102));
+        jPanel9.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 210, 10));
 
         jplSlideMenu.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 170));
 
         pnlAdmin.setBackground(new java.awt.Color(255, 255, 255));
-        pnlAdmin.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlAdmin.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 1, new java.awt.Color(153, 153, 153)));
 
         lbProductType.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbProductType.setForeground(new java.awt.Color(0, 150, 136));
+        lbProductType.setForeground(new java.awt.Color(0, 102, 102));
         lbProductType.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbProductType.setText("Quản lý Loại sản phẩm");
+        lbProductType.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbProductType.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbProductTypeMouseClicked(evt);
+            }
+        });
 
         lbUser.setBackground(new java.awt.Color(255, 255, 255));
         lbUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbUser.setForeground(new java.awt.Color(0, 150, 136));
+        lbUser.setForeground(new java.awt.Color(0, 102, 102));
         lbUser.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbUser.setText("Quản lý Nhân viên");
+        lbUser.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbUser.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbUserMouseClicked(evt);
+            }
+        });
 
         lbProduct.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbProduct.setForeground(new java.awt.Color(0, 150, 136));
+        lbProduct.setForeground(new java.awt.Color(0, 102, 102));
         lbProduct.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbProduct.setText("Quản lý Sản phẩm");
+        lbProduct.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbProduct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbProductMouseClicked(evt);
+            }
+        });
 
         lbBills.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbBills.setForeground(new java.awt.Color(0, 150, 136));
+        lbBills.setForeground(new java.awt.Color(0, 102, 102));
         lbBills.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbBills.setText("Quản lý Hóa đơn");
+        lbBills.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbBills.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lbBillsMouseClicked(evt);
@@ -294,34 +336,54 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         });
 
         lbThickness.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbThickness.setForeground(new java.awt.Color(0, 150, 136));
+        lbThickness.setForeground(new java.awt.Color(0, 102, 102));
         lbThickness.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbThickness.setText("Quản lý Độ dày sản phẩm");
+        lbThickness.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbThickness.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbThicknessMouseClicked(evt);
+            }
+        });
 
         lbRevenue.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbRevenue.setForeground(new java.awt.Color(0, 150, 136));
+        lbRevenue.setForeground(new java.awt.Color(0, 102, 102));
         lbRevenue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbRevenue.setText("Quản lý Doanh thu");
+        lbRevenue.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbRevenue.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbRevenueMouseClicked(evt);
+            }
+        });
 
         lbCustomer.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbCustomer.setForeground(new java.awt.Color(0, 150, 136));
+        lbCustomer.setForeground(new java.awt.Color(0, 102, 102));
         lbCustomer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbCustomer.setText("Quản lý Khách hàng");
+        lbCustomer.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbCustomer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbCustomerMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlAdminLayout = new javax.swing.GroupLayout(pnlAdmin);
         pnlAdmin.setLayout(pnlAdminLayout);
         pnlAdminLayout.setHorizontalGroup(
             pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAdminLayout.createSequentialGroup()
+                .addComponent(lbProductType, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(pnlAdminLayout.createSequentialGroup()
                 .addGroup(pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbBills, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProductType, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbRevenue, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlAdminLayout.setVerticalGroup(
             pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -340,55 +402,89 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         jplSlideMenu.add(pnlAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 210, 480));
 
         lbLogout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbLogout.setForeground(new java.awt.Color(0, 150, 136));
+        lbLogout.setForeground(new java.awt.Color(0, 102, 102));
         lbLogout.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbLogout.setText("Đăng xuất");
-        jplSlideMenu.add(lbLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 740, 210, 30));
+        lbLogout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbLogout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbLogoutMouseClicked(evt);
+            }
+        });
+        jplSlideMenu.add(lbLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 760, 210, 30));
 
         lbHistory.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbHistory.setForeground(new java.awt.Color(0, 150, 136));
+        lbHistory.setForeground(new java.awt.Color(0, 102, 102));
         lbHistory.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbHistory.setText("Lịch sử");
-        jplSlideMenu.add(lbHistory, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 660, 210, 30));
+        lbHistory.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbHistory.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbHistoryMouseClicked(evt);
+            }
+        });
+        jplSlideMenu.add(lbHistory, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 680, 210, 30));
 
         lbExit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbExit.setForeground(new java.awt.Color(234, 84, 60));
         lbExit.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbExit.setText("Thoát");
-        jplSlideMenu.add(lbExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 780, 210, 30));
+        lbExit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbExitMouseClicked(evt);
+            }
+        });
+        jplSlideMenu.add(lbExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 800, 210, 30));
 
         lbChangePassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbChangePassword.setForeground(new java.awt.Color(0, 150, 136));
+        lbChangePassword.setForeground(new java.awt.Color(0, 102, 102));
         lbChangePassword.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbChangePassword.setText("Đổi mật khẩu");
-        jplSlideMenu.add(lbChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, 210, 30));
+        lbChangePassword.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbChangePassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbChangePasswordMouseClicked(evt);
+            }
+        });
+        jplSlideMenu.add(lbChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 720, 210, 30));
 
-        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 830));
+        jSeparator3.setBackground(new java.awt.Color(0, 102, 102));
+        jSeparator3.setForeground(new java.awt.Color(0, 102, 102));
+        jplSlideMenu.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 660, 210, 10));
+
+        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 820));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setEnabled(false);
+        jPanel1.setPreferredSize(new java.awt.Dimension(1200, 850));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("Admin 1");
+        lbFullname.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbFullname.setForeground(new java.awt.Color(0, 102, 102));
+        lbFullname.setText("Admin 1");
 
-        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lbAvatar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jTextField1.setForeground(new java.awt.Color(0, 0, 0));
-        jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        btnProductSearch.setBackground(new java.awt.Color(0, 150, 136));
+        btnProductSearch.setBackground(new java.awt.Color(0, 102, 102));
         btnProductSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnProductSearch.setForeground(new java.awt.Color(255, 255, 255));
         btnProductSearch.setText("Tìm");
         btnProductSearch.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true));
+        btnProductSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProductSearchActionPerformed(evt);
+            }
+        });
 
-        lblOpenMenu.setIcon(new javax.swing.ImageIcon("D:\\Study\\DuAn1\\QLBanHang_DuAn1\\src\\main\\java\\quanli\\ton\\icons\\menu.png")); // NOI18N
+        lblOpenMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanli/ton/icons/menu.png"))); // NOI18N
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblOpenMenuMouseClicked(evt);
@@ -396,7 +492,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         });
 
         tabMain.setBackground(new java.awt.Color(255, 255, 255));
-        tabMain.setForeground(new java.awt.Color(0, 0, 0));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -442,27 +537,43 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel8.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true));
 
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel10.setText("Khách hàng");
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 102, 102)));
 
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel7.setText("Số điện thoại:");
 
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel8.setText("Tên khách hàng:");
 
+        jLabel30.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel30.setText("Địa chỉ:");
 
-        txtPhoneNumber.setForeground(new java.awt.Color(0, 0, 0));
         txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtPhoneNumber.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPhoneNumberFocusLost(evt);
+            }
+        });
 
-        txtCustomerName.setForeground(new java.awt.Color(0, 0, 0));
         txtCustomerName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtCustomerName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCustomerNameKeyReleased(evt);
+            }
+        });
 
-        txtAddress.setForeground(new java.awt.Color(0, 0, 0));
         txtAddress.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtAddress.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAddressKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -510,11 +621,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jLabel15.setText("Trạng thái:");
 
-        btnSave.setBackground(new java.awt.Color(0, 150, 136));
+        btnSave.setBackground(new java.awt.Color(0, 102, 102));
         btnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnSave.setForeground(new java.awt.Color(255, 255, 255));
         btnSave.setText("Lưu");
         btnSave.setBorder(null);
+        btnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveActionPerformed(evt);
@@ -523,6 +635,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         txtNote.setColumns(20);
         txtNote.setRows(5);
+        txtNote.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 102, 102)), javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        txtNote.setCaretColor(new java.awt.Color(0, 102, 102));
         jScrollPane2.setViewportView(txtNote);
 
         jLabel31.setText("Ghi chú:");
@@ -538,6 +652,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
+        sldDiscount.setForeground(new java.awt.Color(0, 102, 102));
         sldDiscount.setMinorTickSpacing(1);
         sldDiscount.setValue(0);
         sldDiscount.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -558,22 +673,24 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         txtRemaining.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtRemaining.setText("0");
 
-        btnPrint.setBackground(new java.awt.Color(255, 193, 7));
+        btnPrint.setBackground(new java.awt.Color(230, 184, 92));
         btnPrint.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnPrint.setForeground(new java.awt.Color(255, 255, 255));
         btnPrint.setText("In");
         btnPrint.setBorder(null);
+        btnPrint.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPrintActionPerformed(evt);
             }
         });
 
-        btnCancle.setBackground(new java.awt.Color(234, 84, 60));
+        btnCancle.setBackground(new java.awt.Color(204, 51, 51));
         btnCancle.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnCancle.setForeground(new java.awt.Color(255, 255, 255));
         btnCancle.setText("Hủy đơn");
-        btnCancle.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(244, 67, 54), 1, true));
+        btnCancle.setBorder(null);
+        btnCancle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnCancle.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancleActionPerformed(evt);
@@ -585,6 +702,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         btnRefresh.setForeground(new java.awt.Color(255, 255, 255));
         btnRefresh.setText("Làm mới");
         btnRefresh.setBorder(null);
+        btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRefreshActionPerformed(evt);
@@ -671,7 +789,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(txtRemaining))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                         .addComponent(jLabel31)
@@ -697,6 +815,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
+        jScrollPane4.setForeground(new java.awt.Color(0, 102, 102));
+        jScrollPane4.setToolTipText("");
+
         pnlProducts.setBackground(new java.awt.Color(255, 255, 255));
         pnlProducts.setLayout(new java.awt.GridLayout(0, 4, 5, 5));
         jScrollPane4.setViewportView(pnlProducts);
@@ -710,7 +831,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel21)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 255, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cboProductType, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cboThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -727,7 +848,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel21)
@@ -742,30 +863,46 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel3.setText("Từ ngày:");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay", " " }));
-
-        jTextField2.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        cboTimeRange.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboTimeRange.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay" }));
+        cboTimeRange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                cboTimeRangeActionPerformed(evt);
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Từ ngày:");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Đến ngày:");
 
-        jTextField3.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtBegin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtBegin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBeginActionPerformed(evt);
+            }
+        });
 
-        jButton3.setBackground(new java.awt.Color(255, 193, 7));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Lọc");
-        jButton3.setRolloverEnabled(false);
+        txtEnd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+
+        btnFilter.setBackground(new java.awt.Color(0, 102, 102));
+        btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnFilter.setForeground(new java.awt.Color(255, 255, 255));
+        btnFilter.setText("Lọc");
+        btnFilter.setRolloverEnabled(false);
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterActionPerformed(evt);
+            }
+        });
 
         jScrollPane1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblBills.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        tblBills.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -791,23 +928,36 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowSelectionAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
+        tblBills.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        tblBills.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblBillsMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblBills);
 
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Tìm kiếm");
 
-        jTextField4.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtSearch.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtSearch.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 150, 136), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng", " " }));
-
-        jButton4.setBackground(new java.awt.Color(0, 150, 136));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Tìm kiếm");
-        jButton4.setRolloverEnabled(false);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        cboSearchType.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboSearchType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Theo số hóa đơn", "Theo số điện thoại khách hàng" }));
+        cboSearchType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                cboSearchTypeActionPerformed(evt);
+            }
+        });
+
+        btnSearch.setBackground(new java.awt.Color(0, 102, 102));
+        btnSearch.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSearch.setForeground(new java.awt.Color(255, 255, 255));
+        btnSearch.setText("Tìm kiếm");
+        btnSearch.setRolloverEnabled(false);
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
             }
         });
 
@@ -816,57 +966,55 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField2)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox3, 0, 220, Short.MAX_VALUE)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 921, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtSearch)
+                    .addComponent(cboSearchType, 0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(btnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtEnd)
+                    .addComponent(txtBegin)
+                    .addComponent(cboTimeRange, 0, 214, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 896, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 277, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addGap(400, 400, 400)
+                .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(cboSearchType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(cboTimeRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(296, 296, 296))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19))
         );
+
+        btnFilter.getAccessibleContext().setAccessibleName("");
+        btnSearch.getAccessibleContext().setAccessibleName("");
 
         tabMain.addTab("HÓA ĐƠN", jPanel3);
 
@@ -875,21 +1023,21 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tabMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lblOpenMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lbFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(319, 319, 319)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 1158, Short.MAX_VALUE)
-                        .addComponent(tabMain, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addGap(0, 32, Short.MAX_VALUE))
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 54, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -897,38 +1045,36 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(lblOpenMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(btnProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel1))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbFullname)
+                            .addComponent(btnProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(lblOpenMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tabMain, javax.swing.GroupLayout.PREFERRED_SIZE, 713, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addContainerGap())
         );
 
-        jLayeredPane1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 1190, 820));
+        jLayeredPane1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 1200, 810));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 850, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -953,42 +1099,15 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         isBillChanging = true;
     }//GEN-LAST:event_txtDepositKeyReleased
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
-
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblCloseMenuMouseClicked
         this.closeMenu();
         // TODO add your handling code here:
     }// GEN-LAST:event_lblCloseMenuMouseClicked
 
-    private void lbBillsMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbBillsMouseClicked
-        // TODO add your handling code here:
-    }// GEN-LAST:event_lbBillsMouseClicked
-
     private void lblOpenMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblOpenMenuMouseClicked
         // TODO add your handling code here:
         this.openMenu();
     }// GEN-LAST:event_lblOpenMenuMouseClicked
-
-    private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {// GEN-FIRST:event_txtPhoneNumberFocusLost
-        // TODO add your handling code here:
-        currentCustomer = this.findCustomer(txtPhoneNumber.getText());
-
-        this.fillCustomer(txtPhoneNumber.getText());
-
-        isBillChanging = true;
-    }// GEN-LAST:event_txtPhoneNumberFocusLost
-
-    private void txtCustomerNameKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtCustomerNameKeyReleased
-        // TODO add your handling code here:
-        isCustomerChanging = true;
-    }// GEN-LAST:event_txtCustomerNameKeyReleased
-
-    private void txtAddressKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtAddressKeyReleased
-        // TODO add your handling code here:
-        isCustomerChanging = true;
-    }// GEN-LAST:event_txtAddressKeyReleased
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
@@ -1035,14 +1154,122 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
     }// GEN-LAST:event_cboProductTypeActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtBeginActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtBeginActionPerformed
         // TODO add your handling code here:
-    }// GEN-LAST:event_jTextField2ActionPerformed
+    }// GEN-LAST:event_txtBeginActionPerformed
 
     private void jLayeredPane1MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jLayeredPane1MouseClicked
         // TODO add your handling code here:
         System.out.println(tabMain.getSelectedIndex());
     }// GEN-LAST:event_jLayeredPane1MouseClicked
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+        this.fillBillBySearch();
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void cboTimeRangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangeActionPerformed
+        // TODO add your handling code here:
+        this.selectTimeRange();
+    }//GEN-LAST:event_cboTimeRangeActionPerformed
+
+    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
+        // TODO add your handling code here:
+        this.fillBillsByTimeRange();
+    }//GEN-LAST:event_btnFilterActionPerformed
+
+    private void cboSearchTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboSearchTypeActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_cboSearchTypeActionPerformed
+
+    private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnProductSearchActionPerformed
+
+    private void lbRevenueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRevenueMouseClicked
+        // TODO add your handling code here:
+        this.showRevenueManagerJDialog(this);
+    }//GEN-LAST:event_lbRevenueMouseClicked
+
+    private void lbUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUserMouseClicked
+        // TODO add your handling code here:
+        this.showUserManagerJDialog(this);
+    }//GEN-LAST:event_lbUserMouseClicked
+
+    private void lbBillsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBillsMouseClicked
+        // TODO add your handling code here:
+        this.showBillManagerJDialog(this);
+    }//GEN-LAST:event_lbBillsMouseClicked
+
+    private void lbProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMouseClicked
+        // TODO add your handling code here:
+        this.showProductManagerJDialog(this);
+    }//GEN-LAST:event_lbProductMouseClicked
+
+    private void lbProductTypeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductTypeMouseClicked
+        // TODO add your handling code here:
+        this.showProductTypeManagerJDialog(this);
+    }//GEN-LAST:event_lbProductTypeMouseClicked
+
+    private void lbThicknessMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbThicknessMouseClicked
+        // TODO add your handling code here:
+        this.showThicknessManagerJDialog(this);
+    }//GEN-LAST:event_lbThicknessMouseClicked
+
+    private void lbCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbCustomerMouseClicked
+        // TODO add your handling code here:
+        this.showCustomerManagerJDialog(this);
+    }//GEN-LAST:event_lbCustomerMouseClicked
+
+    private void lbHistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseClicked
+        // TODO add your handling code here:
+        this.showHistoryJDialog(this);
+    }//GEN-LAST:event_lbHistoryMouseClicked
+
+    private void lbChangePasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbChangePasswordMouseClicked
+        // TODO add your handling code here:
+        this.showChangePasswordJDialog(this);
+    }//GEN-LAST:event_lbChangePasswordMouseClicked
+
+    private void lbExitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbExitMouseClicked
+        // TODO add your handling code here:
+        this.exit();
+    }//GEN-LAST:event_lbExitMouseClicked
+
+    private void lbLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLogoutMouseClicked
+        // TODO add your handling code here:
+        XDialog.alert("Chưa làm chức năng này");
+    }//GEN-LAST:event_lbLogoutMouseClicked
+
+    private void tblBillsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBillsMouseClicked
+        // TODO add your handling code here:
+
+        if (evt.getClickCount() == 2) {
+            int index = tblBills.getSelectedRow();
+            this.fillBill(billList.get(index));
+            tabMain.setSelectedIndex(0);
+        }
+    }//GEN-LAST:event_tblBillsMouseClicked
+
+    private void txtCustomerNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCustomerNameKeyReleased
+        // TODO add your handling code here:
+        isCustomerChanging = true;
+    }//GEN-LAST:event_txtCustomerNameKeyReleased
+
+    private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
+        // TODO add your handling code here:
+        currentCustomer = this.findCustomer(txtPhoneNumber.getText());
+
+        this.fillCustomer(txtPhoneNumber.getText());
+
+        isBillChanging = true;
+    }//GEN-LAST:event_txtPhoneNumberFocusLost
+
+    private void txtAddressKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAddressKeyReleased
+        // TODO add your handling code here:
+        isCustomerChanging = true;
+    }//GEN-LAST:event_txtAddressKeyReleased
 
     /**
      * @param args the command line arguments
@@ -1078,24 +1305,22 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancle;
+    private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnProductSearch;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox<String> cboProductType;
+    private javax.swing.JComboBox<String> cboSearchType;
     private javax.swing.JComboBox<String> cboThickness;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox3;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox<String> cboTimeRange;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
@@ -1117,17 +1342,17 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JPanel jplSlideMenu;
+    private javax.swing.JLabel lbAvatar;
     private javax.swing.JLabel lbBills;
     private javax.swing.JLabel lbChangePassword;
     private javax.swing.JLabel lbCustomer;
     private javax.swing.JLabel lbExit;
+    private javax.swing.JLabel lbFullname;
     private javax.swing.JLabel lbHistory;
     private javax.swing.JLabel lbLogout;
     private javax.swing.JLabel lbProduct;
@@ -1142,22 +1367,26 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JSlider sldDiscount;
     private javax.swing.JTabbedPane tabMain;
     private javax.swing.JTable tblBillDetails;
+    private javax.swing.JTable tblBills;
     private javax.swing.JTextField txtAddress;
+    private javax.swing.JTextField txtBegin;
     private javax.swing.JTextField txtCustomerName;
     private javax.swing.JFormattedTextField txtDeposit;
     private javax.swing.JLabel txtDiscountPercent;
+    private javax.swing.JTextField txtEnd;
     private javax.swing.JTextArea txtNote;
     private javax.swing.JLabel txtOverall;
     private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JLabel txtRemaining;
+    private javax.swing.JTextField txtSearch;
     private javax.swing.JLabel txtStatus;
     // End of variables declaration//GEN-END:variables
 
-     private void createSlideMenu() {
+    private void createSlideMenu() {
         //Tạo slideMenu
         jplSlideMenu.setBounds(0, 0, 0, 820);
         getLayeredPane().add(jplSlideMenu, JLayeredPane.POPUP_LAYER);
-        
+
         //Taoj glassPane -> chặn click xuống JPanel1 khi click ở slideMenu
         glassPane.setOpaque(false);
         glassPane.setBounds(0, 0, getWidth(), getHeight());
@@ -1166,7 +1395,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         getLayeredPane().add(glassPane, JLayeredPane.MODAL_LAYER);
         glassPane.setVisible(false); // Ẩn lúc đầu
     }
-    
+
     private void addTabPanelListener() {
         tabMain.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
             int selectedIndex = tabMain.getSelectedIndex();
@@ -1267,15 +1496,17 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     @Override
     public void open() {
-        currentBill = billDao.findById(Long.valueOf(1));
         this.fillBill(currentBill);
         this.fillTypeCbo();
         this.fillProductList(false, false);
+        this.fillBillsToTable();
+        this.selectTimeRange();
         isBillChanging = false;
     }
 
     @Override
     public void fillBill(Bills entity) {
+        currentBill = entity;
         String status;
         Color color;
 
@@ -1351,7 +1582,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         txtOverall.setText(moneyFormat.format(overallTotal));
         this.billTotalChange(overallTotal);
-        isBillChanging = true;
     }
 
     @Override
@@ -1387,12 +1617,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     }
 
     @Override
-    public void fillToTable() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from
-        // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public void save() {
 
         if (billDetailsList.isEmpty()) {
@@ -1425,9 +1649,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
-        XDialog.confirm("Lưu hóa đơn thành công");
+        XDialog.alert("Lưu hóa đơn thành công");
         isBillChanging = false;
         this.fillBill(bill);
+        this.fillBillsToTable();
     }
 
     @Override
@@ -1441,6 +1666,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     public void print() {
         isBillChanging = true;
         currentBill.setStatus(Bills.Status.COMPLETED.ordinal());
+        currentBill.setCheckout(new Date());
         this.save();
     }
 
@@ -1514,6 +1740,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     }
 
     public void deleteBillDetailColumn(int row) {
+        BillDetails item = billDetailsList.get(row);
+        billDetailDao.deleteById(item.getId());
         billDetailsList.remove(row);
         this.fillBillDetail();
     }
@@ -1593,7 +1821,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         // Nút "Mua"
         JButton btnBuy = new JButton("Mua");
         btnBuy.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnBuy.setBackground(new Color(0, 150, 136));
+        btnBuy.setBackground(new Color(0, 102, 102));
         btnBuy.setForeground(Color.WHITE);
         btnBuy.setFocusPainted(false);
         btnBuy.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1665,20 +1893,100 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             XDialog.alert("Số lượng sản phẩm phải lớn hơn 0. Vui lòng nhập lại!");
             return;
         }
-        
-        System.out.println(type.getDefaultLength());
-        BillDetails details = BillDetails.builder()
-                .billId(currentBill.getId())
-                .productId(product.getId())
-                .unitPrice(product.getUnitPrice())
-                .discount(product.getDiscount())
-                .quantity(quantity)
-                .length(length)
-                .defaultLength(type.getDefaultLength())
-                .productName(product.getName())
-                .build();
 
-        billDetailsList.add(details);
+        Optional<BillDetails> existing = billDetailsList.stream()
+                .filter(bd -> bd.getProductId().equals(product.getId()))
+                .findFirst();
+
+        if (existing.isPresent()) {
+            existing.get().setQuantity(existing.get().getQuantity() + quantity);
+        } else {
+            BillDetails details = BillDetails.builder()
+                    .billId(currentBill.getId())
+                    .productId(product.getId())
+                    .unitPrice(product.getUnitPrice())
+                    .discount(product.getDiscount())
+                    .quantity(quantity)
+                    .length(length)
+                    .defaultLength(type.getDefaultLength())
+                    .productName(product.getName())
+                    .build();
+
+            billDetailsList.add(details);
+        }
+
         this.fillBillDetail();
+        isBillChanging = true;
+    }
+
+    @Override
+    public void fillBillsToTable() {
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+        model.setRowCount(0);
+
+        billList.forEach(item -> {
+            String name = customerDao.findNameByCustomerId(item.getCustomerId());
+
+            Object[] rowData = {
+                item.getId(),
+                item.getUsername(),
+                name,
+                item.getCheckin(),
+                item.getCheckout()
+            };
+            model.addRow(rowData);
+        });
+
+    }
+
+    @Override
+    public void selectTimeRange() {
+        TimeRange range = TimeRange.today();
+        switch (cboTimeRange.getSelectedIndex()) {
+            case 0 ->
+                range = TimeRange.today();
+            case 1 ->
+                range = TimeRange.thisWeek();
+            case 2 ->
+                range = TimeRange.thisMonth();
+            case 3 ->
+                range = TimeRange.thisQuarter();
+            case 4 ->
+                range = TimeRange.thisYear();
+        }
+        txtBegin.setText(XDate.format(range.getBegin(), "MM/dd/yyyy"));
+        txtEnd.setText(XDate.format(range.getEnd(), "MM/dd/yyyy"));
+        this.fillBillsByTimeRange();
+    }
+
+    private void fillBillsByTimeRange() {
+
+        Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+        Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+
+        billList = billDao.findOperatingByTimeRange(begin, end);
+        this.fillBillsToTable();
+    }
+
+    @Override
+    public void fillBillBySearch() {
+        DefaultTableModel model = (DefaultTableModel) tblBills.getModel();
+        model.setRowCount(0);
+
+        String keyWord = txtSearch.getText();
+        Integer cboSearch = cboSearchType.getSelectedIndex();
+
+        switch (cboSearch) {
+            case 0:
+                billList.add(billDao.findOperatingById(Long.valueOf(keyWord)));
+                this.fillBillsToTable();
+                break;
+            case 1:
+                billList = billDao.findOperatingAllOfCustomerId(keyWord);
+                this.fillBillsToTable();
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 }

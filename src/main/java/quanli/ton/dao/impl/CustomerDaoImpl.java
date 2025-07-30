@@ -23,14 +23,14 @@ public class CustomerDaoImpl implements CustomerDao {
     String findAllSql = "SELECT * FROM Customers";
     String findByIdSql = "SELECT * FROM Customers WHERE PhoneNumber=?";
     String isCustomerExistedSql = "SELECT 1 FROM Customers WHERE PhoneNumber=?";
+    String findNameByCustomer = "SELECT FullName FROM Customers WHERE PhoneNumber=?";
 
     @Override
     public Customer create(Customer entity) {
         Object[] values = {
             entity.getPhoneNumber(),
             entity.getFullName(),
-            entity.getAddress(),
-        };
+            entity.getAddress(),};
         XJdbc.executeUpdate(createSql, values);
         return entity;
     }
@@ -40,8 +40,7 @@ public class CustomerDaoImpl implements CustomerDao {
         Object[] values = {
             entity.getFullName(),
             entity.getAddress(),
-            entity.getPhoneNumber(),
-        };
+            entity.getPhoneNumber(),};
         XJdbc.executeUpdate(updateSql, values);
     }
 
@@ -70,4 +69,8 @@ public class CustomerDaoImpl implements CustomerDao {
         }
     }
 
+    @Override
+    public String findNameByCustomerId(String CustomerId) {
+        return XQuery.getSingleValue(findNameByCustomer, CustomerId);
+    }
 }

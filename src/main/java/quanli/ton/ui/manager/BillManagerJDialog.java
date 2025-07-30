@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import quanli.ton.controller.BillManagerController;
 import quanli.ton.dao.BillDao;
@@ -19,6 +20,7 @@ import quanli.ton.dao.impl.CustomerDaoImpl;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
+import quanli.ton.ui.QlyTonJFrame;
 import quanli.ton.util.TimeRange;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
@@ -151,6 +153,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         });
         jScrollPane1.setViewportView(tblBills);
 
+        btnDeleteCheckedItems.setBackground(new java.awt.Color(0, 102, 102));
+        btnDeleteCheckedItems.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDeleteCheckedItems.setForeground(new java.awt.Color(255, 255, 255));
         btnDeleteCheckedItems.setText("Xóa các mục đã chọn");
         btnDeleteCheckedItems.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,6 +163,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnUncheckAll.setBackground(new java.awt.Color(0, 102, 102));
+        btnUncheckAll.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnUncheckAll.setForeground(new java.awt.Color(255, 255, 255));
         btnUncheckAll.setText("Bỏ chọn tất cả");
         btnUncheckAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -165,6 +173,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnCheckAll.setBackground(new java.awt.Color(0, 102, 102));
+        btnCheckAll.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCheckAll.setForeground(new java.awt.Color(255, 255, 255));
         btnCheckAll.setText("Chọn tất cả");
         btnCheckAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,6 +189,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         jLabel8.setText("Đến ngày");
 
+        btnFilter.setBackground(new java.awt.Color(0, 102, 102));
+        btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnFilter.setForeground(new java.awt.Color(255, 255, 255));
         btnFilter.setText("Lọc");
         btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -237,17 +251,20 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                     .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnDeleteCheckedItems)
-                    .addComponent(btnUncheckAll)
-                    .addComponent(btnCheckAll))
+                    .addComponent(btnDeleteCheckedItems, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUncheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(16, 16, 16))
         );
 
         tabs.addTab("DANH SÁCH", jPanel1);
 
+        btnCreate.setBackground(new java.awt.Color(0, 102, 102));
+        btnCreate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCreate.setForeground(new java.awt.Color(255, 255, 255));
         btnCreate.setText("Tạo mới");
         btnCreate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -255,6 +272,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnUpdate.setBackground(new java.awt.Color(0, 102, 102));
+        btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
         btnUpdate.setText("Cập nhập");
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -262,6 +282,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnDelete.setBackground(new java.awt.Color(0, 102, 102));
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Xóa");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -269,6 +292,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnClear.setBackground(new java.awt.Color(0, 102, 102));
+        btnClear.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnClear.setForeground(new java.awt.Color(255, 255, 255));
         btnClear.setText("Nhập mới");
         btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -276,6 +302,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnMoveNext.setBackground(new java.awt.Color(0, 102, 102));
+        btnMoveNext.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnMoveNext.setForeground(new java.awt.Color(255, 255, 255));
         btnMoveNext.setText(">>");
         btnMoveNext.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -283,6 +312,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnMoveLast.setBackground(new java.awt.Color(0, 102, 102));
+        btnMoveLast.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnMoveLast.setForeground(new java.awt.Color(255, 255, 255));
         btnMoveLast.setText(">|");
         btnMoveLast.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -290,6 +322,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnMovePrevious.setBackground(new java.awt.Color(0, 102, 102));
+        btnMovePrevious.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnMovePrevious.setForeground(new java.awt.Color(255, 255, 255));
         btnMovePrevious.setText("<<");
         btnMovePrevious.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -297,6 +332,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        btnMoveFirst.setBackground(new java.awt.Color(0, 102, 102));
+        btnMoveFirst.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnMoveFirst.setForeground(new java.awt.Color(255, 255, 255));
         btnMoveFirst.setText("|<");
         btnMoveFirst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -380,12 +418,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                                 .addComponent(btnDelete)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnClear)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
                                 .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -469,14 +507,14 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate)
-                    .addComponent(btnUpdate)
-                    .addComponent(btnDelete)
-                    .addComponent(btnClear)
-                    .addComponent(btnMoveNext)
-                    .addComponent(btnMoveLast)
-                    .addComponent(btnMovePrevious)
-                    .addComponent(btnMoveFirst))
+                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(8, 8, 8))
         );
 
@@ -591,21 +629,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BillManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BillManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BillManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                try {
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BillManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(QlyTonJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
+                    ex);
         }
         //</editor-fold>
         //</editor-fold>
