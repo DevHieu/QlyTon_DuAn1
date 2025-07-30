@@ -175,13 +175,16 @@ public class BillDaoImpl implements BillDao {
         return list;
         
      }
-} 
-
 
     @Override
     public List<Bills> findOperatingAllOfCustomerId(String id) {
         return XQuery.getBeanList(Bills.class, findOperatingAllOfCustomerId, id);
     };
+
+    @Override
+    public String findNameByCustomerId(String customerId) {
+        return XQuery.getSingleValue(findNameByCustomer, customerId);
+    }
 
 }
 
