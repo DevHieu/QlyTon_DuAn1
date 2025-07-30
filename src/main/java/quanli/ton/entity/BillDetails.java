@@ -22,10 +22,11 @@ public class BillDetails {
     private long id;
     private long billId;
     private String productId;
+    private double importPrice;
     private double unitPrice;
     private double discount;
     private int quantity;
     private double length;
-    private Double defaultLength;
+    private Float defaultLength;
     private String productName;
 }
