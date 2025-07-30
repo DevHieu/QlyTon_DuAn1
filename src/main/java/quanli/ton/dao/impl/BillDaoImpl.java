@@ -31,7 +31,11 @@ public class BillDaoImpl implements BillDao {
     String findByIdSql = "SELECT * FROM Bills WHERE Id=?";
     String findByTimeRangeSql = "SELECT * FROM Bills WHERE Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
     String findAllOfCustomerId = "SELECT * FROM Bills WHERE CustomerId = ?";
-    String findNameByCustomer = "SELECT FullName FROM Customers WHERE PhoneNumber=?";
+
+    // Tìm các đơn đang ở trạng thái "đang xử lý"
+    String findOperatingByIdSql = "SELECT * FROM Bills WHERE Id=? AND Status = 0";
+    String findOperatingByTimeRangeSql = "SELECT * FROM Bills WHERE Status = 0 AND Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
+    String findOperatingAllOfCustomerId = "SELECT * FROM Bills WHERE Status = 0 AND PhoneNumber = ?";
 
     @Override
     public Bills create(Bills entity) {
@@ -103,12 +107,22 @@ public class BillDaoImpl implements BillDao {
     @Override
     public List<Bills> findAllOfCustomerId(String id) {
         return XQuery.getBeanList(Bills.class, findAllOfCustomerId, id);
-    }
-
-    ;
+    };
     
     @Override
-    public String findNameByCustomerId(String CustomerId) {
-        return XQuery.getSingleValue(findNameByCustomer, CustomerId);
+    public Bills findOperatingById(Long id) {
+        return XQuery.getSingleBean(Bills.class, findOperatingByIdSql, id);
     }
+
+    @Override
+    public List<Bills> findOperatingByTimeRange(Date begin, Date end) {
+        return XQuery.getBeanList(Bills.class, findOperatingByTimeRangeSql, begin, end);
+    }
+
+    @Override
+    public List<Bills> findOperatingAllOfCustomerId(String id) {
+        return XQuery.getBeanList(Bills.class, findOperatingAllOfCustomerId, id);
+    }
+;
+
 }

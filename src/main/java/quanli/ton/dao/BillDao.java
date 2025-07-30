@@ -13,7 +13,14 @@ import quanli.ton.entity.Bills;
  * @author hieud
  */
 public interface BillDao extends CrudDAO<Bills, Long> {
+
     public List<Bills> findByTimeRange(Date begin, Date end);
+
     public List<Bills> findAllOfCustomerId(String id);
-    public String findNameByCustomerId(String CustomerId); 
+
+    public Bills findOperatingById(Long id);
+
+    public List<Bills> findOperatingByTimeRange(Date begin, Date end);
+
+    public List<Bills> findOperatingAllOfCustomerId(String id);
 }
