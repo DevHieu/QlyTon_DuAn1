@@ -54,14 +54,11 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar() {{
-            setStringPainted(true);
-            setForeground(Color.WHITE);
-            setBackground(new Color(0, 64, 64));
             setFont(new Font("Arial", Font.BOLD, 14));
 
             // Thay màu chữ %
             UIManager.put("ProgressBar.selectionForeground", Color.BLACK);
-            UIManager.put("ProgressBar.selectionBackground", Color.WHITE);
+            UIManager.put("ProgressBar.selectionBackground", Color.BLACK);
         }};
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -70,12 +67,12 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
         jPanel1.setBackground(new java.awt.Color(0, 102, 102));
 
         jLabel1.setBackground(new java.awt.Color(0, 102, 102));
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Admin\\Downloads\\logoTonHoaMai_trang-Photoroom.png")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logoTonHoaMai_trang-Photoroom.png"))); // NOI18N
         jLabel1.setToolTipText("");
 
         progressBar.setBackground(new java.awt.Color(255, 255, 255));
         progressBar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        progressBar.setForeground(new java.awt.Color(0, 102, 102));
+        progressBar.setForeground(new java.awt.Color(0, 204, 204));
         progressBar.setOpaque(true);
         progressBar.setStringPainted(true);
 

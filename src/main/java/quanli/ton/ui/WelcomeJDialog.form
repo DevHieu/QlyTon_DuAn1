@@ -71,7 +71,7 @@
               <Color blue="66" green="66" red="0" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Admin\Downloads\logoTonHoaMai_trang-Photoroom.png"/>
+              <Image iconType="3" name="/icons/logoTonHoaMai_trang-Photoroom.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
@@ -85,13 +85,13 @@
               <Font name="Segoe UI" size="12" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="66" green="66" red="0" type="rgb"/>
+              <Color blue="cc" green="cc" red="0" type="rgb"/>
             </Property>
             <Property name="opaque" type="boolean" value="true"/>
             <Property name="stringPainted" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JProgressBar() {{&#xd;&#xa;    setStringPainted(true);&#xd;&#xa;    setForeground(Color.WHITE);&#xd;&#xa;    setBackground(new Color(0, 64, 64));&#xd;&#xa;    setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));&#xd;&#xa;    &#xd;&#xa;    // Thay m&#xe0;u ch&#x1eef; %&#xd;&#xa;    UIManager.put(&quot;ProgressBar.selectionForeground&quot;, Color.BLACK);&#xd;&#xa;    UIManager.put(&quot;ProgressBar.selectionBackground&quot;, Color.WHITE);&#xd;&#xa;}}"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JProgressBar() {{&#xd;&#xa;    setFont(new Font(&quot;Arial&quot;, Font.BOLD, 14));&#xd;&#xa;    &#xd;&#xa;    // Thay m&#xe0;u ch&#x1eef; %&#xd;&#xa;    UIManager.put(&quot;ProgressBar.selectionForeground&quot;, Color.BLACK);&#xd;&#xa;    UIManager.put(&quot;ProgressBar.selectionBackground&quot;, Color.BLACK);&#xd;&#xa;}}"/>
           </AuxValues>
         </Component>
       </SubComponents>
