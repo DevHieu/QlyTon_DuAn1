@@ -45,4 +45,5 @@ public class XDate {
         String text = XDate.format(date, "dd-MMM-yyyy");
         System.out.println(text); // => 21-Jan-2024
     }
+
 }

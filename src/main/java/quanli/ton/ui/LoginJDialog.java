@@ -61,7 +61,6 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
                 this.dispose();
             }  
         }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,6 +85,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(800, 500));
@@ -148,6 +148,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
                 cbShowPassword5ActionPerformed(evt);
             }
         });
+      
         jPanel1.add(cbShowPassword5);
         cbShowPassword5.setBounds(611, 270, 120, 20);
 
