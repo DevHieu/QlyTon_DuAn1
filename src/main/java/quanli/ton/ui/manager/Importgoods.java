@@ -10,17 +10,21 @@ import quanli.ton.dao.impl.ProductsDAOimpl; // Import cài đặt DAO
 import quanli.ton.entity.Product; // Import lớp Product
 import java.util.List;
 import quanli.ton.controller.ImportgoodsController;
+import javax.swing.JDialog; // Import JDialog
+import java.awt.Frame; // Import Frame cho constructor của JDialog
 
 /**
  *
  * @author huynhtrunghieu
  */
-public class Importgoods extends javax.swing.JFrame implements ImportgoodsController{
+public class Importgoods extends javax.swing.JDialog implements ImportgoodsController{ // Đã đổi từ JFrame sang JDialog
     private ProductsDAO productsDAO = new ProductsDAOimpl();
     /**
      * Creates new form Importgoods
      */
-    public Importgoods() {
+    // Constructor cho JDialog cần thêm tham số parent Frame và boolean modal
+    public Importgoods(Frame parent, boolean modal) { // Thêm tham số parent và modal
+        super(parent, modal); // Gọi constructor của lớp cha JDialog
         initComponents();
     }
     
@@ -194,11 +198,15 @@ public class Importgoods extends javax.swing.JFrame implements ImportgoodsContro
             java.util.logging.Logger.getLogger(Importgoods.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold> // Loại bỏ một trong hai thẻ đóng này (do lỗi copy-paste từ NetBeans)
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Importgoods().setVisible(true);
+                // Khi tạo JDialog trong main, bạn cần truyền một Frame cha.
+                // Có thể tạo một JFrame tạm thời hoặc truyền null nếu không có parent cụ thể.
+                // Ở đây mình tạo một JFrame tạm thời để làm parent.
+                new Importgoods(new javax.swing.JFrame(), true).setVisible(true); // true ở đây là để dialog là modal (chặn tương tác với cửa sổ cha)
             }
         });
     }

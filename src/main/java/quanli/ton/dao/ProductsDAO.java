@@ -6,7 +6,6 @@ package quanli.ton.dao;
 
 import java.util.List;
 import quanli.ton.entity.Product;
-import quanli.ton.ui.manager.Products;
 /**
  *
  * @author huynhtrunghieu

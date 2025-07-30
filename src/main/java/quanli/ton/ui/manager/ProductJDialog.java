@@ -312,42 +312,48 @@ private Product getForm() {
 
     
     public void open() {
-    // TODO: Hiển thị dữ liệu từ DB ra bảng
-        productsDAO = new ProductsDAOimpl(); 
+    productsDAO = new ProductsDAOimpl();
         fillComboBox();
         fillProductType();
-        updateNavigationButtons(); 
+        fillToTable(null, null);
+        this.productList = productsDAO.findAll(); 
+        
+        updateNavigationButtons();
     }
     
-    private void fillToTable(String productTypeId, Integer thicknessId) { // Thêm tham số lọc
-    DefaultTableModel model = (DefaultTableModel)tblProduct.getModel();
-    model.setRowCount(0);
-    List<Product> list = productsDAO.findAll(); // Lấy tất cả sản phẩm ban đầu
+    private void fillToTable(String productTypeId, Integer thicknessId) {
+        DefaultTableModel model = (DefaultTableModel)tblProduct.getModel();
+        model.setRowCount(0);
+        List<Product> allProducts = productsDAO.findAll(); // Lấy tất cả sản phẩm ban đầu
 
-    // Áp dụng bộ lọc
-    List<Product> filteredList = new ArrayList<>();
-    for (Product p : list) {
-        boolean matchesType = (productTypeId == null || productTypeId.isEmpty() || p.getTypeId().equals(productTypeId));
-        boolean matchesThickness = (thicknessId == null || p.getThickId() == null || p.getThickId().equals(thicknessId));
+        // Áp dụng bộ lọc
+        List<Product> filteredList = new ArrayList<>();
+        for (Product p : allProducts) { // Dùng allProducts ở đây
+            boolean matchesType = (productTypeId == null || productTypeId.isEmpty() || p.getTypeId().equals(productTypeId));
+            boolean matchesThickness = (thicknessId == null || p.getThickId() == null || p.getThickId().equals(thicknessId));
 
-        if (matchesType && matchesThickness) {
-            filteredList.add(p);
+            if (matchesType && matchesThickness) {
+                filteredList.add(p);
+            }
         }
-    }
 
-    for (Product p : filteredList) {
-        String thickName = "";
-        if (p.getThickId() != null) {
-            Thickness thick = thicknessDAO.findById(p.getThickId());
-            thickName = thick.getThick();
+        // Cập nhật productList của class với danh sách đã lọc
+        this.productList = filteredList; // DÒNG QUAN TRỌNG
+
+        for (Product p : filteredList) {
+            String thickName = "";
+            if (p.getThickId() != null) {
+                Thickness thick = thicknessDAO.findById(p.getThickId());
+                thickName = (thick != null) ? thick.getThick() : ""; // Kiểm tra null để tránh NullPointerException
+            }
+            Object[] row = {
+                p.getId(), p.getName(), p.getPhoto(), p.getQuantity(), p.getUnitPrice(), p.getDiscount(),
+                p.getTypeId(), thickName, false // Giả định cột cuối cùng là boolean cho checkbox
+            };
+            model.addRow(row);
         }
-        Object[] row = {
-            p.getId(), p.getName(), p.getPhoto(), p.getQuantity(), p.getUnitPrice(), p.getDiscount(),
-            p.getTypeId(), thickName
-        };
-        model.addRow(row);
+        updateNavigationButtons(); // Cập nhật trạng thái nút sau khi bảng được điền
     }
-}
      private void fillProductType() {
     typeList = productTypeDAO.findAll();
     cboCategory.removeAllItems();
@@ -548,7 +554,7 @@ public void deleteCheckedItems() {
     }
     
     private void showPriceChart (){
-        PriceChart dialog = new PriceChart((Frame)this.getOwner(),true);
+        PriceChart dialog = new PriceChart(null,true);
         dialog.setProductId(txtId.getText()); 
         dialog.setVisible(true);
     }
@@ -1115,8 +1121,8 @@ public void deleteCheckedItems() {
 
     private void ImportGoodsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportGoodsActionPerformed
         // TODO add your handling code here:
-        Importgoods importGoodsFrame = new Importgoods();
-        importGoodsFrame.setVisible(true);
+        Importgoods importGoodsDialog = new Importgoods(new javax.swing.JFrame(), true);
+        importGoodsDialog.setVisible(true);
     }//GEN-LAST:event_ImportGoodsActionPerformed
 
     private void cboThicknessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThicknessActionPerformed

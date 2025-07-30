@@ -7,7 +7,6 @@ package quanli.ton.dao.impl;
 import java.util.List;
 import quanli.ton.dao.ProductsDAO;
 import quanli.ton.entity.Product;
-import quanli.ton.ui.manager.Products;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
 
