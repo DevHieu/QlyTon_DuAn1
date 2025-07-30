@@ -12,4 +12,5 @@ import quanli.ton.entity.Customer;
  */
 public interface CustomerDao extends CrudDAO<Customer, String> {
     boolean isCustomerExisted(String phoneNumber);
+    String findNameByCustomerId(String customerId);
 }
