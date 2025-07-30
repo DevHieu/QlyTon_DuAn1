@@ -279,7 +279,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         });
         jPanel9.add(lblCloseMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(172, 2, 30, 30));
 
-        jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanli/ton/icons/logo_256.png"))); // NOI18N
+        jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logo_256.png"))); // NOI18N
         jPanel9.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(-20, 10, 220, 150));
 
         jLabel23.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -463,7 +463,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jSeparator3.setForeground(new java.awt.Color(0, 102, 102));
         jplSlideMenu.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 660, 210, 10));
 
-        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 820));
+        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 820));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setEnabled(false);
@@ -488,7 +488,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
-        lblOpenMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanli/ton/icons/menu.png"))); // NOI18N
+        lblOpenMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/menu.png"))); // NOI18N
         lblOpenMenu.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblOpenMenuMouseClicked(evt);

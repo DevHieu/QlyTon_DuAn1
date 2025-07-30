@@ -82,7 +82,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="0" width="210" height="820"/>
+              <AbsoluteConstraints x="0" y="0" width="0" height="820"/>
             </Constraint>
           </Constraints>
 
@@ -139,7 +139,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel22">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/quanli/ton/icons/logo_256.png"/>
+                      <Image iconType="3" name="/icons/logo_256.png"/>
                     </Property>
                   </Properties>
                   <Constraints>
@@ -615,7 +615,7 @@
             <Component class="javax.swing.JLabel" name="lblOpenMenu">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/quanli/ton/icons/menu.png"/>
+                  <Image iconType="3" name="/icons/menu.png"/>
                 </Property>
               </Properties>
               <Events>

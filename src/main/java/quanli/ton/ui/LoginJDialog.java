@@ -85,7 +85,6 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setPreferredSize(new java.awt.Dimension(800, 500));
@@ -94,23 +93,23 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         Left.setBackground(new java.awt.Color(0, 102, 102));
         Left.setPreferredSize(new java.awt.Dimension(400, 500));
 
-        jLabel5.setIcon(new javax.swing.ImageIcon("C:\\Users\\Admin\\Downloads\\logoTonHoaMai_trang-Photoroom.png")); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logoTonHoaMai_trang-Photoroom.png"))); // NOI18N
 
         javax.swing.GroupLayout LeftLayout = new javax.swing.GroupLayout(Left);
         Left.setLayout(LeftLayout);
         LeftLayout.setHorizontalGroup(
             LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LeftLayout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
+            .addGroup(LeftLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
                 .addComponent(jLabel5)
-                .addGap(49, 49, 49))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
         LeftLayout.setVerticalGroup(
             LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(LeftLayout.createSequentialGroup()
-                .addGap(83, 83, 83)
+                .addGap(97, 97, 97)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         jPanel1.add(Left);
@@ -148,7 +147,6 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
                 cbShowPassword5ActionPerformed(evt);
             }
         });
-      
         jPanel1.add(cbShowPassword5);
         cbShowPassword5.setBounds(611, 270, 120, 20);
 
