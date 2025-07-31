@@ -108,14 +108,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         setLocationRelativeTo(null); // căn giữa màn hình
         this.setIconImage(XIcon.getIcon("logo_512.png").getImage());
 
-        // if (!this.showWelcomeJDialog(this)) { // Để khi user nhấn nút tắt thì sẽ tắt
-        // luôn chương trình thay vì hiện tiếp login
-        // System.exit(0);
-        // }
-        // if (!this.showLoginJDialog(this)) { // Để khi user nhấn nút tắt thì sẽ tắt
-        // luôn chương trình thay vì hiện tiếp trang chính
-        // System.exit(0);
-        // }
+        if (!this.showWelcomeJDialog(this)) { // Để khi user nhấn nút tắt thì sẽ tắt luôn chương trình thay vì hiện tiếp login
+            System.exit(0);
+        }
+        if (!this.showLoginJDialog(this)) { // Để khi user nhấn nút tắt thì sẽ tắt luôn chương trình thay vì hiện tiếp trang chính
+            System.exit(0);
+        }
         XIcon.setIcon(lbAvatar, "img/avatars/" + XAuth.user.getPhoto());
         lbFullname.setText(XAuth.user.getFullname());
 
@@ -164,7 +162,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jPanel1 = new javax.swing.JPanel();
         lbFullname = new javax.swing.JLabel();
         lbAvatar = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtProductSearch = new javax.swing.JTextField();
         btnProductSearch = new javax.swing.JButton();
         lblOpenMenu = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
@@ -475,7 +473,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         lbAvatar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jTextField1.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtProductSearch.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         btnProductSearch.setBackground(new java.awt.Color(0, 102, 102));
         btnProductSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -812,6 +810,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jLabel21.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel21.setText("Danh sách sản phẩm:");
 
+        cboThickness.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboThicknessActionPerformed(evt);
+            }
+        });
+
         cboProductType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cboProductType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1037,7 +1041,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lbFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(319, 319, 319)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1053,7 +1057,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbFullname)
                             .addComponent(btnProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -1083,6 +1087,39 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductSearchActionPerformed
+        // TODO add your handling code here:
+        String textInput = txtProductSearch.getText();
+        cboProductType.setSelectedIndex(0);
+        cboThickness.removeAll();
+        if (textInput.equals("")) {
+            productList = productDao.findAll();
+        } else {
+            productList = productDao.findProductByName(textInput);
+        }
+
+        this.loadProduct();
+    }//GEN-LAST:event_btnProductSearchActionPerformed
+
+    private void cboProductTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboProductTypeActionPerformed
+        // TODO add your handling code here:
+        int index = cboProductType.getSelectedIndex();
+        if (index > 0) {
+            ProductType type = typeList.get(index - 1); // Do trong combo box có thêm 'Tất cả' nên size = typeList + 1
+            // => phải trừ 1
+            this.fillThicknesCbo(type.getId());
+        } else {
+            cboThickness.removeAll();
+        }
+
+        this.applyFilters();
+    }//GEN-LAST:event_cboProductTypeActionPerformed
+
+    private void cboThicknessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThicknessActionPerformed
+        // TODO add your handling code here:
+        this.applyFilters();
+    }//GEN-LAST:event_cboThicknessActionPerformed
 
     private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtDepositKeyReleased
         // TODO add your handling code here:
@@ -1146,18 +1183,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.clear();
     }// GEN-LAST:event_btnRefreshActionPerformed
 
-    private void cboProductTypeActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cboProductTypeActionPerformed
-        // TODO add your handling code here:
-        int index = cboProductType.getSelectedIndex();
-        if (index > 0) {
-            ProductType type = typeList.get(index - 1); // Do trong combo box có thêm 'Tất cả' nên size = typeList + 1
-            // => phải trừ 1
-            this.fillThicknesCbo(type.getId());
-        } else {
-            cboThickness.removeAll();
-        }
-    }// GEN-LAST:event_cboProductTypeActionPerformed
-
     private void txtBeginActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtBeginActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txtBeginActionPerformed
@@ -1186,10 +1211,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         // TODO add your handling code here:
 
     }// GEN-LAST:event_cboSearchTypeActionPerformed
-
-    private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnProductSearchActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_btnProductSearchActionPerformed
 
     private void lbRevenueMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbRevenueMouseClicked
         // TODO add your handling code here:
@@ -1349,7 +1370,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel jplSlideMenu;
     private javax.swing.JLabel lbAvatar;
     private javax.swing.JLabel lbBills;
@@ -1381,6 +1401,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JTextArea txtNote;
     private javax.swing.JLabel txtOverall;
     private javax.swing.JTextField txtPhoneNumber;
+    private javax.swing.JTextField txtProductSearch;
     private javax.swing.JLabel txtRemaining;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JLabel txtStatus;
@@ -1502,7 +1523,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     public void open() {
         this.fillBill(currentBill);
         this.fillTypeCbo();
-        this.fillProductList(false, false);
+        this.fillProductList(null, null);
         this.fillBillsToTable();
         this.selectTimeRange();
         isBillChanging = false;
@@ -1536,7 +1557,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         txtNote.setText(entity.getNote());
 
         billDetailsList = billDetailDao.findByBillId(entity.getId()); // Trường hợp vừa mở ứng dụng hoặc clear form =>
-                                                                      // null
+        // null
 
         this.fillBillDetail();
         this.fillCustomer(entity.getCustomerId());
@@ -1548,7 +1569,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         if (billDetailsList == null) {
             billDetailsList = new ArrayList<>(); // Nếu như billDetailsList = null => tạo thành 1 array list để thêm
-                                                 // product
+            // product
         }
 
         DefaultTableModel model = (DefaultTableModel) tblBillDetails.getModel();
@@ -1572,15 +1593,15 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             overallTotal += itemTotal;
 
             Object[] rowData = {
-                    stt++, // STT tăng đều
-                    item.getProductId(),
-                    item.getProductName(),
-                    moneyFormat.format(item.getUnitPrice()),
-                    item.getQuantity(),
-                    (item.getLength() != 0 ? item.getLength() + "m" : "-"),
-                    String.format("%.0f%%", item.getDiscount()),
-                    moneyFormat.format(itemTotal),
-                    false
+                stt++, // STT tăng đều
+                item.getProductId(),
+                item.getProductName(),
+                moneyFormat.format(item.getUnitPrice()),
+                item.getQuantity(),
+                (item.getLength() != 0 ? item.getLength() + "m" : "-"),
+                String.format("%.0f%%", item.getDiscount()),
+                moneyFormat.format(itemTotal),
+                false
             };
 
             model.addRow(rowData);
@@ -1755,21 +1776,22 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     // isType: Có lọc bằng type hay không
     // isThickness: có lọc bằng thickness hay không
     @Override
-    public void fillProductList(boolean isType, boolean isThickness) {
-        productList = productDao.findAll();
-        // if (!isType) {
-        // productList = productDao.findAll();
-        // } else {
-        // if (!isThickness) {
-        // productList
-        // }
-        // }
+    public void fillProductList(String typeId, Integer thickId) {
+        if (typeId == null) {
+            productList = productDao.findAll();
+        } else if (thickId == null) {
+            productList = productDao.findProductByType(typeId);
+        } else {
+            productList = productDao.findProductByThick(thickId);
+        }
         this.loadProduct();
     }
 
     private void loadProduct() {// tải và hiển thị các thẻ lên cửa sổ bán hàng
         pnlProducts.removeAll();
         productList.forEach(product -> pnlProducts.add(this.createProduct(product)));
+        pnlProducts.revalidate();
+        pnlProducts.repaint();
     }
 
     private JPanel createProduct(Product product) {
@@ -1932,11 +1954,11 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             String name = customerDao.findNameByCustomerId(item.getCustomerId());
 
             Object[] rowData = {
-                    item.getId(),
-                    item.getUsername(),
-                    name,
-                    item.getCheckin(),
-                    item.getCheckout()
+                item.getId(),
+                item.getUsername(),
+                name,
+                item.getCheckin(),
+                item.getCheckout()
             };
             model.addRow(rowData);
         });
@@ -1992,5 +2014,31 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             default:
                 throw new AssertionError();
         }
+    }
+
+    private void applyFilters() {
+        String selectedProductTypeId = null;
+        Integer selectedThicknessId = null;
+
+        // Lấy TypeId từ cboCategory
+        int categoryIndex = cboProductType.getSelectedIndex();
+        if (categoryIndex > 0) { // Nếu không phải "Tất cả"
+            ProductType selectedType = typeList.get(categoryIndex - 1);
+            selectedProductTypeId = selectedType.getId();
+        }
+
+        // Lấy ThicknessId từ cboThickness
+        int thicknessIndex = cboThickness.getSelectedIndex();
+        if (thicknessIndex > 0 && cboThickness.getItemCount() > 0) { // Nếu không phải "Tất cả" và có mục nào đó
+            String selectedThickName = (String) cboThickness.getSelectedItem();
+            // Tìm Thickness object từ thicknessList dựa vào selectedThickName để lấy ID
+            for (Thickness thick : thickList) {
+                if (thick.getThick().equals(selectedThickName)) {
+                    selectedThicknessId = thick.getId();
+                    break;
+                }
+            }
+        }
+        fillProductList(selectedProductTypeId, selectedThicknessId);
     }
 }

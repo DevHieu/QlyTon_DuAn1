@@ -1,35 +1,33 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package quanli.ton.ui;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Frame;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import static javax.swing.SwingConstants.CENTER;
+import static javax.swing.SwingConstants.LEFT;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import quanli.ton.controller.HistoryController;
 import quanli.ton.dao.BillDao;
-import quanli.ton.dao.impl.BillDaoImpl;
 import quanli.ton.entity.Bills;
 import quanli.ton.util.TimeRange;
-import quanli.ton.util.XAuth;
 import quanli.ton.util.XDate;
 
 /**
  *
- * @author huynhtrunghieu
+ * @author hieud
  */
-    public class History extends javax.swing.JDialog implements HistoryController {
+public class HistoryJDialog extends javax.swing.JDialog implements HistoryController{
+
     private BillDao billDao; // Sử dụng interface
     private List<Bills> bills; // Danh sách hóa đơn cho hiển thị và chi tiết
 
@@ -150,15 +148,12 @@ import quanli.ton.util.XDate;
         // Khi chọn combobox thì cập nhật lại bảng
         fillBills();
     }
-
     /**
-     * Creates new form History
+     * Creates new form HistoryJDialog
      */
-    public History() {
+    public HistoryJDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
-        billDao = new BillDaoImpl(); // Khởi tạo BillDaoImpl
-        initTable(); // Khởi tạo cấu trúc bảng
-        this.open(); // Đặt vị trí và điền dữ liệu ban đầ
     }
 
     /**
@@ -180,11 +175,6 @@ import quanli.ton.util.XDate;
         jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
-        });
 
         jLabel1.setText("Từ Ngày");
 
@@ -244,7 +234,7 @@ import quanli.ton.util.XDate;
                     .addGroup(layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 832, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,7 +249,7 @@ import quanli.ton.util.XDate;
                     .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 491, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -270,22 +260,17 @@ import quanli.ton.util.XDate;
         this.fillBills();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        // TODO add your handling code here:
-                 this.open();
-    }//GEN-LAST:event_formWindowOpened
-
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        // TODO add your handling code here:
-         if (evt.getClickCount() == 2) {
-            this.showBillJDialog();
-        }
-    }//GEN-LAST:event_jTable1MouseClicked
-
     private void cboTimeRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangesActionPerformed
         // TODO add your handling code here:
         this.selectTimeRange();
     }//GEN-LAST:event_cboTimeRangesActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            this.showBillJDialog();
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -304,20 +289,27 @@ import quanli.ton.util.XDate;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(History.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(History.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(History.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(History.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HistoryJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new History().setVisible(true);
+                HistoryJDialog dialog = new HistoryJDialog(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
@@ -332,5 +324,4 @@ import quanli.ton.util.XDate;
     private javax.swing.JTextField txtBegin;
     private javax.swing.JTextField txtEnd;
     // End of variables declaration//GEN-END:variables
-
 }

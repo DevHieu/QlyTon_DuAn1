@@ -21,7 +21,10 @@ public class ProductsDAOimpl implements ProductsDAO {
     String deleteSql = "DELETE FROM Products WHERE Id=?";
     String findAllSql = "SELECT * FROM Products";
     String findByIdSql = "SELECT * FROM Products WHERE Id=?";
-    String importProduct =  "{CALL ImportProduct(?, ?)}";
+    String importProduct =  "{CALL ImportProduct(?, ?, ?)}";
+    String findProductByNameSql = "SELECT * FROM Products WHERE Name = ?";
+    String findProductByTypeSql = "SELECT * FROM Products WHERE TypeId = ?";
+    String findProductByThickSql = "SELECT * FROM Products WHERE ThickID = ?";
 
     @Override
     public void update(Product product) {
@@ -62,6 +65,19 @@ public class ProductsDAOimpl implements ProductsDAO {
 //        XJdbc.executeUpdate(insertSql, id, quantity);
 //    }
 
-
+        @Override
+    public List<Product> findProductByName(String textInput) {
+        return XQuery.getBeanList(Product.class, findProductByNameSql, textInput);
+    }
+    
+        @Override
+    public List<Product> findProductByType(String id) {
+        return XQuery.getBeanList(Product.class, findProductByTypeSql, id);
+    }
+    
+        @Override
+    public List<Product> findProductByThick(int id) {
+        return XQuery.getBeanList(Product.class, findProductByThickSql, id);
+    }
 }
 
