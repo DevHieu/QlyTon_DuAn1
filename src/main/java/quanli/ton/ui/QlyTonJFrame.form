@@ -82,7 +82,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="0" width="210" height="820"/>
+              <AbsoluteConstraints x="0" y="0" width="0" height="820"/>
             </Constraint>
           </Constraints>
 
@@ -139,7 +139,7 @@
                 <Component class="javax.swing.JLabel" name="jLabel22">
                   <Properties>
                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/quanli/ton/icons/logo_256.png"/>
+                      <Image iconType="3" name="/icons/logo_256.png"/>
                     </Property>
                   </Properties>
                   <Constraints>
@@ -509,7 +509,7 @@
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="lbFullname" min="-2" pref="374" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="319" max="-2" attributes="0"/>
-                              <Component id="jTextField1" min="-2" pref="250" max="-2" attributes="0"/>
+                              <Component id="txtProductSearch" min="-2" pref="250" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnProductSearch" min="-2" pref="76" max="-2" attributes="0"/>
                           </Group>
@@ -530,7 +530,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jTextField1" alignment="0" min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="txtProductSearch" alignment="0" min="-2" pref="27" max="-2" attributes="0"/>
                                   <Component id="lbFullname" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnProductSearch" alignment="0" min="-2" pref="27" max="-2" attributes="0"/>
                               </Group>
@@ -570,7 +570,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="jTextField1">
+            <Component class="javax.swing.JTextField" name="txtProductSearch">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
@@ -615,7 +615,7 @@
             <Component class="javax.swing.JLabel" name="lblOpenMenu">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/quanli/ton/icons/menu.png"/>
+                  <Image iconType="3" name="/icons/menu.png"/>
                 </Property>
               </Properties>
               <Events>
@@ -1338,6 +1338,9 @@
                           <StringArray count="0"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboThicknessActionPerformed"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                       </AuxValues>

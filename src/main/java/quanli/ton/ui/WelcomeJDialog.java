@@ -15,6 +15,12 @@ import quanli.ton.controller.WelcomeController;
  */
 public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeController {
 
+    private boolean proceed = false;
+
+    public boolean isProceed() {
+        return proceed;
+    }
+
     /**
      * Creates new form WelcomeJDialog
      */
@@ -24,23 +30,23 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
         progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI());
         this.waiting();
     }
-    
-    @Override 
-    public void waiting() {
-    this.setLocationRelativeTo(null);
-    new Thread(() -> {
-        try {
-            for (var i = 0; i <= 100; i++) {
-                progressBar.setValue(i);
-                Thread.sleep(10);
-            }
-            WelcomeJDialog.this.dispose();
-        } catch (InterruptedException ex) {
-            System.exit(0);
-        }
-    }).start();
-    }
 
+    @Override
+    public void waiting() {
+        this.setLocationRelativeTo(null);
+        new Thread(() -> {
+            try {
+                for (var i = 0; i <= 100; i++) {
+                    progressBar.setValue(i);
+                    Thread.sleep(10);
+                }
+                proceed = true;
+                WelcomeJDialog.this.dispose();
+            } catch (InterruptedException ex) {
+                System.exit(0);
+            }
+        }).start();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

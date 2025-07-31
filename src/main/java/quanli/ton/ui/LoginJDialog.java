@@ -16,7 +16,13 @@ import quanli.ton.util.XDialog;
  *
  * @author hieud
  */
-public class LoginJDialog extends javax.swing.JDialog implements LoginController{
+public class LoginJDialog extends javax.swing.JDialog implements LoginController {
+
+    private boolean proceed = false;
+
+    public boolean isProceed() {
+        return proceed;
+    }
 
     /**
      * Creates new form LoginJDialog
@@ -25,19 +31,19 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         super(parent, modal);
         initComponents();
         open();
-        }
+    }
 
-            @Override
-        public void open() {
-            this.setLocationRelativeTo(null);
-        }
+    @Override
+    public void open() {
+        this.setLocationRelativeTo(null);
+    }
 
-        @Override
-        public void login() {
-            String username = txtUsername.getText();
-            String password = txtPassword.getText();
+    @Override
+    public void login() {
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
 
-            if (username.isEmpty() && password.isEmpty()) {
+        if (username.isEmpty() && password.isEmpty()) {
             XDialog.alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
             return;
         } else if (username.isEmpty()) {
@@ -48,19 +54,20 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             return;
         }
 
-            UserDao dao = (UserDao) new UserDAOImpl();
-            User user = dao.findById(username);
-            if (user == null) {
-                XDialog.alert("Sai tên đăng nhập!");
-            } else if (!password.equals(user.getPassword())) {
-                XDialog.alert("Sai mật khẩu đăng nhập!");
-            } else if (!user.isEnabled()) {
-                XDialog.alert("Tài khoản của bạn đang tạm dừng!");
-            } else {
-                XAuth.user = user; // duy trì user đăng nhập
-                this.dispose();
-            }  
+        UserDao dao = (UserDao) new UserDAOImpl();
+        User user = dao.findById(username);
+        if (user == null) {
+            XDialog.alert("Sai tên đăng nhập!");
+        } else if (!password.equals(user.getPassword())) {
+            XDialog.alert("Sai mật khẩu đăng nhập!");
+        } else if (!user.isEnabled()) {
+            XDialog.alert("Tài khoản của bạn đang tạm dừng!");
+        } else {
+            XAuth.user = user; // duy trì user đăng nhập
+            proceed = true;
+            this.dispose();
         }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -94,23 +101,23 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         Left.setBackground(new java.awt.Color(0, 102, 102));
         Left.setPreferredSize(new java.awt.Dimension(400, 500));
 
-        jLabel5.setIcon(new javax.swing.ImageIcon("C:\\Users\\Admin\\Downloads\\logoTonHoaMai_trang-Photoroom.png")); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/logoTonHoaMai_trang-Photoroom.png"))); // NOI18N
 
         javax.swing.GroupLayout LeftLayout = new javax.swing.GroupLayout(Left);
         Left.setLayout(LeftLayout);
         LeftLayout.setHorizontalGroup(
             LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LeftLayout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
+            .addGroup(LeftLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
                 .addComponent(jLabel5)
-                .addGap(49, 49, 49))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
         LeftLayout.setVerticalGroup(
             LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(LeftLayout.createSequentialGroup()
-                .addGap(83, 83, 83)
+                .addGap(97, 97, 97)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         jPanel1.add(Left);
@@ -196,7 +203,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 423, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();

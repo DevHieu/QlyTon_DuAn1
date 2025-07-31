@@ -5,6 +5,8 @@
 package quanli.ton.ui.manager;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Window;
 import java.util.List;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartFactory;
@@ -16,24 +18,25 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.dao.ProductPriceHistoryDAO;
 import quanli.ton.dao.impl.ProductPriceHistoryDAOImpl;
 import quanli.ton.entity.ProductPriceHistory;
-
 /**
  *
  * @author huynhtrunghieu
  */
 public class PriceChart extends javax.swing.JDialog {
-    String productId;
+    
+     String productId;
     
     public void setProductId(String productId) {
         this.productId = productId;
     }
+
     /**
      * Creates new form PriceChart
      */
-    public PriceChart(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-    }
+   public PriceChart(Window parent, boolean modal) { // Đã đổi Dialog thành Window
+    initComponents();
+    // ...
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,35 +47,21 @@ public class PriceChart extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        priceChartPanel = new javax.swing.JPanel();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
-        });
-
-        priceChartPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(priceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(priceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        // TODO add your handling code here:
-       // this.open();
-    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -117,56 +106,5 @@ public class PriceChart extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel priceChartPanel;
     // End of variables declaration//GEN-END:variables
-
-//    public void open (){       
-//        JFreeChart lineChart = ChartFactory.createLineChart(
-//         "Biến đọng giá của sản phẩm",
-//         "Years","Number of Schools",
-//         createDataset(),
-//         PlotOrientation.VERTICAL,
-//         true,true,false);
-//         
-//      ChartPanel chartPanel = new ChartPanel( lineChart );
-//      chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
-//      setContentPane( chartPanel );
-//    }
-//    
-//    private DefaultCategoryDataset createDataset( ) {
-//            DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
-//            dataset.addValue( 15 , "schools" , "1970" );
-//            dataset.addValue( 30 , "schools" , "1980" );
-//            dataset.addValue( 60 , "schools" ,  "1990" );
-//            dataset.addValue( 120 , "schools" , "2000" );
-//            dataset.addValue( 240 , "schools" , "2010" );
-//            dataset.addValue( 300 , "schools" , "2014" );
-//            return dataset;
-//         }
-    
-    //private void open() {
-       // ProductPriceHistoryDAO dao = new ProductPriceHistoryDAOImpl();
-       // List<ProductPriceHistory> list = dao.findAllById(productId);
-        
-       // ChartPanel chartPanel = createLineChartPanel(list);
-       // priceChartPanel.removeAll();                   // xoá sạch bên trong
-       // priceChartPanel.setLayout(new BorderLayout()); // đảm bảo layout
-      //  priceChartPanel.add(chartPanel, BorderLayout.CENTER); // add vào giữa
-       // priceChartPanel.revalidate();
-      //  priceChartPanel.repaint();
-    }
-
-    //private ChartPanel createLineChartPanel(List<ProductPriceHistory> items) {
-        //DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        //items.forEach(item -> dataset.setValue(Number.valueOf(item.getImportPrice()),"Giá (VNĐ)", item.getEffectiveDate()));
-
-
-        //JFreeChart chart = ChartFactory.createPieChart(
-              //  "Số lượng bán ra", dataset, true, true, false);
-
-        //PiePlot plot = (PiePlot) chart.getPlot();
-        //plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})"));
-
-        //return new ChartPanel(chart);
-   // }
-
+}

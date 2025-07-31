@@ -11,11 +11,12 @@ import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
 import quanli.ton.ui.ChangePassword;
-import quanli.ton.ui.History;
+import quanli.ton.ui.HistoryJDialog;
 import quanli.ton.ui.LoginJDialog;
 import quanli.ton.ui.WelcomeJDialog;
 import quanli.ton.ui.manager.BillManagerJDialog;
 import quanli.ton.ui.manager.CustomerManagerJDialog;
+import quanli.ton.ui.manager.ProductJDialog;
 import quanli.ton.ui.manager.ProductTypeJDialog;
 import quanli.ton.ui.manager.RevenueManager;
 import quanli.ton.ui.manager.ThicknessJDialog;
@@ -54,7 +55,7 @@ public interface QlyTonController {
 
     boolean isValidInput();
 
-    void fillProductList(boolean isType, boolean isThickness);
+    void fillProductList(String typeId, Integer thickId);
 
     void fillTypeCbo();
 
@@ -77,25 +78,26 @@ public interface QlyTonController {
         dialog.setVisible(true);
     }
 
-//    default boolean showWelcomeJDialog(JFrame frame){
-//        WelcomeJDialog dialog = new WelcomeJDialog(frame, true);
-//        dialog.setLocationRelativeTo(null);
-//        dialog.setVisible(true);
-//        return dialog.isProceed();
-//    }
-//    default boolean showLoginJDialog(JFrame frame){
-//        LoginJDialog dialog = new LoginJDialog(frame, true);
-//        dialog.setLocationRelativeTo(null);
-//        dialog.setVisible(true);
-//        return dialog.isProceed();
-//    }
+    default boolean showWelcomeJDialog(JFrame frame){
+        WelcomeJDialog dialog = new WelcomeJDialog(frame, true);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+        return dialog.isProceed();
+    }
+    
+    default boolean showLoginJDialog(JFrame frame){
+        LoginJDialog dialog = new LoginJDialog(frame, true);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+        return dialog.isProceed();
+    }
+    
     default void showChangePasswordJDialog(JFrame frame) {
         this.showJDialog(new ChangePassword(frame, true));
     }
 
     default void showHistoryJDialog(JFrame frame) {
-        XDialog.alert("Chưa có chức năng");
-//        this.showJDialog(new History(frame, true));
+        this.showJDialog(new HistoryJDialog(frame, true));
     }
 
     default void showRevenueManagerJDialog(JFrame frame) {
@@ -111,8 +113,7 @@ public interface QlyTonController {
     }
 
     default void showProductManagerJDialog(JFrame frame) {
-        XDialog.alert("Chưa có chức năng");
-//        this.showJDialog(new ProductManagerJDialog(frame, true));
+        this.showJDialog(new ProductJDialog(frame, true));
     }
 
     default void showProductTypeManagerJDialog(JFrame frame) {
