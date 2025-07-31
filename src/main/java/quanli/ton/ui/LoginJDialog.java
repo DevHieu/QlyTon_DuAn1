@@ -16,7 +16,13 @@ import quanli.ton.util.XDialog;
  *
  * @author hieud
  */
-public class LoginJDialog extends javax.swing.JDialog implements LoginController{
+public class LoginJDialog extends javax.swing.JDialog implements LoginController {
+
+    private boolean proceed = false;
+
+    public boolean isProceed() {
+        return proceed;
+    }
 
     /**
      * Creates new form LoginJDialog
@@ -25,19 +31,19 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         super(parent, modal);
         initComponents();
         open();
-        }
+    }
 
-            @Override
-        public void open() {
-            this.setLocationRelativeTo(null);
-        }
+    @Override
+    public void open() {
+        this.setLocationRelativeTo(null);
+    }
 
-        @Override
-        public void login() {
-            String username = txtUsername.getText();
-            String password = txtPassword.getText();
+    @Override
+    public void login() {
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
 
-            if (username.isEmpty() && password.isEmpty()) {
+        if (username.isEmpty() && password.isEmpty()) {
             XDialog.alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
             return;
         } else if (username.isEmpty()) {
@@ -48,19 +54,21 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             return;
         }
 
-            UserDao dao = (UserDao) new UserDAOImpl();
-            User user = dao.findById(username);
-            if (user == null) {
-                XDialog.alert("Sai tên đăng nhập!");
-            } else if (!password.equals(user.getPassword())) {
-                XDialog.alert("Sai mật khẩu đăng nhập!");
-            } else if (!user.isEnabled()) {
-                XDialog.alert("Tài khoản của bạn đang tạm dừng!");
-            } else {
-                XAuth.user = user; // duy trì user đăng nhập
-                this.dispose();
-            }  
+        UserDao dao = (UserDao) new UserDAOImpl();
+        User user = dao.findById(username);
+        if (user == null) {
+            XDialog.alert("Sai tên đăng nhập!");
+        } else if (!password.equals(user.getPassword())) {
+            XDialog.alert("Sai mật khẩu đăng nhập!");
+        } else if (!user.isEnabled()) {
+            XDialog.alert("Tài khoản của bạn đang tạm dừng!");
+        } else {
+            XAuth.user = user; // duy trì user đăng nhập
+            proceed = true;
+            this.dispose();
         }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -195,7 +203,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 423, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
