@@ -58,7 +58,7 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
 
             // Thay màu chữ %
             UIManager.put("ProgressBar.selectionForeground", Color.BLACK);
-            UIManager.put("ProgressBar.selectionBackground", Color.BLACK);
+            UIManager.put("ProgressBar.selectionBackground", new Color(0, 102, 102));
         }};
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -72,7 +72,7 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
 
         progressBar.setBackground(new java.awt.Color(255, 255, 255));
         progressBar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        progressBar.setForeground(new java.awt.Color(0, 204, 204));
+        progressBar.setForeground(new java.awt.Color(200, 255, 255));
         progressBar.setOpaque(true);
         progressBar.setStringPainted(true);
 
@@ -82,21 +82,19 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(140, 140, 140)
-                .addComponent(jLabel1)
-                .addContainerGap(150, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 590, 320));
