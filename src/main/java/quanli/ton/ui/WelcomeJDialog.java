@@ -27,6 +27,7 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
     public WelcomeJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.setLocationRelativeTo(null);
         progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI());
         this.waiting();
     }
@@ -78,7 +79,7 @@ public class WelcomeJDialog extends javax.swing.JDialog implements WelcomeContro
 
         progressBar.setBackground(new java.awt.Color(255, 255, 255));
         progressBar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        progressBar.setForeground(new java.awt.Color(200, 255, 255));
+        progressBar.setForeground(new java.awt.Color(198, 255, 255));
         progressBar.setOpaque(true);
         progressBar.setStringPainted(true);
 

@@ -95,7 +95,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setPreferredSize(new java.awt.Dimension(800, 500));
+        jPanel2.setPreferredSize(new java.awt.Dimension(800, 450));
         jPanel2.setLayout(null);
 
         jPanel1.setBackground(new java.awt.Color(0, 102, 102));
@@ -108,23 +108,23 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(18, 18, 18)
                 .addComponent(jLabel6)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(95, 95, 95)
+                .addGap(80, 80, 80)
                 .addComponent(jLabel6)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(175, Short.MAX_VALUE))
         );
 
         jPanel2.add(jPanel1);
         jPanel1.setBounds(0, 0, 340, 500);
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel5.setText("Xác Nhận Mật Khẩu Mới");
+        jLabel5.setText("Xác nhận mật khẩu mới:");
         jPanel2.add(jLabel5);
         jLabel5.setBounds(580, 230, 180, 20);
 
@@ -169,7 +169,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         txtCurrentPassword.setBounds(580, 180, 200, 30);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setText("Mật Khẩu Mới");
+        jLabel4.setText("Mật khẩu mới:");
         jPanel2.add(jLabel4);
         jLabel4.setBounds(360, 230, 120, 20);
 
@@ -191,12 +191,12 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jButton1.setBounds(580, 330, 90, 40);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setText("Tên Đăng Nhập");
+        jLabel2.setText("Tên đăng nhập:");
         jPanel2.add(jLabel2);
         jLabel2.setBounds(360, 150, 130, 20);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setText("Mật Khẩu Hiện Tại");
+        jLabel3.setText("Mật khẩu hiện tại:");
         jPanel2.add(jLabel3);
         jLabel3.setBounds(580, 150, 150, 20);
 

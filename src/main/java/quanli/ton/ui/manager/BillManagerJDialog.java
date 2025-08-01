@@ -4,6 +4,7 @@
  */
 package quanli.ton.ui.manager;
 
+import java.awt.Font;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +61,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         groupStatus = new javax.swing.ButtonGroup();
+        jPanel3 = new javax.swing.JPanel();
         tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -104,6 +106,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         txtPhoneNumber = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtAddress = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -120,6 +124,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Quản lí phiếu");
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        tabs.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         tblBills.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -184,12 +194,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         });
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel7.setText("Từ ngày");
+        jLabel7.setText("Từ ngày:");
 
         txtBegin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel8.setText("Đến ngày");
+        jLabel8.setText("Đến ngày:");
 
         btnFilter.setBackground(new java.awt.Color(0, 102, 102));
         btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -254,7 +264,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                     .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDeleteCheckedItems, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -264,6 +274,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         );
 
         tabs.addTab("DANH SÁCH", jPanel1);
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
         btnCreate.setBackground(new java.awt.Color(0, 102, 102));
         btnCreate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -345,29 +357,41 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
-        jLabel1.setText("Mã phiếu");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setText("Mã phiếu:");
 
         txtId.setEditable(false);
+        txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtId.setEnabled(false);
 
-        jLabel3.setText("Thời điểm tạo");
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Thời điểm tạo:");
 
-        jLabel4.setText("Thời điểm thanh toán");
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setText("Thời điểm thanh toán:");
 
-        jLabel6.setText("Trạng thái");
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setText("Trạng thái:");
 
         groupStatus.add(rdoProcessing);
+        rdoProcessing.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         rdoProcessing.setText("Processing");
 
         groupStatus.add(rdoComplete);
+        rdoComplete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         rdoComplete.setText("Completed");
 
         groupStatus.add(rdoCanceled);
+        rdoCanceled.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         rdoCanceled.setText("Canceled");
 
-        jLabel9.setText("Người tạo");
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setText("Người tạo:");
 
-        jLabel10.setText("Phiếu chi tiết");
+        txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel10.setText("Phiếu chi tiết:");
 
         tblBillDetails.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -391,17 +415,25 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         txtCheckin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
 
-        jLabel2.setText("Tên Khách hàng");
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel2.setText("Tên khách hàng:");
 
-        jLabel11.setText("Số điện thoại");
+        txtCustomerName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel11.setText("Số điện thoại:");
+
+        txtPhoneNumber.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtPhoneNumber.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtPhoneNumberFocusLost(evt);
             }
         });
 
-        jLabel5.setText("Địa chỉ");
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Địa chỉ:");
+
+        txtAddress.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -421,7 +453,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                                 .addComponent(btnDelete)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnClear)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
                                 .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -471,27 +503,27 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCheckin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCheckin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -501,7 +533,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                     .addComponent(rdoProcessing)
                     .addComponent(rdoComplete)
                     .addComponent(rdoCanceled)
-                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -523,20 +555,57 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         tabs.addTab("BIỂU MẪU", jPanel2);
 
+        jLabel12.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel12.setText("QUẢN LÝ PHIẾU BÁN HÀNG");
+
+        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 854, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(tabs)
+                        .addComponent(jSeparator2)
+                        .addGroup(jPanel3Layout.createSequentialGroup()
+                            .addGap(250, 250, 250)
+                            .addComponent(jLabel12)
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addContainerGap()))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 650, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel12)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabs))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabs)
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -680,6 +749,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -690,10 +760,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTable jTable1;
     private javax.swing.JRadioButton rdoCanceled;
     private javax.swing.JRadioButton rdoComplete;
@@ -776,6 +848,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         this.setLocationRelativeTo(null);
         this.selectTimeRange();
         this.clear();
+        tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        
     }
 
     @Override
