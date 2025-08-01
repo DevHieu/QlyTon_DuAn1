@@ -126,6 +126,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         tblBillDetails.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(this));
         tblBillDetails.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer());
         tblBillDetails.getColumnModel().getColumn(8).setCellEditor(new ButtonEditor(this));
+        
+        tabMain.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
 
     /**
@@ -1521,12 +1523,14 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     @Override
     public void open() {
+        this.setLocationRelativeTo(null);
         this.fillBill(currentBill);
         this.fillTypeCbo();
         this.fillProductList(null, null);
         this.fillBillsToTable();
         this.selectTimeRange();
         isBillChanging = false;
+        tabMain.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
 
     @Override
