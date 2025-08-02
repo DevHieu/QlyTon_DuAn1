@@ -65,7 +65,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         } else {
             // Kiểm tra username có chính xác không (phân biệt chữ hoa/thường)
             if (!username.equals(user.getUsername())) {
-                XDialog.alert("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại chữ hoa/thường.");
+                XDialog.alert("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại.");
                 return;
             }
             XAuth.user = user; // duy trì user đăng nhập
