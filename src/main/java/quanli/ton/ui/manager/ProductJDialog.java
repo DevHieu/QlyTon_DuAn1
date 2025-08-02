@@ -85,51 +85,78 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     /**
      * Creates new form Products
      */
-    private void fillComboBox() {
-        cboModel.removeAllItems();
-        cboModel.addItem(""); // Mục trống để người dùng có thể không chọn
-        List<Product> types = productsDAO.findAll(); // Giả sử có phương thức này
-        for (Product type : types) {
-            cboModel.addItem(type.getId());
-        }
-    }
+    @Override
+    public void setForm(Product product) {
+    txtId.setText(product.getId());
+    txtName.setText(product.getName());
+    txtQuantity.setText(String.valueOf(product.getQuantity())); // Đã sửa từ getUnitPrice()
+    slGiamGia.setValue((int) product.getDiscount());
+    txtDiscountPercent.setText(product.getDiscount() + "%");
+    txtUnitPrice.setText(String.valueOf(product.getUnitPrice())); // Thêm dòng này
+    txtId.setEditable(false); 
 
-    private void setForm(Product product) {
-        txtId.setText(product.getId());
-        txtName.setText(product.getName());
-        txtUnitPrice.setText(String.valueOf(product.getUnitPrice()));
-        slGiamGia.setValue((int) product.getDiscount());
-        txtDiscountPercent.setText(product.getDiscount() + "%");
-
-        cboModel.setSelectedItem(product.getTypeId());
-//        jTextField1.setText(product.getTypeId());
-//        cboThickness2.setText(String.valueOf(product.getThickId())); // thickId là số nguyên
-//        jTextField3.setText(String.valueOf(product.getQuantity()));
-
-        if (product.getPhoto() != null && !product.getPhoto().isEmpty()) {
-            try {
-                ImageIcon icon = new ImageIcon(product.getPhoto());
-                lblImage.setIcon(icon);
-                lblImage.setText(""); // Xóa bất kỳ văn bản nào
-            } catch (Exception e) {
-                lblImage.setIcon(null);
-                lblImage.setText("Không có hình ảnh");
-                e.printStackTrace();
+    if (product.getTypeId() != null) {
+        ProductType selectedProductType = null;
+        for (ProductType type : typeList) {
+            if (type.getId().equals(product.getTypeId())) {
+                selectedProductType = type;
+                break;
             }
+        }
+        if (selectedProductType != null) {
+            cboModel.setSelectedItem(selectedProductType.getName());
+            filljComboBox1(selectedProductType.getId()); // Gọi để điền cboThickness2 với các độ dày liên quan
         } else {
+            cboModel.setSelectedIndex(0);
+            filljComboBox1(null); // Điền cboThickness2 với tất cả độ dày nếu không có loại nào được chọn
+        }
+    } else {
+        cboModel.setSelectedIndex(0);
+        filljComboBox1(null); // Điền cboThickness2 với tất cả độ dày nếu không có loại nào được chọn
+    } 
+    
+    // Phần quan trọng để sửa lỗi độ dày
+    if (product.getThickId() != null) {
+        // Lấy đối tượng Thickness trực tiếp từ DAO
+        Thickness selectedThickness = thicknessDAO.findById(product.getThickId()); 
+        if (selectedThickness != null) {
+            // Sau khi cboThickness2 đã được điền, setSelectedItem
+            cboThickness2.setSelectedItem(selectedThickness.getThick());
+        } else {
+            cboThickness2.setSelectedIndex(0);
+        }
+    } else {
+        cboThickness2.setSelectedIndex(0);
+    } 
+        
+    if (product.getPhoto() != null && !product.getPhoto().isEmpty()) {
+        try {
+            ImageIcon icon = new ImageIcon(product.getPhoto());
+            lblImage.setIcon(icon);
+            lblImage.setText(""); 
+            lblImage.setToolTipText(product.getPhoto()); 
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải hình ảnh: " + e.getMessage());
             lblImage.setIcon(null);
             lblImage.setText("Không có hình ảnh");
+            lblImage.setToolTipText(null);
+            e.printStackTrace();
         }
+    } else {
+        lblImage.setIcon(null);
+        lblImage.setText("Không có hình ảnh");
+        lblImage.setToolTipText(null); 
     }
-
-    private Product getForm() {
+}
+         @Override
+        public Product getForm() {
         Product product = new Product();
         product.setId(txtId.getText());
         product.setName(txtName.getText());
         product.setPhoto(lblImage.getToolTipText()); // Giả sử ToolTipText lưu đường dẫn file ảnh
 
         try {
-            product.setQuantity(Integer.parseInt(jTextField4.getText()));
+            product.setQuantity(Integer.parseInt(txtQuantity.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên.");
             return null; // Trả về null nếu dữ liệu không hợp lệ
@@ -145,7 +172,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         product.setDiscount(slGiamGia.getValue());
 
         // Xử lý TypeId từ cboCategory
-        int categoryIndex = cboCategory.getSelectedIndex();
+        int categoryIndex = cboModel.getSelectedIndex();
         if (categoryIndex > 0) { // Nếu một loại sản phẩm cụ thể được chọn (không phải "Tất cả")
             // Lấy ID từ đối tượng ProductType trong typeList
             product.setTypeId(typeList.get(categoryIndex - 1).getId());
@@ -157,8 +184,8 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         }
 
         // Xử lý ThickId từ cboThickness
-        if (cboThickness.getSelectedIndex() > 0 && cboThickness.getItemCount() > 0 && thicknessList != null) {
-            String selectedThickName = (String) cboThickness.getSelectedItem();
+        if (cboThickness2.getSelectedIndex() > 0 && cboThickness2.getItemCount() > 0 && thicknessList != null) {
+            String selectedThickName = (String) cboThickness2.getSelectedItem();
             Integer selectedThickId = null;
             for (Thickness thick : thicknessList) {
                 if (thick.getThick().equals(selectedThickName)) {
@@ -174,8 +201,8 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
         return product;
     }
-
-    private void edit() {
+    @Override
+    public void edit() {
         int selectedRow = tblProduct.getSelectedRow();
         if (selectedRow >= 0 && selectedRow < productList.size()) {
             Product product = productList.get(selectedRow);
@@ -189,8 +216,9 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     public void open() {
         this.setLocationRelativeTo(null);
         productsDAO = new ProductsDAOimpl();
-        fillComboBox();
         fillProductType();
+        fillModel();
+        filljComboBox1(null);
         fillToTable(null, null);
         this.productList = productsDAO.findAll();
 
@@ -240,7 +268,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
             cboCategory.addItem(p.getName());
         }
     }
-
+    
     private void fillThickness(String typeId) {
         thicknessList = thicknessDAO.findByProductTypeId(typeId);
         cboThickness.removeAllItems(); // Sử dụng removeAllItems() cho JComboBox
@@ -256,34 +284,64 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         }
     }
 
-    private void create() {
+    private void fillModel() {
+    typeList = productTypeDAO.findAll();
+    cboModel.removeAllItems();
+    cboModel.addItem("Tất cả");
+    cboModel.setSelectedIndex(0);
+    for (ProductType p : typeList) {
+        cboModel.addItem(p.getName());
+    }
+    }
+     
+    private void filljComboBox1(String typeId){
+    List<Thickness> thicknessesForForm;
+    if (typeId != null && !typeId.isEmpty()) {
+        thicknessesForForm = thicknessDAO.findByProductTypeId(typeId);
+    } else {
+        thicknessesForForm = thicknessDAO.findAll();
+    }
+
+    this.thicknessList = thicknessesForForm; // Đảm bảo thicknessList của lớp được cập nhật
+
+    cboThickness2.removeAllItems();
+    cboThickness2.addItem(""); // Thêm một mục trống
+    if (thicknessesForForm != null && !thicknessesForForm.isEmpty()) {
+        for (Thickness thick : thicknessesForForm) {
+            cboThickness2.addItem(thick.getThick());
+        }
+    }
+}
+    
+    @Override
+    public void create() {
         Product newProduct = getForm();
         if (newProduct != null) {
             try {
-                productsDAO.create(newProduct);
+                productsDAO.create(newProduct); 
                 JOptionPane.showMessageDialog(this, "Sản phẩm đã được tạo thành công!");
-                clear();
+                clear(); 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tạo sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
-
-    private void update() {
+    @Override
+    public void update() {
         Product updatedProduct = getForm();
         if (updatedProduct != null) {
             try {
                 productsDAO.update(updatedProduct); // Cập nhật sản phẩm
                 JOptionPane.showMessageDialog(this, "Sản phẩm đã được cập nhật thành công!");
-            } catch (Exception e) {
+            }  catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
-
-    private void delete() {
+    @Override
+    public void delete() {
         String productIdToDelete = txtId.getText();
         if (productIdToDelete.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã Sản Phẩm để xóa.");
@@ -301,48 +359,45 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
             }
         }
     }
-
-    private void clear() {
+    @Override
+    public void clear() {
         txtId.setText("");
         txtName.setText("");
-        txtUnitPrice.setText("");
+        txtQuantity.setText("");
         slGiamGia.setValue(0);
         txtDiscountPercent.setText("0%");
-        cboModel.setSelectedIndex(0); // Đặt lại combo box
-//        jTextField1.setText(""); // Xóa trường ID danh mục
-//        cboThickness2.setText(""); // Xóa trường ID độ dày
-//        jTextField3.setText(""); // Xóa trường số lượng
+        cboModel.setSelectedIndex(0);
         lblImage.setIcon(null);
         lblImage.setText("Nhấp để chọn hình ảnh");
         currentIndex = -1; // Không có sản phẩm nào được chọn
         updateNavigationButtons();
     }
-
-    private void moveFirst() {
+    @Override
+    public void moveFirst() {
         if (!productList.isEmpty()) {
             currentIndex = 0;
             setForm(productList.get(currentIndex));
             updateNavigationButtons();
         }
     }
-
-    private void movePrevious() {
+    @Override
+    public void movePrevious() {
         if (!productList.isEmpty() && currentIndex > 0) {
             currentIndex--;
             setForm(productList.get(currentIndex));
             updateNavigationButtons();
         }
     }
-
-    private void moveNext() {
+    @Override
+    public void moveNext() {
         if (!productList.isEmpty() && currentIndex < productList.size() - 1) {
             currentIndex++;
             setForm(productList.get(currentIndex));
             updateNavigationButtons();
         }
     }
-
-    private void moveLast() {
+    @Override
+    public void moveLast() {
         if (!productList.isEmpty()) {
             currentIndex = productList.size() - 1;
             setForm(productList.get(currentIndex));
@@ -434,9 +489,9 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     }
 
     private void showPriceChart() {
-        PriceChart dialog = new PriceChart(null, true);
-        dialog.setProductId(txtId.getText());
-        dialog.setVisible(true);
+    PriceChart dialog = new PriceChart(null, true); // Tạo một PriceChart dialog mới
+    dialog.setProductId(txtId.getText());
+    dialog.setVisible(true); // Hiển thị PriceChart dialog
     }
 
     /**
@@ -468,7 +523,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jLabel4 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
         txtName = new javax.swing.JTextField();
-        txtUnitPrice = new javax.swing.JTextField();
+        txtQuantity = new javax.swing.JTextField();
         txtDiscountPercent = new javax.swing.JLabel();
         slGiamGia = new javax.swing.JSlider();
         jLabel6 = new javax.swing.JLabel();
@@ -484,7 +539,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         btnPriceChart = new javax.swing.JButton();
         ImportGoods = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtUnitPrice = new javax.swing.JTextField();
         cboThickness2 = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
@@ -634,6 +689,11 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jLabel3.setText("Tên Sản Phẩm");
 
         cboModel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboModel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboModelActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Đơn giá");
@@ -642,7 +702,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
         txtName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        txtUnitPrice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         txtDiscountPercent.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtDiscountPercent.setText("Giảm giá");
@@ -763,10 +823,14 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setText("Số Lượng");
 
-        jTextField4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtUnitPrice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         cboThickness2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        cboThickness2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboThickness2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboThickness2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -798,10 +862,10 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel7)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel4)))
                             .addComponent(cboThickness2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(35, Short.MAX_VALUE))
@@ -853,14 +917,14 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel7)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtDiscountPercent)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel4)
                                         .addGap(15, 15, 15)
-                                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addGap(35, 35, 35)
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -897,7 +961,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 787, Short.MAX_VALUE)
+            .addGap(0, 797, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -1098,7 +1162,6 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         frame.setVisible(true);
         frame.setSize(800, 600); // Tăng kích thước khung hình
         frame.setLocationRelativeTo(null);
-        this.showPriceChart();
     }//GEN-LAST:event_btnPriceChartActionPerformed
 
     private void ImportGoodsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportGoodsActionPerformed
@@ -1127,6 +1190,16 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
         moveNext();
     }//GEN-LAST:event_btnMoveNextActionPerformed
+
+    private void cboModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboModelActionPerformed
+        // TODO add your handling code here:
+        applyFilters(); 
+    }//GEN-LAST:event_cboModelActionPerformed
+
+    private void cboThickness2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThickness2ActionPerformed
+        // TODO add your handling code here:
+        applyFilters();
+    }//GEN-LAST:event_cboThickness2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1194,13 +1267,33 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JLabel lblImage;
     private javax.swing.JSlider slGiamGia;
     private javax.swing.JTable tblProduct;
     private javax.swing.JLabel txtDiscountPercent;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtQuantity;
     private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void fillToTable() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void moveTo(int rowIndex) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean isValidInput() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

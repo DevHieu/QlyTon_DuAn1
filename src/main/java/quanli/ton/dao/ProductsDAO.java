@@ -18,4 +18,10 @@ public interface ProductsDAO extends CrudDAO<Product, String> {
     List<Product> findProductByType(String id);
 
     List<Product> findProductByThick(int id);
+    
+    public Product findById(String id);
+    
+
+    
+
 }
