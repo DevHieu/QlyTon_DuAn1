@@ -4,6 +4,8 @@
  */
 package quanli.ton.controller;
 
+import quanli.ton.entity.Product;
+
 /**
  *
  * @author huynhtrunghieu

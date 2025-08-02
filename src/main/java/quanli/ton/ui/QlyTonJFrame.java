@@ -156,6 +156,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         lbThickness = new javax.swing.JLabel();
         lbRevenue = new javax.swing.JLabel();
         lbCustomer = new javax.swing.JLabel();
+        lb = new javax.swing.JLabel();
         lbLogout = new javax.swing.JLabel();
         lbHistory = new javax.swing.JLabel();
         lbExit = new javax.swing.JLabel();
@@ -245,7 +246,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tôn Hoa Mai");
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(1180, 850));
         setResizable(false);
 
         jLayeredPane1.setBackground(new java.awt.Color(255, 255, 255));
@@ -372,6 +372,17 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
+        lb.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lb.setForeground(new java.awt.Color(0, 102, 102));
+        lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lb.setText("Quản lý hàng tồn kho");
+        lb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlAdminLayout = new javax.swing.GroupLayout(pnlAdmin);
         pnlAdmin.setLayout(pnlAdminLayout);
         pnlAdminLayout.setHorizontalGroup(
@@ -381,13 +392,19 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(pnlAdminLayout.createSequentialGroup()
                 .addGroup(pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbBills, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbRevenue, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAdminLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlAdminLayout.createSequentialGroup()
+                        .addGroup(pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbBills, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbRevenue, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lb, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         pnlAdminLayout.setVerticalGroup(
             pnlAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -406,7 +423,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(lbThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(146, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lb, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         jplSlideMenu.add(pnlAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 210, 480));
@@ -463,7 +482,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jSeparator3.setForeground(new java.awt.Color(0, 102, 102));
         jplSlideMenu.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 660, 210, 10));
 
-        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 0, 820));
+        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 260, 820));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setEnabled(false);
@@ -1123,6 +1142,11 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.applyFilters();
     }//GEN-LAST:event_cboThicknessActionPerformed
 
+    private void lbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMouseClicked
+        // TODO add your handling code here:
+        this.showStockManagementDialog(this);
+    }//GEN-LAST:event_lbMouseClicked
+
     private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtDepositKeyReleased
         // TODO add your handling code here:
         // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
@@ -1269,6 +1293,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         XDialog.alert("Chưa làm chức năng này");
     }// GEN-LAST:event_lbLogoutMouseClicked
 
+
+
     private void tblBillsMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_tblBillsMouseClicked
         // TODO add your handling code here:
 
@@ -1373,6 +1399,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JPanel jplSlideMenu;
+    private javax.swing.JLabel lb;
     private javax.swing.JLabel lbAvatar;
     private javax.swing.JLabel lbBills;
     private javax.swing.JLabel lbChangePassword;
@@ -1532,6 +1559,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         isBillChanging = false;
         tabMain.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
+    
 
     @Override
     public void fillBill(Bills entity) {
@@ -1655,6 +1683,25 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             return;
         }
 
+        // Kiểm tra số lượng trong kho trước khi lưu
+        for (BillDetails item : billDetailsList) {
+            Product product = productDao.findById(item.getProductId());
+            if (product != null) {
+                int remainingStock = product.getQuantity() - item.getQuantity();
+                if (remainingStock < 0) {
+                    XDialog.alert("⚠️ LỖI: Sản phẩm " + product.getName() + " không đủ số lượng trong kho!\n" +
+                                 "Yêu cầu: " + item.getQuantity() + ", Có sẵn: " + product.getQuantity());
+                    return;
+                }
+                if (remainingStock <= 100) {
+                    XDialog.alert("⚠️ CẢNH BÁO: Sản phẩm " + product.getName() + " sẽ còn " + remainingStock + " trong kho sau khi bán!\n" +
+                                 "Vui lòng nhập thêm hàng!");
+                }
+            }
+        }
+
+
+
         Customer customer = this.getCustomerForm();
         if (currentCustomer == null) {
             customerDao.create(customer);
@@ -1674,13 +1721,14 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             boolean existed = billDetailDao.isBillDetailExisted(item.getId());
             if (!existed) {
                 item.setBillId(currentBill.getId()); // Lấy id của currentBill
-                billDetailDao.create(item);
+                billDetailDao.update(item);
             } else {
                 billDetailDao.update(item);
             }
         });
 
         XDialog.alert("Lưu hóa đơn thành công");
+        
         isBillChanging = false;
         this.fillBill(bill);
         this.fillBillsToTable();
@@ -1924,6 +1972,23 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             return;
         }
 
+        // Kiểm tra số lượng trong kho
+        if (quantity > product.getQuantity()) {
+            XDialog.alert("⚠️ CẢNH BÁO: Số lượng yêu cầu (" + quantity + ") vượt quá số lượng trong kho (" + product.getQuantity() + ")!\n\n" +
+                         "Sản phẩm: " + product.getName() + "\n" +
+                         "Mã sản phẩm: " + product.getId() + "\n\n" +
+                         "Vui lòng giảm số lượng hoặc nhập thêm hàng!");
+            return;
+        }
+
+        // Cảnh báo khi số lượng trong kho thấp
+        if (product.getQuantity() <= 100) {
+            XDialog.alert("⚠️ LƯU Ý: Sản phẩm " + product.getName() + " chỉ còn " + product.getQuantity() + " trong kho!\n" +
+                         "Vui lòng cân nhắc nhập thêm hàng.");
+        }
+
+
+
         Optional<BillDetails> existing = billDetailsList.stream()
                 .filter(bd -> bd.getProductId().equals(product.getId()))
                 .findFirst();
@@ -2045,4 +2110,75 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
         fillProductList(selectedProductTypeId, selectedThicknessId);
     }
+    
+
+    
+    /**
+     * Hiển thị dialog quản lý hàng tồn kho
+     */
+    private void showStockManagementDialog(java.awt.Frame parent) {
+        List<Product> allProducts = productDao.findAll();
+        
+        StringBuilder stockReport = new StringBuilder();
+        stockReport.append(" BÁO CÁO HÀNG TỒN KHO\n");
+        stockReport.append("=").append("=".repeat(50)).append("\n\n");
+        
+        // Phân loại sản phẩm theo tình trạng
+        List<Product> outOfStock = new ArrayList<>();
+        List<Product> lowStock = new ArrayList<>();
+        List<Product> normalStock = new ArrayList<>();
+        
+        for (Product product : allProducts) {
+            if (product.getQuantity() == 0) {
+                outOfStock.add(product);
+            } else if (product.getQuantity() <= 100) {
+                lowStock.add(product);
+            } else {
+                normalStock.add(product);
+            }
+        }
+        
+        // Hiển thị sản phẩm hết hàng
+        if (!outOfStock.isEmpty()) {
+            stockReport.append(" SẢN PHẨM HẾT HÀNG:\n");
+            for (Product product : outOfStock) {
+                stockReport.append("• ").append(product.getName())
+                           .append(" (Mã: ").append(product.getId()).append(")\n");
+            }
+            stockReport.append("\n");
+        }
+        
+        // Hiển thị sản phẩm sắp hết
+        if (!lowStock.isEmpty()) {
+            stockReport.append(" SẢN PHẨM SẮP HẾT (≤100):\n");
+            for (Product product : lowStock) {
+                stockReport.append("• ").append(product.getName())
+                           .append(" (Mã: ").append(product.getId()).append(")")
+                           .append(" - Còn lại: ").append(product.getQuantity()).append(" sản phẩm\n");
+            }
+            stockReport.append("\n");
+        }
+        
+        // Hiển thị sản phẩm bình thường
+        if (!normalStock.isEmpty()) {
+            stockReport.append(" SẢN PHẨM ĐỦ HÀNG (>100):\n");
+            for (Product product : normalStock) {
+                stockReport.append("• ").append(product.getName())
+                           .append(" (Mã: ").append(product.getId()).append(")")
+                           .append(" - Còn lại: ").append(product.getQuantity()).append(" sản phẩm\n");
+            }
+            stockReport.append("\n");
+        }
+        
+        // Thống kê tổng quan
+        stockReport.append(" THỐNG KÊ TỔNG QUAN:\n");
+        stockReport.append("• Tổng số sản phẩm: ").append(allProducts.size()).append("\n");
+        stockReport.append("• Sản phẩm hết hàng: ").append(outOfStock.size()).append("\n");
+        stockReport.append("• Sản phẩm sắp hết: ").append(lowStock.size()).append("\n");
+        stockReport.append("• Sản phẩm đủ hàng: ").append(normalStock.size()).append("\n");
+        
+        XDialog.alert(stockReport.toString());
+    }
+    
+
 }

@@ -91,6 +91,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -126,7 +127,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Xác nhận mật khẩu mới:");
         jPanel2.add(jLabel5);
-        jLabel5.setBounds(580, 230, 180, 20);
+        jLabel5.setBounds(580, 230, 180, 17);
 
         txtNewPassword.setMinimumSize(new java.awt.Dimension(100, 30));
         txtNewPassword.setPreferredSize(new java.awt.Dimension(100, 30));
@@ -171,7 +172,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Mật khẩu mới:");
         jPanel2.add(jLabel4);
-        jLabel4.setBounds(360, 230, 120, 20);
+        jLabel4.setBounds(360, 230, 120, 17);
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jSeparator1);
@@ -193,12 +194,22 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Tên đăng nhập:");
         jPanel2.add(jLabel2);
-        jLabel2.setBounds(360, 150, 130, 20);
+        jLabel2.setBounds(360, 150, 130, 17);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Mật khẩu hiện tại:");
         jPanel2.add(jLabel3);
-        jLabel3.setBounds(580, 150, 150, 20);
+        jLabel3.setBounds(580, 150, 150, 17);
+
+        jCheckBox1.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jCheckBox1.setText("Hiện Mật Khẩu");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jCheckBox1);
+        jCheckBox1.setBounds(663, 300, 120, 22);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -225,6 +236,21 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         // TODO add your handling code here:
         close ();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+        if (jCheckBox1.isSelected()) {
+            // Nếu checkbox được chọn, hiển thị ký tự thật
+            txtCurrentPassword.setEchoChar((char) 0); // Ký tự 0 hiển thị ký tự gốc
+            txtNewPassword.setEchoChar((char) 0);
+            txtConfirm.setEchoChar((char) 0);
+        } else {
+            // Nếu checkbox không được chọn, ẩn mật khẩu bằng ký tự '*'
+            txtCurrentPassword.setEchoChar('*');
+            txtNewPassword.setEchoChar('*');
+            txtConfirm.setEchoChar('*');
+        }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,6 +287,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -275,4 +302,4 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
     private javax.swing.JPasswordField txtNewPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
-}
+} 

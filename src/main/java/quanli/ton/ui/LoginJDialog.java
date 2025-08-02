@@ -63,6 +63,11 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         } else if (!user.isEnabled()) {
             XDialog.alert("Tài khoản của bạn đang tạm dừng!");
         } else {
+            // Kiểm tra username có chính xác không (phân biệt chữ hoa/thường)
+            if (!username.equals(user.getUsername())) {
+                XDialog.alert("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại chữ hoa/thường.");
+                return;
+            }
             XAuth.user = user; // duy trì user đăng nhập
             proceed = true;
             this.dispose();
@@ -211,10 +216,11 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
 
     private void cbShowPassword5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbShowPassword5ActionPerformed
         // TODO add your handling code here:
-        cbShowPassword5.addActionListener(e -> {
-            char c = cbShowPassword5.isSelected() ? (char) 0 : '*';
-            txtPassword.setEchoChar(c);
-        });
+        if (cbShowPassword5.isSelected()) {
+            txtPassword.setEchoChar((char) 0); // Hiện mật khẩu
+        } else {
+            txtPassword.setEchoChar('*'); // Ẩn mật khẩu
+        }
     }//GEN-LAST:event_cbShowPassword5ActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
