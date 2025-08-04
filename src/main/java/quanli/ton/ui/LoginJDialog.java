@@ -65,7 +65,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         } else {
             // Kiểm tra username có chính xác không (phân biệt chữ hoa/thường)
             if (!username.equals(user.getUsername())) {
-                XDialog.alert("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại chữ hoa/thường.");
+                XDialog.alert("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại.");
                 return;
             }
             XAuth.user = user; // duy trì user đăng nhập
@@ -138,7 +138,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             }
         });
         jPanel1.add(btnLogin);
-        btnLogin.setBounds(510, 300, 110, 40);
+        btnLogin.setBounds(500, 300, 120, 40);
 
         btnExit.setBackground(new java.awt.Color(0, 102, 102));
         btnExit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -161,7 +161,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             }
         });
         jPanel1.add(cbShowPassword5);
-        cbShowPassword5.setBounds(611, 270, 120, 20);
+        cbShowPassword5.setBounds(611, 270, 120, 19);
 
         txtPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtPassword.setPreferredSize(new java.awt.Dimension(65, 30));
@@ -171,7 +171,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Mật khẩu:");
         jPanel1.add(jLabel4);
-        jLabel4.setBounds(430, 210, 110, 20);
+        jLabel4.setBounds(430, 210, 110, 17);
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtUsername.setPreferredSize(new java.awt.Dimension(65, 30));
@@ -181,7 +181,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Tên đăng nhập:");
         jPanel1.add(jLabel3);
-        jLabel3.setBounds(430, 140, 120, 20);
+        jLabel3.setBounds(430, 140, 120, 17);
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N

@@ -61,6 +61,9 @@ import quanli.ton.util.XAuth;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XIcon;
+import quanli.ton.util.XPDF;
+import quanli.ton.util.XFile;
+import quanli.ton.ui.LoginJDialog;
 
 /**
  *
@@ -101,6 +104,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.addTabPanelListener();
         this.createSlideMenu();
         this.open();
+        this.showStockManagementDialog(this);
     }
 
     @Override
@@ -375,7 +379,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         lb.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lb.setForeground(new java.awt.Color(0, 102, 102));
         lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lb.setText("Quản lý hàng tồn kho");
+        lb.setText("Quản lý Hàng tồn kho");
         lb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -425,10 +429,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lb, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(130, Short.MAX_VALUE))
         );
 
-        jplSlideMenu.add(pnlAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 210, 480));
+        jplSlideMenu.add(pnlAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 210, 500));
 
         lbLogout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbLogout.setForeground(new java.awt.Color(0, 102, 102));
@@ -440,7 +444,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 lbLogoutMouseClicked(evt);
             }
         });
-        jplSlideMenu.add(lbLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 760, 210, 30));
+        jplSlideMenu.add(lbLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 730, 210, 30));
 
         lbHistory.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbHistory.setForeground(new java.awt.Color(0, 102, 102));
@@ -452,7 +456,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 lbHistoryMouseClicked(evt);
             }
         });
-        jplSlideMenu.add(lbHistory, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 680, 210, 30));
+        jplSlideMenu.add(lbHistory, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 670, 210, 30));
 
         lbExit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbExit.setForeground(new java.awt.Color(234, 84, 60));
@@ -464,7 +468,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 lbExitMouseClicked(evt);
             }
         });
-        jplSlideMenu.add(lbExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 800, 210, 30));
+        jplSlideMenu.add(lbExit, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 760, 210, 30));
 
         lbChangePassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbChangePassword.setForeground(new java.awt.Color(0, 102, 102));
@@ -476,13 +480,13 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 lbChangePasswordMouseClicked(evt);
             }
         });
-        jplSlideMenu.add(lbChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 720, 210, 30));
+        jplSlideMenu.add(lbChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 700, 210, 30));
 
         jSeparator3.setBackground(new java.awt.Color(0, 102, 102));
         jSeparator3.setForeground(new java.awt.Color(0, 102, 102));
         jplSlideMenu.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 660, 210, 10));
 
-        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 260, 820));
+        jLayeredPane1.add(jplSlideMenu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 230, 800));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setEnabled(false);
@@ -1149,21 +1153,31 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtDepositKeyReleased
         // TODO add your handling code here:
-        // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
-        double overall = Double.parseDouble(txtOverall.getText().replaceAll("[^\\d.]", "")); // Xóa hết ký tự không phải
-        // số hoặc dấu chấm ( VNĐ )
+        try {
+            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
+            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
+            if (overallText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double overall = Double.parseDouble(overallText);
 
-        // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
-        double value = Double.parseDouble(txtAddress.getText().replaceAll("[^\\d.]", "")); // Xóa hết ký tự không phải
-        // số hoặc dấu chấm ( VNĐ )
+            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
+            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
+            if (depositText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double value = Double.parseDouble(depositText);
 
-        if (value > overall) {
-            XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
-            txtDeposit.setText(moneyFormat.format(txtDeposit.getValue())); // hiển thị về lại giá trị trước đó
+            if (value > overall) {
+                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
+                txtDeposit.setText(moneyFormat.format(txtDeposit.getValue())); // hiển thị về lại giá trị trước đó
+            }
+
+            this.billTotalChange(overall);
+            isBillChanging = true;
+        } catch (NumberFormatException e) {
+            // Bỏ qua lỗi parse nếu text không phải số
         }
-
-        this.billTotalChange(overall);
-        isBillChanging = true;
     }// GEN-LAST:event_txtDepositKeyReleased
 
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblCloseMenuMouseClicked
@@ -1290,7 +1304,17 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void lbLogoutMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbLogoutMouseClicked
         // TODO add your handling code here:
-        XDialog.alert("Chưa làm chức năng này");
+        if (XDialog.confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+            // Xóa thông tin user hiện tại
+            XAuth.user = null;
+            
+            // Đóng cửa sổ hiện tại
+            this.dispose();
+            
+            // Mở lại giao diện login
+            LoginJDialog loginDialog = new LoginJDialog(null, true);
+            loginDialog.setVisible(true);
+        }
     }// GEN-LAST:event_lbLogoutMouseClicked
 
 
@@ -1717,15 +1741,24 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             billDao.update(bill);
         }
 
+        // Debug: In ra thông tin để kiểm tra
+        System.out.println("=== DEBUG SAVE ===");
+        System.out.println("Bill ID: " + currentBill.getId());
+        System.out.println("Bill Details List count: " + billDetailsList.size());
+        
         billDetailsList.forEach(item -> {
             boolean existed = billDetailDao.isBillDetailExisted(item.getId());
+            System.out.println("Bill Detail ID: " + item.getId() + ", Existed: " + existed);
             if (!existed) {
                 item.setBillId(currentBill.getId()); // Lấy id của currentBill
-                billDetailDao.update(item);
+                billDetailDao.create(item); // Tạo mới thay vì update
+                System.out.println("Created new bill detail with ID: " + item.getId());
             } else {
                 billDetailDao.update(item);
+                System.out.println("Updated existing bill detail with ID: " + item.getId());
             }
         });
+        System.out.println("=== END DEBUG SAVE ===");
 
         XDialog.alert("Lưu hóa đơn thành công");
         
@@ -1747,6 +1780,33 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         currentBill.setStatus(Bills.Status.COMPLETED.ordinal());
         currentBill.setCheckout(new Date());
         this.save();
+        
+        // Hỏi người dùng có muốn xuất phiếu giao hàng không
+        boolean choice = XDialog.confirm("Bạn có muốn xuất phiếu giao hàng không?");
+        if (choice) { // true = YES
+            try {
+                String filePath = XFile.saveFile("pdf");
+                if (filePath != null) {
+                    // Lấy thông tin khách hàng
+                    Customer customer = customerDao.findById(currentBill.getCustomerId());
+                    
+                    // Lấy chi tiết hóa đơn
+                    List<BillDetails> billDetails = billDetailDao.findByBillId(currentBill.getId());
+                    
+                    // Debug: In ra thông tin để kiểm tra
+                    System.out.println("=== DEBUG PRINT ===");
+                    System.out.println("Bill ID: " + currentBill.getId());
+                    System.out.println("Bill Details count: " + billDetails.size());
+                    System.out.println("Customer: " + customer.getFullName());
+                    System.out.println("=== END DEBUG ===");
+                    
+                    XPDF.createDeliveryNote(filePath, currentBill, billDetails, customer);
+                    XDialog.alert("Xuất phiếu giao hàng thành công!");
+                }
+            } catch (Exception e) {
+                XDialog.alert("Lỗi xuất phiếu giao hàng: " + e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -2159,17 +2219,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             stockReport.append("\n");
         }
         
-        // Hiển thị sản phẩm bình thường
-        if (!normalStock.isEmpty()) {
-            stockReport.append(" SẢN PHẨM ĐỦ HÀNG (>100):\n");
-            for (Product product : normalStock) {
-                stockReport.append("• ").append(product.getName())
-                           .append(" (Mã: ").append(product.getId()).append(")")
-                           .append(" - Còn lại: ").append(product.getQuantity()).append(" sản phẩm\n");
-            }
-            stockReport.append("\n");
-        }
-        
         // Thống kê tổng quan
         stockReport.append(" THỐNG KÊ TỔNG QUAN:\n");
         stockReport.append("• Tổng số sản phẩm: ").append(allProducts.size()).append("\n");
@@ -2178,6 +2227,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         stockReport.append("• Sản phẩm đủ hàng: ").append(normalStock.size()).append("\n");
         
         XDialog.alert(stockReport.toString());
+        
     }
     
 

@@ -35,6 +35,7 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.util.XFile;
+import quanli.ton.util.XPDF;
 
 /**
  *
@@ -201,6 +202,51 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         List<Revenue.ByUser> listObjs = dao.getByUser(begin, end);
         String title = "Doanh thu của từng nhân viên - " + txtBegin.getText() + " - " + txtEnd.getText();
         XFile.fileExport(this, header, listObjs, fileName, title);
+    }
+    
+    void productTypePDFExport() {
+        try {
+            Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+            Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+            List<Revenue.ByCategory> listObjs = dao.getByCategory(begin, end);
+            String filePath = XFile.saveFile("pdf");
+            if (filePath != null) {
+                XPDF.createRevenuePDF(filePath, listObjs);
+                quanli.ton.util.XDialog.alert("Xuất PDF thành công!");
+            }
+        } catch (Exception e) {
+            quanli.ton.util.XDialog.alert("Lỗi xuất PDF: " + e.getMessage());
+        }
+    }
+    
+    void EmployeePDFExport() {
+        try {
+            Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+            Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+            List<Revenue.ByUser> listObjs = dao.getByUser(begin, end);
+            String filePath = XFile.saveFile("pdf");
+            if (filePath != null) {
+                // Tạo PDF cho báo cáo nhân viên
+                quanli.ton.util.XPDF.setTitle("BÁO CÁO DOANH THU THEO NHÂN VIÊN");
+                quanli.ton.util.XPDF.setHeaders(new String[]{"Nhân viên", "Doanh thu", "Số lượng", "Thời gian đầu", "Thời gian cuối"});
+                
+                List<Object[]> data = new ArrayList<>();
+                for (Revenue.ByUser item : listObjs) {
+                    data.add(new Object[]{
+                        item.getUser(),
+                        String.format("%,.0f", item.getRevenue()),
+                        item.getQuantity(),
+                        XDate.format(item.getFirstTime(), "dd-MM-yyyy"),
+                        XDate.format(item.getLastTime(), "dd-MM-yyyy")
+                    });
+                }
+                quanli.ton.util.XPDF.setData(data);
+                quanli.ton.util.XPDF.createPDF(filePath);
+                quanli.ton.util.XDialog.alert("Xuất PDF thành công!");
+            }
+        } catch (Exception e) {
+            quanli.ton.util.XDialog.alert("Lỗi xuất PDF: " + e.getMessage());
+        }
     }
 
     private void addBarChart(List<Revenue.ByUser> list) {
@@ -706,6 +752,16 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         EmployeeFileExport();
     }//GEN-LAST:event_btnEmployeeExportActionPerformed
 
+    private void btnTypePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypePDFActionPerformed
+        // TODO add your handling code here:
+        productTypePDFExport();
+    }//GEN-LAST:event_btnTypePDFActionPerformed
+
+    private void btnEmployeePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmployeePDFActionPerformed
+        // TODO add your handling code here:
+        EmployeePDFExport();
+    }//GEN-LAST:event_btnEmployeePDFActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -743,8 +799,10 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     private javax.swing.JPanel RevenueByEmployee;
     private javax.swing.JPanel RevenueByType;
     private javax.swing.JButton btnEmployeeExport;
+    private javax.swing.JButton btnEmployeePDF;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnTypeExport;
+    private javax.swing.JButton btnTypePDF;
     private javax.swing.JComboBox<String> cboTimeRanges;
     private javax.swing.JPanel donutChart;
     private javax.swing.JLabel jLabel1;

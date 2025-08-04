@@ -4,14 +4,10 @@
  */
 package quanli.ton.ui.manager;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -20,14 +16,6 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.controller.ProductsController;
 import quanli.ton.dao.ProductPriceHistoryDAO;
 import quanli.ton.dao.ProductTypeDAO;
@@ -38,7 +26,6 @@ import quanli.ton.dao.impl.ProductTypeDAOImpl;
 import quanli.ton.dao.impl.ProductsDAOimpl;
 import quanli.ton.dao.impl.ThicknessDAOImpl;
 import quanli.ton.entity.Product;
-import quanli.ton.entity.ProductPriceHistory;
 import quanli.ton.entity.ProductType;
 import quanli.ton.entity.Thickness;
 import quanli.ton.util.XDialog;
@@ -87,6 +74,10 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
      */
     @Override
     public void setForm(Product product) {
+    System.out.println("Setting form for product: " + product.getId());
+    System.out.println("Product TypeId: " + product.getTypeId());
+    System.out.println("Product ThickId: " + product.getThickId());
+    
     txtId.setText(product.getId());
     txtName.setText(product.getName());
     txtQuantity.setText(String.valueOf(product.getQuantity())); // Đã sửa từ getUnitPrice()
@@ -119,14 +110,20 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     if (product.getThickId() != null) {
         // Lấy đối tượng Thickness trực tiếp từ DAO
         Thickness selectedThickness = thicknessDAO.findById(product.getThickId()); 
+        System.out.println("Found thickness: " + (selectedThickness != null ? selectedThickness.getThick() : "null"));
         if (selectedThickness != null) {
-            // Sau khi cboThickness2 đã được điền, setSelectedItem
+            // Đảm bảo cboThickness2 đã được điền trước khi setSelectedItem
+            filljComboBox1(product.getTypeId()); // Điền lại cboThickness2
+            // Sau đó setSelectedItem
             cboThickness2.setSelectedItem(selectedThickness.getThick());
+            System.out.println("Set selected thickness: " + selectedThickness.getThick());
         } else {
             cboThickness2.setSelectedIndex(0);
+            System.out.println("Thickness not found, set to index 0");
         }
     } else {
         cboThickness2.setSelectedIndex(0);
+        System.out.println("Product has no ThickId, set to index 0");
     } 
         
     if (product.getPhoto() != null && !product.getPhoto().isEmpty()) {
@@ -298,8 +295,10 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     List<Thickness> thicknessesForForm;
     if (typeId != null && !typeId.isEmpty()) {
         thicknessesForForm = thicknessDAO.findByProductTypeId(typeId);
+        System.out.println("Loading thicknesses for typeId: " + typeId + ", found: " + thicknessesForForm.size());
     } else {
         thicknessesForForm = thicknessDAO.findAll();
+        System.out.println("Loading all thicknesses, found: " + thicknessesForForm.size());
     }
 
     this.thicknessList = thicknessesForForm; // Đảm bảo thicknessList của lớp được cập nhật
@@ -309,6 +308,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     if (thicknessesForForm != null && !thicknessesForForm.isEmpty()) {
         for (Thickness thick : thicknessesForForm) {
             cboThickness2.addItem(thick.getThick());
+            System.out.println("Added thickness: " + thick.getThick() + " (ID: " + thick.getId() + ")");
         }
     }
 }
@@ -488,11 +488,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         fillToTable(selectedProductTypeId, selectedThicknessId);
     }
 
-    private void showPriceChart() {
-    PriceChart dialog = new PriceChart(null, true); // Tạo một PriceChart dialog mới
-    dialog.setProductId(txtId.getText());
-    dialog.setVisible(true); // Hiển thị PriceChart dialog
-    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -584,9 +580,16 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, true
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         tblProduct.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1079,95 +1082,36 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
     private void btnPriceChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPriceChartActionPerformed
         // TODO add your handling code here:
+        
+        String productId = txtId.getText();
+        System.out.println("Product ID: " + productId);
+        
+        if (productId == null || productId.trim().isEmpty()) {
+            XDialog.alert("Vui lòng chọn một sản phẩm trước khi xem biến động giá!");
+            return;
+        }
 
-        List<ProductPriceHistory> products = ProductPriceHistoryDAO.findAllById(txtId.getText());
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-        products.forEach(item -> {
-            Date effectiveDate = item.getEffectiveDate();
-            String formattedDate = formatter.format(effectiveDate);
-
-            dataset.setValue(item.getImportPrice(), "Giá nhập", formattedDate);
-            dataset.setValue(item.getUnitPrice(), "Giá bán", formattedDate);
-        });
-
-        JFreeChart chart = ChartFactory.createLineChart(
-                "Biểu đồ Giá Trị Tham Số", // Tiêu đề biểu đồ
-                "Thời gian", // Nhãn trục X (Tham Số -> Thời gian cho rõ ràng)
-                "Giá Trị", // Nhãn trục Y
-                dataset, // Dữ liệu
-                PlotOrientation.VERTICAL, // Hướng biểu đồ
-                true, // Hiển thị chú giải (legend)
-                true, // Tạo tooltips
-                false // Tạo URLs
-        );
-
-        // 1. Cài đặt màu nền tổng thể của biểu đồ
-        chart.setBackgroundPaint(new Color(245, 245, 245)); // Màu xám nhạt
-
-        // 2. Cài đặt màu tiêu đề
-        chart.getTitle().setPaint(Color.BLACK);
-        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 18)); // Đặt font cho tiêu đề
-
-        // 3. Truy cập CategoryPlot để tùy chỉnh các thuộc tính bên trong
-        CategoryPlot plot = chart.getCategoryPlot();
-
-        // 4. Màu nền của vùng vẽ (plot area)
-//        plot.setBackgroundPaint(Color.WHITE); // Màu trắng cho nền vùng vẽ
-        // 5. Đường kẻ ngang (Range Gridlines)
-        plot.setRangeGridlinePaint(new Color(200, 200, 200)); // Màu xám nhạt hơn
-        plot.setRangeGridlineStroke(new BasicStroke(0.5f)); // Độ dày đường kẻ
-
-        // 6. Đường kẻ dọc (Domain Gridlines - nếu muốn hiển thị)
-        // plot.setDomainGridlinePaint(new Color(200, 200, 200)); // Uncomment nếu muốn hiển thị đường kẻ dọc
-        // plot.setDomainGridlineStroke(new BasicStroke(0.5f));
-        // 7. Màu viền vùng vẽ
-        plot.setOutlinePaint(Color.LIGHT_GRAY); // Màu viền xám nhạt
-        plot.setOutlineStroke(new BasicStroke(1.0f)); // Độ dày viền
-
-        // 8. Tùy chỉnh renderer để thay đổi style đường và thêm điểm đánh dấu
-        LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
-
-        // Tùy chỉnh "Giá nhập" (series 0)
-        renderer.setSeriesPaint(0, new Color(255, 99, 71)); // Màu đỏ cam (Tomato)
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f)); // Độ dày đường
-        renderer.setSeriesShapesVisible(0, true); // Hiển thị hình dạng tại các điểm dữ liệu
-        renderer.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-3, -3, 6, 6)); // Hình tròn nhỏ
-
-        // Tùy chỉnh "Giá bán" (series 1)
-        renderer.setSeriesPaint(1, new Color(65, 105, 225)); // Màu xanh hoàng gia (RoyalBlue)
-        renderer.setSeriesStroke(1, new BasicStroke(2.0f));
-        renderer.setSeriesShapesVisible(1, true);
-        renderer.setSeriesShape(1, new java.awt.geom.Rectangle2D.Double(-3, -3, 6, 6)); // Hình vuông nhỏ
-
-        // 9. Tùy chỉnh trục X (Category Axis)
-        CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLabelFont(new Font("Arial", Font.BOLD, 12)); // Font cho nhãn trục X
-        domainAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 10)); // Font cho các giá trị trên trục X
-        //domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45); // Xoay nhãn 45 độ nếu dài để tránh chồng lấn
-
-        // 10. Tùy chỉnh trục Y (Value Axis - Range Axis)
-        plot.getRangeAxis().setLabelFont(new Font("Arial", Font.BOLD, 12)); // Font cho nhãn trục Y
-        plot.getRangeAxis().setTickLabelFont(new Font("Arial", Font.PLAIN, 10)); // Font cho các giá trị trên trục Y
-
-        // 11. Tùy chỉnh chú giải (Legend)
-        chart.getLegend().setItemFont(new Font("Arial", Font.PLAIN, 12)); // Font cho chú giải
-        chart.getLegend().setBackgroundPaint(new Color(250, 250, 250, 180)); // Nền chú giải hơi trong suốt
-        chart.getLegend().setFrame(new org.jfree.chart.block.BlockBorder(Color.LIGHT_GRAY)); // Viền cho chú giải
-
-        // 12. Hiển thị biểu đồ
-        ChartFrame frame = new ChartFrame("Biểu Đồ Thông Số Sản Phẩm", chart);
-        frame.setVisible(true);
-        frame.setSize(800, 600); // Tăng kích thước khung hình
-        frame.setLocationRelativeTo(null);
+        // Mở dialog PriceChart
+        PriceChart priceChartDialog = new PriceChart(null, true);
+        priceChartDialog.setProductId(productId);
+        priceChartDialog.setVisible(true);
     }//GEN-LAST:event_btnPriceChartActionPerformed
 
     private void ImportGoodsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportGoodsActionPerformed
         // TODO add your handling code here:
         Importgoods importGoodsDialog = new Importgoods(new javax.swing.JFrame(), true);
+        importGoodsDialog.setId(txtId.getText());
+        importGoodsDialog.setProductName(txtName.getText());
         importGoodsDialog.setVisible(true);
+        importGoodsDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                Product newProduct = productsDAO.findById(txtId.getText());
+                
+                ProductJDialog.this.applyFilters();
+                ProductJDialog.this.setForm(newProduct);
+            }
+        });
     }//GEN-LAST:event_ImportGoodsActionPerformed
 
     private void cboThicknessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThicknessActionPerformed
