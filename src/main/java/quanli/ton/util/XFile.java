@@ -53,4 +53,28 @@ public class XFile {
             }
         }
     }
+    
+    /**
+     * Hiển thị dialog chọn file để lưu
+     */
+    public static String saveFile(String extension) {
+        String userDocs = System.getProperty("user.home") + "\\Documents";
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(extension.toUpperCase() + " files (*." + extension + ")", extension);
+        fileChooser.setFileFilter(filter);
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setCurrentDirectory(new File(userDocs));
+        fileChooser.setDialogTitle("Chọn nơi lưu file");
+        
+        int result = fileChooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String path = fileChooser.getSelectedFile().getAbsolutePath();
+            if (!path.toLowerCase().endsWith("." + extension.toLowerCase())) {
+                path += "." + extension;
+            }
+            return path;
+        }
+        return null;
+    }
 }

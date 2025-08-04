@@ -157,7 +157,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel1.setForeground(new java.awt.Color(0, 102, 102));
         jLabel1.setText("Đổi Mật Khẩu ");
         jPanel2.add(jLabel1);
-        jLabel1.setBounds(480, 20, 170, 30);
+        jLabel1.setBounds(480, 20, 190, 30);
 
         txtConfirm.setMinimumSize(new java.awt.Dimension(100, 30));
         txtConfirm.setPreferredSize(new java.awt.Dimension(100, 30));
