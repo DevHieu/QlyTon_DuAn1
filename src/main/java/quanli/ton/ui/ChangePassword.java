@@ -25,6 +25,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
     public void open() {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        txtUsername.setText(XAuth.user.getUsername());
     }
 
     @Override
@@ -40,22 +41,24 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
     String confirm = new String(txtConfirm.getPassword());
     
     // Dòng này kiểm tra tên đăng nhập nhập vào có khớp với người dùng đang đăng nhập không
-    System.out.print(XAuth.user.getUsername()); 
     if (!newpass.equals(confirm)) {
-        XDialog.alert("Xác nhận mật khẩu không đúng!");
+        XDialog.error("Xác nhận mật khẩu không đúng!");
     } 
     // Dòng này so sánh tên đăng nhập nhập vào với tên đăng nhập của người dùng HIỆN TẠI
     else if (!username.equals(XAuth.user.getUsername())) { 
-        XDialog.alert("Sai tên đăng nhập!");
+        XDialog.error("Sai tên đăng nhập!");
     } 
     // Dòng này so sánh mật khẩu hiện tại nhập vào với mật khẩu của người dùng HIỆN TẠI
     else if (!password.equals(XAuth.user.getPassword())) { 
-        XDialog.alert("Sai mật khẩu!");
+        XDialog.error("Sai mật khẩu!");
     } else {
         // Dòng này cập nhật mật khẩu cho đối tượng người dùng HIỆN TẠI
         XAuth.user.setPassword(newpass); 
         dao.update(XAuth.user); // Cập nhật vào cơ sở dữ liệu
-        XDialog.alert("Đổi mật khẩu thành công!");
+        XDialog.notify("Đổi mật khẩu thành công!");
+        txtCurrentPassword.setText("");
+        txtNewPassword.setText("");
+        txtConfirm.setText("");
     }
 }
     /**
@@ -93,6 +96,11 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setPreferredSize(new java.awt.Dimension(800, 450));
@@ -133,6 +141,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jPanel2.add(txtNewPassword);
         txtNewPassword.setBounds(360, 260, 200, 30);
 
+        txtUsername.setEnabled(false);
         txtUsername.setMinimumSize(new java.awt.Dimension(100, 30));
         txtUsername.setPreferredSize(new java.awt.Dimension(100, 30));
         jPanel2.add(txtUsername);
@@ -225,6 +234,11 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         // TODO add your handling code here:
         close ();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        open();
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments

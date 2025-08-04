@@ -114,10 +114,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         if (!this.showLoginJDialog(this)) { // Để khi user nhấn nút tắt thì sẽ tắt luôn chương trình thay vì hiện tiếp trang chính
             System.exit(0);
         }
-        XIcon.setIcon(lbAvatar, "img/avatars/" + XAuth.user.getPhoto());
+        XIcon.setIcon(lbAvatar, "images/users/" + XAuth.user.getPhoto());
         lbFullname.setText(XAuth.user.getFullname());
-
-        System.out.println(XAuth.user.isManager());
         if (!XAuth.user.isManager()) {
             jplSlideMenu.remove(pnlAdmin);
         }
@@ -126,7 +124,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         tblBillDetails.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(this));
         tblBillDetails.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer());
         tblBillDetails.getColumnModel().getColumn(8).setCellEditor(new ButtonEditor(this));
-        
+
         tabMain.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
 
@@ -1216,57 +1214,68 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void lbRevenueMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbRevenueMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showRevenueManagerJDialog(this);
     }// GEN-LAST:event_lbRevenueMouseClicked
 
     private void lbUserMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbUserMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showUserManagerJDialog(this);
     }// GEN-LAST:event_lbUserMouseClicked
 
     private void lbBillsMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbBillsMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showBillManagerJDialog(this);
     }// GEN-LAST:event_lbBillsMouseClicked
 
     private void lbProductMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbProductMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showProductManagerJDialog(this);
     }// GEN-LAST:event_lbProductMouseClicked
 
     private void lbProductTypeMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbProductTypeMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showProductTypeManagerJDialog(this);
     }// GEN-LAST:event_lbProductTypeMouseClicked
 
     private void lbThicknessMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbThicknessMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showThicknessManagerJDialog(this);
     }// GEN-LAST:event_lbThicknessMouseClicked
 
     private void lbCustomerMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbCustomerMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showCustomerManagerJDialog(this);
     }// GEN-LAST:event_lbCustomerMouseClicked
 
     private void lbHistoryMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbHistoryMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showHistoryJDialog(this);
     }// GEN-LAST:event_lbHistoryMouseClicked
 
     private void lbChangePasswordMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbChangePasswordMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.showChangePasswordJDialog(this);
     }// GEN-LAST:event_lbChangePasswordMouseClicked
 
     private void lbExitMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbExitMouseClicked
         // TODO add your handling code here:
+        checkBillValid();
         this.exit();
     }// GEN-LAST:event_lbExitMouseClicked
 
     private void lbLogoutMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbLogoutMouseClicked
         // TODO add your handling code here:
-        XDialog.alert("Chưa làm chức năng này");
+        checkBillValid();
+        this.logout();
     }// GEN-LAST:event_lbLogoutMouseClicked
 
     private void tblBillsMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_tblBillsMouseClicked
@@ -1430,6 +1439,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             if (selectedIndex == 1) {
                 // Gọi hàm để load bảng hóa đơn
                 checkBillValid();
+                tabMain.setSelectedIndex(1);
             }
         });
     }
@@ -1446,7 +1456,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             if (XDialog.confirm("Bạn có muốn lưu hóa đơn hiện tại?")) {
                 this.save();
             } else {
-
+                this.clear();
             }
         }
     }
@@ -1680,7 +1690,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
-        XDialog.alert("Lưu hóa đơn thành công");
+        XDialog.notify("Lưu hóa đơn thành công");
         isBillChanging = false;
         this.fillBill(bill);
         this.fillBillsToTable();
@@ -1709,6 +1719,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         this.fillCustomer("");
         isBillChanging = false;
+        isCustomerChanging = false;
     }
 
     @Override
@@ -1902,12 +1913,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 String defaultValue = type.getDefaultLength() != null ? String.valueOf(type.getDefaultLength()) : "";
                 length = Double.parseDouble(XDialog.prompt("Nhập độ dài của sản phẩm", defaultValue));
             } catch (NumberFormatException e) {
-                XDialog.alert("Độ dài của sản phẩm phải là một số. Vui lòng nhập lại!");
+                XDialog.error("Độ dài của sản phẩm phải là một số. Vui lòng nhập lại!");
                 return;
             }
 
             if (length <= 0) {
-                XDialog.alert("Độ dài của sản phẩm phải lớn hơn 0. Vui lòng nhập lại!");
+                XDialog.error("Độ dài của sản phẩm phải lớn hơn 0. Vui lòng nhập lại!");
                 return;
             }
         }
@@ -1915,12 +1926,12 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         try {
             quantity = Integer.parseInt(XDialog.prompt("Nhập số lượng sản phẩm"));
         } catch (NumberFormatException e) {
-            XDialog.alert("Số lượng của sản phẩm phải là một số. Vui lòng nhập lại!");
+            XDialog.error("Số lượng của sản phẩm phải là một số. Vui lòng nhập lại!");
             return;
         }
 
         if (quantity <= 0) {
-            XDialog.alert("Số lượng sản phẩm phải lớn hơn 0. Vui lòng nhập lại!");
+            XDialog.error("Số lượng sản phẩm phải lớn hơn 0. Vui lòng nhập lại!");
             return;
         }
 
@@ -1966,7 +1977,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             };
             model.addRow(rowData);
         });
-
     }
 
     @Override
@@ -2008,7 +2018,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         switch (cboSearch) {
             case 0:
-                billList.add(billDao.findOperatingById(Long.valueOf(keyWord)));
+                Bills bill = billDao.findOperatingById(Long.valueOf(keyWord));
+                if (bill != null) {
+                    billList.add(bill);
+                }
                 this.fillBillsToTable();
                 break;
             case 1:
@@ -2044,5 +2057,14 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         }
         fillProductList(selectedProductTypeId, selectedThicknessId);
+    }
+
+    @Override
+    public void logout() {
+        if (XDialog.confirm("Bạn có chắc chắn muốn thoát?")) {
+            this.dispose();
+            QlyTonJFrame frame = new QlyTonJFrame();
+            frame.setVisible(true);
+        }
     }
 }

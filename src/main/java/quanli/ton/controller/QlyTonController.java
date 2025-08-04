@@ -66,6 +66,8 @@ public interface QlyTonController {
     void selectTimeRange();
 
     void fillBillBySearch();
+    
+    void logout();
 
     default void exit() {
         if (XDialog.confirm("Bạn muốn kết thúc?")) {

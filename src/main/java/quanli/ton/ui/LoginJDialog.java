@@ -44,24 +44,24 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         String password = txtPassword.getText();
 
         if (username.isEmpty() && password.isEmpty()) {
-            XDialog.alert("Vui lòng nhập tên đăng nhập và mật khẩu!");
+            XDialog.error("Vui lòng nhập tên đăng nhập và mật khẩu!");
             return;
         } else if (username.isEmpty()) {
-            XDialog.alert("Vui lòng nhập tên đăng nhập!");
+            XDialog.error("Vui lòng nhập tên đăng nhập!");
             return;
         } else if (password.isEmpty()) {
-            XDialog.alert("Vui lòng nhập mật khẩu!");
+            XDialog.error("Vui lòng nhập mật khẩu!");
             return;
         }
 
         UserDao dao = (UserDao) new UserDAOImpl();
         User user = dao.findById(username);
         if (user == null) {
-            XDialog.alert("Sai tên đăng nhập!");
+            XDialog.error("Sai tên đăng nhập!");
         } else if (!password.equals(user.getPassword())) {
-            XDialog.alert("Sai mật khẩu đăng nhập!");
+            XDialog.error("Sai mật khẩu đăng nhập!");
         } else if (!user.isEnabled()) {
-            XDialog.alert("Tài khoản của bạn đang tạm dừng!");
+            XDialog.error("Tài khoản của bạn đang tạm dừng!");
         } else {
             XAuth.user = user; // duy trì user đăng nhập
             proceed = true;
@@ -211,10 +211,11 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
 
     private void cbShowPassword5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbShowPassword5ActionPerformed
         // TODO add your handling code here:
-        cbShowPassword5.addActionListener(e -> {
-            char c = cbShowPassword5.isSelected() ? (char) 0 : '*';
-            txtPassword.setEchoChar(c);
-        });
+        if (cbShowPassword5.isSelected()) {
+            txtPassword.setEchoChar((char) 0);
+        } else {
+            txtPassword.setEchoChar('•');
+        }
     }//GEN-LAST:event_cbShowPassword5ActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed

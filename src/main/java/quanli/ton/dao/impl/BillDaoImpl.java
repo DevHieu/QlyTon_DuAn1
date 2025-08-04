@@ -45,7 +45,7 @@ public class BillDaoImpl implements BillDao {
     // Tìm các đơn đang ở trạng thái "đang xử lý"
     String findOperatingByIdSql = "SELECT * FROM Bills WHERE Id=? AND Status = 0";
     String findOperatingByTimeRangeSql = "SELECT * FROM Bills WHERE Status = 0 AND Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
-    String findOperatingAllOfCustomerId = "SELECT * FROM Bills WHERE Status = 0 AND PhoneNumber = ?";
+    String findOperatingAllOfCustomerId = "SELECT * FROM Bills WHERE Status = 0 AND CustomerId = ?";
 
     @Override
     public Bills create(Bills entity) {

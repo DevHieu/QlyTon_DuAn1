@@ -24,12 +24,13 @@ import quanli.ton.util.XDialog;
  *
  * @author USER
  */
-public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessController{
+public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessController {
+
     ThicknessDAO dao = new ThicknessDAOImpl();
     List<Thickness> items = List.of();
     ProductTypeDAO prodDao = new ProductTypeDAOImpl();
     List<ProductType> prodItems = prodDao.findHasThicknessTrue();
-    
+
     /**
      * Creates new form Thickness
      */
@@ -38,7 +39,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         initComponents();
         this.open();
     }
-    
+
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
@@ -47,7 +48,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
-  
+
     @Override
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblThickness.getModel();
@@ -65,11 +66,11 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
                 typeName,
                 false
             };
-            model.addRow(rowData);  
+            model.addRow(rowData);
         });
         this.clear();
     }
-    
+
     @Override
     public void edit() {
         Thickness entity = items.get(tblThickness.getSelectedRow());
@@ -79,7 +80,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
     }
 
     @Override
-    public void deleteCheckedItems(){
+    public void deleteCheckedItems() {
         if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
             for (int i = 0; i < tblThickness.getRowCount(); i++) {
                 if ((Boolean) tblThickness.getValueAt(i, 3)) {
@@ -89,56 +90,50 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
             this.fillToTable();
         }
     }
-    public void setCheckedAll(boolean checked){
-        for(int i = 0; i < tblThickness.getRowCount(); i++){
+
+    public void setCheckedAll(boolean checked) {
+        for (int i = 0; i < tblThickness.getRowCount(); i++) {
             tblThickness.setValueAt(checked, i, 3);
         }
     }
+
     @Override
     public void checkAll() {
         this.setCheckedAll(true);
     }
-    
+
     @Override
     public void uncheckAll() {
         this.setCheckedAll(false);
     }
-    
+
     @Override
-    public void fillProductType(){
+    public void fillProductType() {
         DefaultComboBoxModel cboModel = (DefaultComboBoxModel) cboType.getModel();
         cboModel.removeAllElements();
 
         prodItems.forEach(productType -> {
             cboModel.addElement(productType);
         });
- 
+
     }
-    
+
     @Override
     public void setForm(Thickness entity) {
+        int index = 0;
+        for (int i = 0; i < prodItems.size(); i++) {
+            if (entity.getTypeId() == null ? prodItems.get(i).getId() == null : entity.getTypeId().equals(prodItems.get(i).getId())) {
+                index = i;
+                break;
+            }
+        }
+
         txtId.setText(String.valueOf(entity.getId()));
         txtName.setText(entity.getThick());
+        cboType.setSelectedIndex(index);
     }
-    
-//    @Override 
-//    public Thickness getForm() {
-//        try {
-//            Integer idText = Integer.parseInt(txtId.getText().trim());
-//            String thickText = txtName.getText().trim();
-//            ProductType selectedType = (ProductType) cboType.getSelectedItem();
-//
-//            return Thickness.builder()
-//                    .id(idText)
-//                    .thick(thickText)
-//                    .typeId(selectedType.getId())
-//                    .build();
-//        } catch (Exception e) {
-//            throw e;
-//        }
-//    }
-    
-    @Override 
+
+    @Override
     public Thickness getForm() {
         return Thickness.builder()
                 .id(Integer.parseInt(txtId.getText()))
@@ -146,13 +141,13 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
                 .typeId(((ProductType) cboType.getSelectedItem()).getId())
                 .build();
     }
-    
+
     @Override
-    public void clear(){
+    public void clear() {
         this.setForm(new Thickness());
         this.setEditable(false);
     }
-    
+
     @Override
     public void create() {
         Thickness entity = this.getForm();
@@ -177,7 +172,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
             this.clear();
         }
     }
-    
+
     @Override
     public void setEditable(boolean editable) {
         txtId.setEnabled(!editable);
@@ -225,7 +220,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
     public boolean isValidInput() {
         return true;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -626,7 +621,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
 
     private void tblThicknessMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblThicknessMouseClicked
         // TODO add your handling code here:
-        if(evt.getClickCount() == 2){
+        if (evt.getClickCount() == 2) {
             this.edit();
         }
     }//GEN-LAST:event_tblThicknessMouseClicked

@@ -104,6 +104,9 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         txtName.setText(entity.getName());
         txtUnit.setText(entity.getName()); //new
         txtSize.setText(entity.getDefaultLength() != null ? String.valueOf(entity.getDefaultLength()) : "");
+        ckbCoPhanLoai.setSelected(entity.isHasThickness());
+        ckbNhapDoDai.setSelected(entity.isRequiresSize());
+        ckbDoDayMacDinh.setSelected(entity.getDefaultLength() != null);
     }
 
     @Override
@@ -287,9 +290,16 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         tblProductType.addMouseListener(new java.awt.event.MouseAdapter() {
