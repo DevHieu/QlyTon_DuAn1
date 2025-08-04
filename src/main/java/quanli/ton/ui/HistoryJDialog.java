@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import quanli.ton.controller.HistoryController;
 import quanli.ton.dao.BillDao;
+import quanli.ton.dao.impl.BillDaoImpl;
 import quanli.ton.entity.Bills;
 import quanli.ton.ui.manager.RevenueManager;
 import quanli.ton.util.TimeRange;
@@ -30,9 +31,9 @@ import quanli.ton.util.XDate;
  */
 public class HistoryJDialog extends javax.swing.JDialog implements HistoryController{
 
-    private BillDao billDao; // Sử dụng interface
-    private List<Bills> bills; // Danh sách hóa đơn cho hiển thị và chi tiết
-
+    private BillDao billDao = new BillDaoImpl();; // Sử dụng interface
+    private List<Bills> bills;
+    
     private void initTable() {
         // Cập nhật các cột hiển thị để khớp với dữ liệu từ selectByTimeRange
         String[] columns = {"Mã HĐ", "Nhân viên", "Khách hàng", "Ngày tạo", "Ngày thanh toán", "Trạng thái"};
@@ -101,6 +102,12 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
     public void open() {
         // Đặt JFrame ở giữa màn hình
         this.setLocationRelativeTo(null);
+        
+        // Set ngày hiện tại cho textfield
+        Date today = new Date();
+        txtBegin.setText(XDate.format(today, "dd-MM-yyyy HH:mm:ss"));
+        txtEnd.setText(XDate.format(today, "dd-MM-yyyy HH:mm:ss"));
+        
         // Chọn "Hôm nay" và điền dữ liệu
         cboTimeRanges.setSelectedIndex(0);
         fillBills();
@@ -147,7 +154,40 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
 
     @Override
     public void selectTimeRange() {
-        // Khi chọn combobox thì cập nhật lại bảng
+        // Cập nhật ngày trong textfield khi chọn combobox
+        Date beginDate = null;
+        Date endDate = null;
+        
+        switch (cboTimeRanges.getSelectedIndex()) {
+            case 0: // Hôm nay
+                beginDate = TimeRange.today().getBegin();
+                endDate = TimeRange.today().getEnd();
+                break;
+            case 1: // Tuần này
+                beginDate = TimeRange.thisWeek().getBegin();
+                endDate = TimeRange.thisWeek().getEnd();
+                break;
+            case 2: // Tháng này
+                beginDate = TimeRange.thisMonth().getBegin();
+                endDate = TimeRange.thisMonth().getEnd();
+                break;
+            case 3: // Quý này
+                beginDate = TimeRange.thisQuarter().getBegin();
+                endDate = TimeRange.thisQuarter().getEnd();
+                break;
+            case 4: // Năm nay
+                beginDate = TimeRange.thisYear().getBegin();
+                endDate = TimeRange.thisYear().getEnd();
+                break;
+        }
+        
+        // Cập nhật textfield với ngày tương ứng
+        if (beginDate != null && endDate != null) {
+            txtBegin.setText(XDate.format(beginDate, "dd-MM-yyyy HH:mm:ss"));
+            txtEnd.setText(XDate.format(endDate, "dd-MM-yyyy HH:mm:ss"));
+        }
+        
+        // Cập nhật lại bảng
         fillBills();
     }
     /**
@@ -156,6 +196,7 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
     public HistoryJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.open();
     }
 
     /**
@@ -282,13 +323,14 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2)
-                        .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cboTimeRanges))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(cboTimeRanges, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGap(18, 18, 18)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap()))

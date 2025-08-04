@@ -4,14 +4,10 @@
  */
 package quanli.ton.ui.manager;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -20,14 +16,6 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.controller.ProductsController;
 import quanli.ton.dao.ProductPriceHistoryDAO;
 import quanli.ton.dao.ProductTypeDAO;
@@ -38,7 +26,6 @@ import quanli.ton.dao.impl.ProductTypeDAOImpl;
 import quanli.ton.dao.impl.ProductsDAOimpl;
 import quanli.ton.dao.impl.ThicknessDAOImpl;
 import quanli.ton.entity.Product;
-import quanli.ton.entity.ProductPriceHistory;
 import quanli.ton.entity.ProductType;
 import quanli.ton.entity.Thickness;
 import quanli.ton.util.XDialog;
@@ -85,51 +72,88 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     /**
      * Creates new form Products
      */
-    private void fillComboBox() {
-        cboModel.removeAllItems();
-        cboModel.addItem(""); // Mục trống để người dùng có thể không chọn
-        List<Product> types = productsDAO.findAll(); // Giả sử có phương thức này
-        for (Product type : types) {
-            cboModel.addItem(type.getId());
-        }
-    }
+    @Override
+    public void setForm(Product product) {
+    System.out.println("Setting form for product: " + product.getId());
+    System.out.println("Product TypeId: " + product.getTypeId());
+    System.out.println("Product ThickId: " + product.getThickId());
+    
+    txtId.setText(product.getId());
+    txtName.setText(product.getName());
+    txtQuantity.setText(String.valueOf(product.getQuantity())); // Đã sửa từ getUnitPrice()
+    slGiamGia.setValue((int) product.getDiscount());
+    txtDiscountPercent.setText(product.getDiscount() + "%");
+    txtUnitPrice.setText(String.valueOf(product.getUnitPrice())); // Thêm dòng này
+    txtId.setEditable(false); 
 
-    private void setForm(Product product) {
-        txtId.setText(product.getId());
-        txtName.setText(product.getName());
-        txtUnitPrice.setText(String.valueOf(product.getUnitPrice()));
-        slGiamGia.setValue((int) product.getDiscount());
-        txtDiscountPercent.setText(product.getDiscount() + "%");
-
-        cboModel.setSelectedItem(product.getTypeId());
-//        jTextField1.setText(product.getTypeId());
-//        cboThickness2.setText(String.valueOf(product.getThickId())); // thickId là số nguyên
-//        jTextField3.setText(String.valueOf(product.getQuantity()));
-
-        if (product.getPhoto() != null && !product.getPhoto().isEmpty()) {
-            try {
-                ImageIcon icon = new ImageIcon(product.getPhoto());
-                lblImage.setIcon(icon);
-                lblImage.setText(""); // Xóa bất kỳ văn bản nào
-            } catch (Exception e) {
-                lblImage.setIcon(null);
-                lblImage.setText("Không có hình ảnh");
-                e.printStackTrace();
+    if (product.getTypeId() != null) {
+        ProductType selectedProductType = null;
+        for (ProductType type : typeList) {
+            if (type.getId().equals(product.getTypeId())) {
+                selectedProductType = type;
+                break;
             }
+        }
+        if (selectedProductType != null) {
+            cboModel.setSelectedItem(selectedProductType.getName());
+            filljComboBox1(selectedProductType.getId()); // Gọi để điền cboThickness2 với các độ dày liên quan
         } else {
+            cboModel.setSelectedIndex(0);
+            filljComboBox1(null); // Điền cboThickness2 với tất cả độ dày nếu không có loại nào được chọn
+        }
+    } else {
+        cboModel.setSelectedIndex(0);
+        filljComboBox1(null); // Điền cboThickness2 với tất cả độ dày nếu không có loại nào được chọn
+    } 
+    
+    // Phần quan trọng để sửa lỗi độ dày
+    if (product.getThickId() != null) {
+        // Lấy đối tượng Thickness trực tiếp từ DAO
+        Thickness selectedThickness = thicknessDAO.findById(product.getThickId()); 
+        System.out.println("Found thickness: " + (selectedThickness != null ? selectedThickness.getThick() : "null"));
+        if (selectedThickness != null) {
+            // Đảm bảo cboThickness2 đã được điền trước khi setSelectedItem
+            filljComboBox1(product.getTypeId()); // Điền lại cboThickness2
+            // Sau đó setSelectedItem
+            cboThickness2.setSelectedItem(selectedThickness.getThick());
+            System.out.println("Set selected thickness: " + selectedThickness.getThick());
+        } else {
+            cboThickness2.setSelectedIndex(0);
+            System.out.println("Thickness not found, set to index 0");
+        }
+    } else {
+        cboThickness2.setSelectedIndex(0);
+        System.out.println("Product has no ThickId, set to index 0");
+    } 
+        
+    if (product.getPhoto() != null && !product.getPhoto().isEmpty()) {
+        try {
+            ImageIcon icon = new ImageIcon(product.getPhoto());
+            lblImage.setIcon(icon);
+            lblImage.setText(""); 
+            lblImage.setToolTipText(product.getPhoto()); 
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải hình ảnh: " + e.getMessage());
             lblImage.setIcon(null);
             lblImage.setText("Không có hình ảnh");
+            lblImage.setToolTipText(null);
+            e.printStackTrace();
         }
+    } else {
+        lblImage.setIcon(null);
+        lblImage.setText("Không có hình ảnh");
+        lblImage.setToolTipText(null); 
     }
-
-    private Product getForm() {
+}
+         @Override
+        public Product getForm() {
         Product product = new Product();
         product.setId(txtId.getText());
         product.setName(txtName.getText());
         product.setPhoto(lblImage.getToolTipText()); // Giả sử ToolTipText lưu đường dẫn file ảnh
 
         try {
-            product.setQuantity(Integer.parseInt(jTextField4.getText()));
+            product.setQuantity(Integer.parseInt(txtQuantity.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên.");
             return null; // Trả về null nếu dữ liệu không hợp lệ
@@ -145,7 +169,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         product.setDiscount(slGiamGia.getValue());
 
         // Xử lý TypeId từ cboCategory
-        int categoryIndex = cboCategory.getSelectedIndex();
+        int categoryIndex = cboModel.getSelectedIndex();
         if (categoryIndex > 0) { // Nếu một loại sản phẩm cụ thể được chọn (không phải "Tất cả")
             // Lấy ID từ đối tượng ProductType trong typeList
             product.setTypeId(typeList.get(categoryIndex - 1).getId());
@@ -157,8 +181,8 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         }
 
         // Xử lý ThickId từ cboThickness
-        if (cboThickness.getSelectedIndex() > 0 && cboThickness.getItemCount() > 0 && thicknessList != null) {
-            String selectedThickName = (String) cboThickness.getSelectedItem();
+        if (cboThickness2.getSelectedIndex() > 0 && cboThickness2.getItemCount() > 0 && thicknessList != null) {
+            String selectedThickName = (String) cboThickness2.getSelectedItem();
             Integer selectedThickId = null;
             for (Thickness thick : thicknessList) {
                 if (thick.getThick().equals(selectedThickName)) {
@@ -174,8 +198,8 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
         return product;
     }
-
-    private void edit() {
+    @Override
+    public void edit() {
         int selectedRow = tblProduct.getSelectedRow();
         if (selectedRow >= 0 && selectedRow < productList.size()) {
             Product product = productList.get(selectedRow);
@@ -189,8 +213,9 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     public void open() {
         this.setLocationRelativeTo(null);
         productsDAO = new ProductsDAOimpl();
-        fillComboBox();
         fillProductType();
+        fillModel();
+        filljComboBox1(null);
         fillToTable(null, null);
         this.productList = productsDAO.findAll();
 
@@ -240,7 +265,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
             cboCategory.addItem(p.getName());
         }
     }
-
+    
     private void fillThickness(String typeId) {
         thicknessList = thicknessDAO.findByProductTypeId(typeId);
         cboThickness.removeAllItems(); // Sử dụng removeAllItems() cho JComboBox
@@ -256,34 +281,67 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         }
     }
 
-    private void create() {
+    private void fillModel() {
+    typeList = productTypeDAO.findAll();
+    cboModel.removeAllItems();
+    cboModel.addItem("Tất cả");
+    cboModel.setSelectedIndex(0);
+    for (ProductType p : typeList) {
+        cboModel.addItem(p.getName());
+    }
+    }
+     
+    private void filljComboBox1(String typeId){
+    List<Thickness> thicknessesForForm;
+    if (typeId != null && !typeId.isEmpty()) {
+        thicknessesForForm = thicknessDAO.findByProductTypeId(typeId);
+        System.out.println("Loading thicknesses for typeId: " + typeId + ", found: " + thicknessesForForm.size());
+    } else {
+        thicknessesForForm = thicknessDAO.findAll();
+        System.out.println("Loading all thicknesses, found: " + thicknessesForForm.size());
+    }
+
+    this.thicknessList = thicknessesForForm; // Đảm bảo thicknessList của lớp được cập nhật
+
+    cboThickness2.removeAllItems();
+    cboThickness2.addItem(""); // Thêm một mục trống
+    if (thicknessesForForm != null && !thicknessesForForm.isEmpty()) {
+        for (Thickness thick : thicknessesForForm) {
+            cboThickness2.addItem(thick.getThick());
+            System.out.println("Added thickness: " + thick.getThick() + " (ID: " + thick.getId() + ")");
+        }
+    }
+}
+    
+    @Override
+    public void create() {
         Product newProduct = getForm();
         if (newProduct != null) {
             try {
-                productsDAO.create(newProduct);
+                productsDAO.create(newProduct); 
                 JOptionPane.showMessageDialog(this, "Sản phẩm đã được tạo thành công!");
-                clear();
+                clear(); 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi tạo sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
-
-    private void update() {
+    @Override
+    public void update() {
         Product updatedProduct = getForm();
         if (updatedProduct != null) {
             try {
                 productsDAO.update(updatedProduct); // Cập nhật sản phẩm
                 JOptionPane.showMessageDialog(this, "Sản phẩm đã được cập nhật thành công!");
-            } catch (Exception e) {
+            }  catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
-
-    private void delete() {
+    @Override
+    public void delete() {
         String productIdToDelete = txtId.getText();
         if (productIdToDelete.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã Sản Phẩm để xóa.");
@@ -301,48 +359,45 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
             }
         }
     }
-
-    private void clear() {
+    @Override
+    public void clear() {
         txtId.setText("");
         txtName.setText("");
-        txtUnitPrice.setText("");
+        txtQuantity.setText("");
         slGiamGia.setValue(0);
         txtDiscountPercent.setText("0%");
-        cboModel.setSelectedIndex(0); // Đặt lại combo box
-//        jTextField1.setText(""); // Xóa trường ID danh mục
-//        cboThickness2.setText(""); // Xóa trường ID độ dày
-//        jTextField3.setText(""); // Xóa trường số lượng
+        cboModel.setSelectedIndex(0);
         lblImage.setIcon(null);
         lblImage.setText("Nhấp để chọn hình ảnh");
         currentIndex = -1; // Không có sản phẩm nào được chọn
         updateNavigationButtons();
     }
-
-    private void moveFirst() {
+    @Override
+    public void moveFirst() {
         if (!productList.isEmpty()) {
             currentIndex = 0;
             setForm(productList.get(currentIndex));
             updateNavigationButtons();
         }
     }
-
-    private void movePrevious() {
+    @Override
+    public void movePrevious() {
         if (!productList.isEmpty() && currentIndex > 0) {
             currentIndex--;
             setForm(productList.get(currentIndex));
             updateNavigationButtons();
         }
     }
-
-    private void moveNext() {
+    @Override
+    public void moveNext() {
         if (!productList.isEmpty() && currentIndex < productList.size() - 1) {
             currentIndex++;
             setForm(productList.get(currentIndex));
             updateNavigationButtons();
         }
     }
-
-    private void moveLast() {
+    @Override
+    public void moveLast() {
         if (!productList.isEmpty()) {
             currentIndex = productList.size() - 1;
             setForm(productList.get(currentIndex));
@@ -433,11 +488,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         fillToTable(selectedProductTypeId, selectedThicknessId);
     }
 
-    private void showPriceChart() {
-        PriceChart dialog = new PriceChart(null, true);
-        dialog.setProductId(txtId.getText());
-        dialog.setVisible(true);
-    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -468,7 +519,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jLabel4 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
         txtName = new javax.swing.JTextField();
-        txtUnitPrice = new javax.swing.JTextField();
+        txtQuantity = new javax.swing.JTextField();
         txtDiscountPercent = new javax.swing.JLabel();
         slGiamGia = new javax.swing.JSlider();
         jLabel6 = new javax.swing.JLabel();
@@ -484,7 +535,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         btnPriceChart = new javax.swing.JButton();
         ImportGoods = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtUnitPrice = new javax.swing.JTextField();
         cboThickness2 = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
@@ -529,9 +580,16 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, true
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         tblProduct.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -634,6 +692,11 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jLabel3.setText("Tên Sản Phẩm");
 
         cboModel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboModel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboModelActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Đơn giá");
@@ -642,7 +705,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
         txtName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        txtUnitPrice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         txtDiscountPercent.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtDiscountPercent.setText("Giảm giá");
@@ -763,10 +826,14 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setText("Số Lượng");
 
-        jTextField4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtUnitPrice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         cboThickness2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        cboThickness2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboThickness2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboThickness2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -798,10 +865,10 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel7)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel4)))
                             .addComponent(cboThickness2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(35, Short.MAX_VALUE))
@@ -853,14 +920,14 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel7)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtDiscountPercent)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel4)
                                         .addGap(15, 15, 15)
-                                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addGap(35, 35, 35)
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -897,7 +964,7 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 787, Short.MAX_VALUE)
+            .addGap(0, 797, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -1015,96 +1082,36 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
     private void btnPriceChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPriceChartActionPerformed
         // TODO add your handling code here:
+        
+        String productId = txtId.getText();
+        System.out.println("Product ID: " + productId);
+        
+        if (productId == null || productId.trim().isEmpty()) {
+            XDialog.alert("Vui lòng chọn một sản phẩm trước khi xem biến động giá!");
+            return;
+        }
 
-        List<ProductPriceHistory> products = ProductPriceHistoryDAO.findAllById(txtId.getText());
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-        products.forEach(item -> {
-            Date effectiveDate = item.getEffectiveDate();
-            String formattedDate = formatter.format(effectiveDate);
-
-            dataset.setValue(item.getImportPrice(), "Giá nhập", formattedDate);
-            dataset.setValue(item.getUnitPrice(), "Giá bán", formattedDate);
-        });
-
-        JFreeChart chart = ChartFactory.createLineChart(
-                "Biểu đồ Giá Trị Tham Số", // Tiêu đề biểu đồ
-                "Thời gian", // Nhãn trục X (Tham Số -> Thời gian cho rõ ràng)
-                "Giá Trị", // Nhãn trục Y
-                dataset, // Dữ liệu
-                PlotOrientation.VERTICAL, // Hướng biểu đồ
-                true, // Hiển thị chú giải (legend)
-                true, // Tạo tooltips
-                false // Tạo URLs
-        );
-
-        // 1. Cài đặt màu nền tổng thể của biểu đồ
-        chart.setBackgroundPaint(new Color(245, 245, 245)); // Màu xám nhạt
-
-        // 2. Cài đặt màu tiêu đề
-        chart.getTitle().setPaint(Color.BLACK);
-        chart.getTitle().setFont(new Font("Arial", Font.BOLD, 18)); // Đặt font cho tiêu đề
-
-        // 3. Truy cập CategoryPlot để tùy chỉnh các thuộc tính bên trong
-        CategoryPlot plot = chart.getCategoryPlot();
-
-        // 4. Màu nền của vùng vẽ (plot area)
-//        plot.setBackgroundPaint(Color.WHITE); // Màu trắng cho nền vùng vẽ
-        // 5. Đường kẻ ngang (Range Gridlines)
-        plot.setRangeGridlinePaint(new Color(200, 200, 200)); // Màu xám nhạt hơn
-        plot.setRangeGridlineStroke(new BasicStroke(0.5f)); // Độ dày đường kẻ
-
-        // 6. Đường kẻ dọc (Domain Gridlines - nếu muốn hiển thị)
-        // plot.setDomainGridlinePaint(new Color(200, 200, 200)); // Uncomment nếu muốn hiển thị đường kẻ dọc
-        // plot.setDomainGridlineStroke(new BasicStroke(0.5f));
-        // 7. Màu viền vùng vẽ
-        plot.setOutlinePaint(Color.LIGHT_GRAY); // Màu viền xám nhạt
-        plot.setOutlineStroke(new BasicStroke(1.0f)); // Độ dày viền
-
-        // 8. Tùy chỉnh renderer để thay đổi style đường và thêm điểm đánh dấu
-        LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
-
-        // Tùy chỉnh "Giá nhập" (series 0)
-        renderer.setSeriesPaint(0, new Color(255, 99, 71)); // Màu đỏ cam (Tomato)
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f)); // Độ dày đường
-        renderer.setSeriesShapesVisible(0, true); // Hiển thị hình dạng tại các điểm dữ liệu
-        renderer.setSeriesShape(0, new java.awt.geom.Ellipse2D.Double(-3, -3, 6, 6)); // Hình tròn nhỏ
-
-        // Tùy chỉnh "Giá bán" (series 1)
-        renderer.setSeriesPaint(1, new Color(65, 105, 225)); // Màu xanh hoàng gia (RoyalBlue)
-        renderer.setSeriesStroke(1, new BasicStroke(2.0f));
-        renderer.setSeriesShapesVisible(1, true);
-        renderer.setSeriesShape(1, new java.awt.geom.Rectangle2D.Double(-3, -3, 6, 6)); // Hình vuông nhỏ
-
-        // 9. Tùy chỉnh trục X (Category Axis)
-        CategoryAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLabelFont(new Font("Arial", Font.BOLD, 12)); // Font cho nhãn trục X
-        domainAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 10)); // Font cho các giá trị trên trục X
-        //domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45); // Xoay nhãn 45 độ nếu dài để tránh chồng lấn
-
-        // 10. Tùy chỉnh trục Y (Value Axis - Range Axis)
-        plot.getRangeAxis().setLabelFont(new Font("Arial", Font.BOLD, 12)); // Font cho nhãn trục Y
-        plot.getRangeAxis().setTickLabelFont(new Font("Arial", Font.PLAIN, 10)); // Font cho các giá trị trên trục Y
-
-        // 11. Tùy chỉnh chú giải (Legend)
-        chart.getLegend().setItemFont(new Font("Arial", Font.PLAIN, 12)); // Font cho chú giải
-        chart.getLegend().setBackgroundPaint(new Color(250, 250, 250, 180)); // Nền chú giải hơi trong suốt
-        chart.getLegend().setFrame(new org.jfree.chart.block.BlockBorder(Color.LIGHT_GRAY)); // Viền cho chú giải
-
-        // 12. Hiển thị biểu đồ
-        ChartFrame frame = new ChartFrame("Biểu Đồ Thông Số Sản Phẩm", chart);
-        frame.setVisible(true);
-        frame.setSize(800, 600); // Tăng kích thước khung hình
-        frame.setLocationRelativeTo(null);
-        this.showPriceChart();
+        // Mở dialog PriceChart
+        PriceChart priceChartDialog = new PriceChart(null, true);
+        priceChartDialog.setProductId(productId);
+        priceChartDialog.setVisible(true);
     }//GEN-LAST:event_btnPriceChartActionPerformed
 
     private void ImportGoodsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportGoodsActionPerformed
         // TODO add your handling code here:
         Importgoods importGoodsDialog = new Importgoods(new javax.swing.JFrame(), true);
+        importGoodsDialog.setId(txtId.getText());
+        importGoodsDialog.setProductName(txtName.getText());
         importGoodsDialog.setVisible(true);
+        importGoodsDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                Product newProduct = productsDAO.findById(txtId.getText());
+                
+                ProductJDialog.this.applyFilters();
+                ProductJDialog.this.setForm(newProduct);
+            }
+        });
     }//GEN-LAST:event_ImportGoodsActionPerformed
 
     private void cboThicknessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThicknessActionPerformed
@@ -1127,6 +1134,16 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
 
         moveNext();
     }//GEN-LAST:event_btnMoveNextActionPerformed
+
+    private void cboModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboModelActionPerformed
+        // TODO add your handling code here:
+        applyFilters(); 
+    }//GEN-LAST:event_cboModelActionPerformed
+
+    private void cboThickness2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThickness2ActionPerformed
+        // TODO add your handling code here:
+        applyFilters();
+    }//GEN-LAST:event_cboThickness2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1194,13 +1211,33 @@ public class ProductJDialog extends javax.swing.JDialog implements ProductsContr
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JLabel lblImage;
     private javax.swing.JSlider slGiamGia;
     private javax.swing.JTable tblProduct;
     private javax.swing.JLabel txtDiscountPercent;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtQuantity;
     private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void fillToTable() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void moveTo(int rowIndex) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean isValidInput() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

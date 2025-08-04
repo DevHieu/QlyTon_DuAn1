@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS QLyTon;
 CREATE DATABASE QLyTon;
 USE QLyTon;
 
+-- 1. Users Table
 CREATE TABLE Users (
     Username VARCHAR(50) NOT NULL PRIMARY KEY,
     Fullname VARCHAR(100) NOT NULL,
@@ -30,14 +31,14 @@ CREATE TABLE Thickness (
     FOREIGN KEY (TypeId) REFERENCES ProductType(Id) ON DELETE CASCADE
 );
 
--- 4. Products Table (CÓ THÊM COSTPRICE)
+-- 4. Products Table (dùng ImportPrice)
 CREATE TABLE Products (
     Id VARCHAR(20) NOT NULL PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     Photo VARCHAR(255) NOT NULL,
     Quantity INT NOT NULL,
     UnitPrice FLOAT NOT NULL,
-    CostPrice FLOAT NOT NULL DEFAULT 0,  -- THÊM MỚI: Giá nhập
+    ImportPrice FLOAT NOT NULL DEFAULT 0,
     Discount FLOAT NOT NULL,
     TypeId VARCHAR(20) NOT NULL,
     ThickID INT NULL,
@@ -67,13 +68,13 @@ CREATE TABLE Bills (
     FOREIGN KEY (CustomerId) REFERENCES Customers(PhoneNumber) ON DELETE RESTRICT
 );
 
--- 7. BillDetails Table (CÓ THÊM COSTPRICE)
+-- 7. BillDetails Table (dùng ImportPrice)
 CREATE TABLE BillDetails (
     Id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     BillId BIGINT NOT NULL,
     ProductId VARCHAR(20) NOT NULL,
     UnitPrice FLOAT NOT NULL,
-    CostPrice FLOAT NOT NULL DEFAULT 0,  -- THÊM MỚI: Giá nhập tại thời điểm bán
+    ImportPrice FLOAT NOT NULL DEFAULT 0,
     Discount FLOAT NOT NULL,
     Quantity INT NOT NULL,
     Length FLOAT NULL,
@@ -85,23 +86,21 @@ CREATE TABLE BillDetails (
 CREATE TABLE ProductPriceHistory (
     Id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     ProductId VARCHAR(20) NOT NULL,
-    CostPrice FLOAT NOT NULL,
+    ImportPrice FLOAT NOT NULL,
     UnitPrice FLOAT NOT NULL,
     EffectiveDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ProductId) REFERENCES Products(Id) ON DELETE CASCADE
 );
 
 -- ==========================
--- TRIGGER check RequiresSize
+-- TRIGGERS
 -- ==========================
 DELIMITER $$
-
 CREATE TRIGGER trg_check_length_insert
 BEFORE INSERT ON BillDetails
 FOR EACH ROW
 BEGIN
     DECLARE requires_size BOOLEAN;
-
     SELECT RequiresSize INTO requires_size
     FROM ProductType
     WHERE Id = (SELECT TypeId FROM Products WHERE Id = NEW.ProductId);
@@ -117,7 +116,6 @@ BEFORE UPDATE ON BillDetails
 FOR EACH ROW
 BEGIN
     DECLARE requires_size BOOLEAN;
-
     SELECT RequiresSize INTO requires_size
     FROM ProductType
     WHERE Id = (SELECT TypeId FROM Products WHERE Id = NEW.ProductId);
@@ -131,21 +129,28 @@ END$$
 DELIMITER ;
 
 -- ==========================
--- Stored Procedures
+-- STORED PROCEDURES
 -- ==========================
 DELIMITER //
+
 CREATE PROCEDURE ImportProduct(
     IN p_id VARCHAR(20),
-    IN p_quantity INT
+    IN p_quantity INT,
+    IN p_importPrice FLOAT
 )
 BEGIN
     UPDATE Products 
-    SET Quantity = Quantity + p_quantity
+    SET Quantity = Quantity + p_quantity,
+        ImportPrice = p_importPrice
+    WHERE Id = p_id;
+
+    -- Lưu lịch sử giá nhập + giá bán hiện tại
+    INSERT INTO ProductPriceHistory (ProductId, ImportPrice, UnitPrice)
+    SELECT Id, p_importPrice, UnitPrice
+    FROM Products
     WHERE Id = p_id;
 END //
-DELIMITER ;
 
-DELIMITER //
 CREATE PROCEDURE SellProduct(
     IN p_id VARCHAR(20),
     IN p_quantity INT
@@ -166,7 +171,12 @@ BEGIN
         WHERE Id = p_id;
     END IF;
 END //
+
 DELIMITER ;
+
+-- ==========================
+-- DỮ LIỆU MẪU
+-- ==========================
 
 -- USERS
 INSERT INTO Users VALUES
@@ -175,7 +185,7 @@ INSERT INTO Users VALUES
 
 -- PRODUCT TYPES
 INSERT INTO ProductType VALUES
-('TON', 'Tôn lạnh', 'Tấm', 1, 1, 6.0),
+('TON', 'Tôn lạnh', 'Tấm', 1, 1, NULL),
 ('XAGO', 'Xà gồ C', 'Thanh', 1, 1, 6.0),
 ('PHU', 'Phụ kiện', 'Cái', 0, 0, NULL);
 
@@ -205,21 +215,61 @@ INSERT INTO Bills (Username, CustomerId, Checkin, Checkout, Note, Discount, Depo
 ('user01', '0911222333', NOW(), NOW(), 'Giao ngay trong ngày', 50000, 1000000, 1);
 
 -- BILL DETAILS
-INSERT INTO BillDetails (BillId, ProductId, UnitPrice, CostPrice, Discount, Quantity, Length) VALUES
+INSERT INTO BillDetails (BillId, ProductId, UnitPrice, ImportPrice, Discount, Quantity, Length) VALUES
 (1, 'TON001', 125000, 100000, 0, 10, 6.0),
-(1, 'PK001', 2000, 1500, 0, 100, NULL),
-(2, 'XG001', 150000, 120000, 5000, 20, 6.0),
+(1, 'PK001', 2000, 1500, 0, 10, NULL),
+(2, 'XG001', 150000, 120000, 2, 20, 6.0),
 (2, 'TON002', 130000, 105000, 0, 15, 6.0);
 
--- OPTIONAL: PRODUCT PRICE HISTORY
-INSERT INTO ProductPriceHistory (ProductId, CostPrice, UnitPrice) VALUES
+-- PRICE HISTORY
+INSERT INTO ProductPriceHistory (ProductId, ImportPrice, UnitPrice) VALUES
 ('TON001', 95000, 120000),
 ('TON001', 100000, 125000),
 ('TON002', 102000, 130000),
 ('XG001', 118000, 145000),
 ('XG001', 120000, 150000);
 
+-- Cập nhật trạng thái
 UPDATE Bills
 SET Checkout = NOW(), Status = 1
 WHERE Id IN (1, 2);
+
+-- Kiểm tra
 SELECT * FROM Bills WHERE Status = 1 AND Checkout IS NOT NULL;
+
+-- P001: Tôn lạnh 3.0
+INSERT INTO Products (Id, Name, Photo, Quantity, UnitPrice, ImportPrice, Discount, TypeId, ThickID)
+VALUES ('P001', 'Tôn lạnh 3.0', 'ton1.jpg', 0, 110000, 0, 0, 'TON', 1);
+
+-- P002: Tôn lạnh 4.5
+INSERT INTO Products VALUES ('P002', 'Tôn lạnh 4.5', 'ton2.jpg', 0, 115000, 0, 0, 'TON', 2);
+
+-- P003: Xà gồ C 1.5
+INSERT INTO Products VALUES ('P003', 'Xà gồ C 1.5', 'xago1.jpg', 0, 130000, 0, 0, 'XAGO', 3);
+
+-- P004: Xà gồ C 2.0
+INSERT INTO Products VALUES ('P004', 'Xà gồ C 2.0', 'xago2.jpg', 0, 135000, 0, 0, 'XAGO', 4);
+
+-- P005: Phụ kiện (không độ dày)
+INSERT INTO Products VALUES ('P005', 'Vít bắn tôn', 'phukien.jpg', 0, 5000, 0, 0, 'PHU', NULL);
+
+INSERT INTO ProductPriceHistory (ProductId, ImportPrice, UnitPrice, EffectiveDate) VALUES
+('P001', 90000, 110000, '2025-07-20 08:00:00'),
+('P001', 91000, 110000, '2025-07-21 09:15:00'),
+('P001', 92000, 110000, '2025-07-22 10:30:00'),
+
+('P002', 95000, 115000, '2025-07-20 11:00:00'),
+('P002', 94000, 115000, '2025-07-21 13:45:00'),
+
+('P003', 105000, 130000, '2025-07-20 14:00:00'),
+('P003', 107000, 130000, '2025-07-22 16:20:00'),
+
+('P004', 110000, 135000, '2025-07-20 08:45:00'),
+('P004', 108000, 135000, '2025-07-23 10:10:00'),
+
+('P005', 3000, 5000, '2025-07-19 08:00:00'),
+('P005', 2900, 5000, '2025-07-20 08:30:00'),
+('P005', 3100, 5000, '2025-07-21 09:00:00'),
+('P005', 3200, 5000, '2025-07-22 10:30:00'),
+('P005', 3300, 5000, '2025-07-23 11:45:00'),
+('P005', 3400, 5000, '2025-07-24 14:00:00');

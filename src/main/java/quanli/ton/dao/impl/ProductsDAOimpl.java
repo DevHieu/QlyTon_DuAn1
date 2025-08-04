@@ -26,6 +26,7 @@ public class ProductsDAOimpl implements ProductsDAO {
     String findProductByTypeSql = "SELECT * FROM Products WHERE TypeId = ?";
     String findProductByThickSql = "SELECT * FROM Products WHERE ThickID = ?";
 
+
     @Override
     public void update(Product product) {
         Object[] args = {
@@ -79,5 +80,9 @@ public class ProductsDAOimpl implements ProductsDAO {
     public List<Product> findProductByThick(int id) {
         return XQuery.getBeanList(Product.class, findProductByThickSql, id);
     }
+    
+
+    
+
 }
 

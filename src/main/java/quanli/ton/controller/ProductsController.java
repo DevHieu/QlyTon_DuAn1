@@ -4,12 +4,14 @@
  */
 package quanli.ton.controller;
 
+import quanli.ton.entity.Product;
+
 /**
  *
  * @author huynhtrunghieu
  */
 
-public interface ProductsController {
+public interface ProductsController extends CrudController<Product> {
      void fillBillDetails(); // tải và hiển thị chi tiết phiếu
     void selectTimeRange();
 }

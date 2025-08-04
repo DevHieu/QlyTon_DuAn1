@@ -16,7 +16,7 @@ import quanli.ton.util.XQuery;
  */
 public class ProductPriceHistoryDAOImpl implements ProductPriceHistoryDAO{
 
-    String findAllById = "Select * from ProductPriceHistory where ProductId = ?";
+    String findAllById = "Select * from ProductPriceHistory where ProductId = ? ORDER BY EffectiveDate";
     
     @Override
     public List<ProductPriceHistory> findAllById(String id) {
