@@ -19,7 +19,7 @@ import quanli.ton.util.XIcon;
  *
  * @author hieud
  */
-public class ProductDetail extends javax.swing.JDialog {
+public class ProductDetailJDialog extends javax.swing.JDialog {
 
     @Setter
     Product product;
@@ -27,7 +27,7 @@ public class ProductDetail extends javax.swing.JDialog {
     /**
      * Creates new form ProductDetail
      */
-    public ProductDetail(java.awt.Frame parent, boolean modal) {
+    public ProductDetailJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
@@ -130,30 +130,31 @@ public class ProductDetail extends javax.swing.JDialog {
                 .addContainerGap(398, Short.MAX_VALUE))
             .addComponent(jSeparator2)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                    .addGap(171, 171, 171)
-                    .addComponent(jLabel3)
-                    .addContainerGap(233, Short.MAX_VALUE))
                 .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(217, 217, 217)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(171, 171, 171)
+                            .addComponent(jLabel3))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(217, 217, 217)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel4)
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel8))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtName)
-                                .addComponent(txtThick)
-                                .addComponent(txtType)
-                                .addComponent(txtQuantity)
-                                .addComponent(txtUnitPrice)
-                                .addComponent(txtDiscount)))
-                        .addComponent(jLabel7))
-                    .addContainerGap(185, Short.MAX_VALUE)))
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jLabel1)
+                                        .addComponent(jLabel8))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txtName)
+                                        .addComponent(txtThick)
+                                        .addComponent(txtType)
+                                        .addComponent(txtQuantity)
+                                        .addComponent(txtUnitPrice)
+                                        .addComponent(txtDiscount)))
+                                .addComponent(jLabel7))))
+                    .addContainerGap(233, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,20 +231,21 @@ public class ProductDetail extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProductDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductDetailJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProductDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductDetailJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProductDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductDetailJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProductDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductDetailJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ProductDetail dialog = new ProductDetail(new javax.swing.JFrame(), true);
+                ProductDetailJDialog dialog = new ProductDetailJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -290,7 +292,7 @@ public class ProductDetail extends javax.swing.JDialog {
         
         txtName.setText(product.getName());
         txtType.setText(type.getName());
-        txtQuantity.setText(product.getQuantity() + " " + type.getUnit());
+        txtQuantity.setText(String.format("%.2f ", product.getQuantity()) + type.getUnit());
         txtUnitPrice.setText(moneyFormat.format(product.getUnitPrice()) + " / " + type.getUnit());
         txtDiscount.setText(product.getDiscount() + "%");
         

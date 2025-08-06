@@ -7,17 +7,17 @@ package quanli.ton.dao.impl;
 import java.util.List;
 import quanli.ton.entity.User;
 import quanli.ton.util.XJdbc;
-import quanli.ton.dao.UserDao;
 import quanli.ton.util.XQuery;
+import quanli.ton.dao.UserDAO;
 
 /**
  *
  * @author Admin
  */
-public class UserDAOImpl implements UserDao {
+public class UserDAOImpl implements UserDAO {
 
-    String createSql = "INSERT INTO Users(Username, Password, Enabled, Fullname, Photo, Manager, PhoneNumber) VALUES(?, ?, ?, ?, ?, ?,?)";
-    String updateSql = "UPDATE USERS SET Password = ?, Enabled = ?, Fullname = ?, Photo = ?, Manager = ?, PhoneNumber = ? WHERE Username = ?";
+    String createSql = "INSERT INTO Users(Username, Password, Enabled, Fullname, Photo, Gender, Manager, PhoneNumber) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+    String updateSql = "UPDATE USERS SET Password = ?, Enabled = ?, Fullname = ?, Photo = ?, Gender = ?, Manager = ?, PhoneNumber = ? WHERE Username = ?";
     String deleteSql = "DELETE FROM USERS WHERE Username = ?";
     String findAllSql = "SELECT * FROM USERS";
     String findByIdSql = "SELECT * FROM USERS WHERE Username = ?";
@@ -30,6 +30,7 @@ public class UserDAOImpl implements UserDao {
             entity.isEnabled(),
             entity.getFullname(),
             entity.getPhoto(),
+            entity.isGender(),
             entity.isManager(),
             entity.getPhoneNumber()
         };
@@ -44,6 +45,7 @@ public class UserDAOImpl implements UserDao {
             entity.isEnabled(),
             entity.getFullname(),
             entity.getPhoto(),
+            entity.isGender(),
             entity.isManager(),
             entity.getPhoneNumber(),
             entity.getUsername()

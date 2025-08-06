@@ -25,7 +25,7 @@ public class BillDetails {
     private double importPrice;
     private double unitPrice;
     private double discount;
-    private int quantity;
+    private double quantity;
     private double length;
     private Float defaultLength;
     private String productName;

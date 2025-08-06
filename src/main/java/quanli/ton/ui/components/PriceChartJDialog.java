@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package quanli.ton.ui.manager;
+package quanli.ton.ui.components;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -32,16 +32,16 @@ import quanli.ton.util.XDialog;
  *
  * @author huynhtrunghieu
  */
-public class PriceChart extends javax.swing.JDialog {
-    
+public class PriceChartJDialog extends javax.swing.JDialog {
+
     private String productId;
     private ProductPriceHistoryDAO productPriceHistoryDAO = new ProductPriceHistoryDAOImpl();
-    
+
     public void setProductId(String productId) {
         this.productId = productId;
         createPriceChart();
     }
-    
+
     private void createPriceChart() {
         if (productId == null || productId.trim().isEmpty()) {
             XDialog.alert("Vui lòng chọn một sản phẩm trước khi xem biến động giá!");
@@ -50,15 +50,15 @@ public class PriceChart extends javax.swing.JDialog {
 
         List<ProductPriceHistory> products = productPriceHistoryDAO.findAllById(productId);
         System.out.println("Found " + products.size() + " price history records for product: " + productId);
-        
+
         if (products.isEmpty()) {
             XDialog.alert("Không có dữ liệu biến động giá cho sản phẩm này!");
             return;
         }
-        
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         products.forEach(item -> {
             Date effectiveDate = item.getEffectiveDate();
             String formattedDate = formatter.format(effectiveDate);
@@ -131,12 +131,12 @@ public class PriceChart extends javax.swing.JDialog {
         // Tạo ChartPanel chứa biểu đồ
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
-        
+
         // Xóa layout cũ và thêm chartPanel
         getContentPane().removeAll();
         setLayout(new BorderLayout());
         add(chartPanel, BorderLayout.CENTER);
-        
+
         // Cài đặt kích thước dialog
         setSize(800, 600);
         setLocationRelativeTo(null);
@@ -145,7 +145,7 @@ public class PriceChart extends javax.swing.JDialog {
     /**
      * Creates new form PriceChart
      */
-    public PriceChart(java.awt.Frame parent, boolean modal) {
+    public PriceChartJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -192,20 +192,21 @@ public class PriceChart extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PriceChart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PriceChartJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PriceChart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PriceChartJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PriceChart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PriceChartJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PriceChart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PriceChartJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                PriceChart dialog = new PriceChart(new javax.swing.JFrame(), true);
+                PriceChartJDialog dialog = new PriceChartJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

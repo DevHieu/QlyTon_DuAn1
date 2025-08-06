@@ -7,11 +7,11 @@ package quanli.ton.ui;
 import javax.swing.UIManager;
 
 import quanli.ton.controller.LoginController;
-import quanli.ton.dao.UserDao;
 import quanli.ton.dao.impl.UserDAOImpl;
 import quanli.ton.entity.User;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
+import quanli.ton.dao.UserDAO;
 
 /**
  *
@@ -55,7 +55,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             return;
         }
 
-        UserDao dao = (UserDao) new UserDAOImpl();
+        UserDAO dao = (UserDAO) new UserDAOImpl();
         User user = dao.findById(username);
         if (user == null) {
             XDialog.error("Sai tên đăng nhập!");
@@ -66,7 +66,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         } else {
             // Kiểm tra username có chính xác không (phân biệt chữ hoa/thường)
             if (!username.equals(user.getUsername())) {
-                XDialog.alert("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại.");
+                XDialog.error("Tên đăng nhập không chính xác! Vui lòng kiểm tra lại.");
                 return;
             }
             XAuth.user = user; // duy trì user đăng nhập
@@ -82,7 +82,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -113,18 +113,19 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         javax.swing.GroupLayout LeftLayout = new javax.swing.GroupLayout(Left);
         Left.setLayout(LeftLayout);
         LeftLayout.setHorizontalGroup(
-                LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(LeftLayout.createSequentialGroup()
-                                .addGap(43, 43, 43)
-                                .addComponent(jLabel5)
-                                .addContainerGap(57, Short.MAX_VALUE)));
+            LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LeftLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(jLabel5)
+                .addContainerGap(57, Short.MAX_VALUE))
+        );
         LeftLayout.setVerticalGroup(
-                LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(LeftLayout.createSequentialGroup()
-                                .addGap(67, 67, 67)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 257,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(176, Short.MAX_VALUE)));
+            LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LeftLayout.createSequentialGroup()
+                .addGap(67, 67, 67)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(176, Short.MAX_VALUE))
+        );
 
         jPanel1.add(Left);
         Left.setBounds(0, 0, 400, 500);
@@ -162,9 +163,10 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             }
         });
         jPanel1.add(cbShowPassword5);
-        cbShowPassword5.setBounds(611, 270, 120, 19);
+        cbShowPassword5.setBounds(611, 270, 120, 20);
 
         txtPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtPassword.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtPassword.setPreferredSize(new java.awt.Dimension(65, 30));
         jPanel1.add(txtPassword);
         txtPassword.setBounds(430, 230, 300, 30);
@@ -172,9 +174,10 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Mật khẩu:");
         jPanel1.add(jLabel4);
-        jLabel4.setBounds(430, 210, 110, 17);
+        jLabel4.setBounds(430, 210, 110, 20);
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtUsername.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtUsername.setPreferredSize(new java.awt.Dimension(65, 30));
         jPanel1.add(txtUsername);
         txtUsername.setBounds(430, 170, 300, 30);
@@ -182,7 +185,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Tên đăng nhập:");
         jPanel1.add(jLabel3);
-        jLabel3.setBounds(430, 140, 120, 17);
+        jLabel3.setBounds(430, 140, 120, 20);
 
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -202,14 +205,15 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
-                                .addContainerGap()));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE)
+                .addContainerGap())
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 450,
-                                javax.swing.GroupLayout.PREFERRED_SIZE));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -219,7 +223,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
         if (cbShowPassword5.isSelected()) {
             txtPassword.setEchoChar((char) 0); // Hiện mật khẩu
         } else {
-            txtPassword.setEchoChar('*'); // Ẩn mật khẩu
+            txtPassword.setEchoChar('•'); // Ẩn mật khẩu
         }
     }// GEN-LAST:event_cbShowPassword5ActionPerformed
 

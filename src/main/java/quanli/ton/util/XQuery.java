@@ -124,20 +124,4 @@ public class XQuery {
             throw new RuntimeException(e);
         }
     }
-
-//
-//    public static void main(String[] args) {
-//        demo1();
-//        demo2();
-//    }
-//
-//    private static void demo1() {
-//        String sql = "SELECT * FROM Users WHERE Username=? AND Password=?";
-//        User user = XQuery.getSingleBean(User.class, sql, "NghiemN", "123456");
-//    }
-//
-//    private static void demo2() {
-//        String sql = "SELECT * FROM Users WHERE Fullname LIKE ?";
-//        List<User> list = XQuery.getBeanList(User.class, sql, "%Nguyễn %");
-//    }
 }

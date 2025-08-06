@@ -10,17 +10,17 @@ import java.util.List;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
-import quanli.ton.ui.ChangePassword;
+import quanli.ton.ui.ChangePasswordJDialog;
 import quanli.ton.ui.HistoryJDialog;
 import quanli.ton.ui.LoginJDialog;
 import quanli.ton.ui.WelcomeJDialog;
 import quanli.ton.ui.manager.BillManagerJDialog;
 import quanli.ton.ui.manager.CustomerManagerJDialog;
-import quanli.ton.ui.manager.ProductJDialog;
-import quanli.ton.ui.manager.ProductTypeJDialog;
+import quanli.ton.ui.manager.ProductManagerJDialog;
+import quanli.ton.ui.manager.ProductTypeManagerJDialog;
 import quanli.ton.ui.manager.RevenueManager;
-import quanli.ton.ui.manager.ThicknessJDialog;
-import quanli.ton.ui.manager.UserManager;
+import quanli.ton.ui.manager.ThicknessManagerJDialog;
+import quanli.ton.ui.manager.UserManagerJDialog;
 import quanli.ton.util.XDialog;
 
 /**
@@ -43,7 +43,7 @@ public interface QlyTonController {
 
     Customer getCustomerForm();
 
-    void save(); // Cập nhật thực thể đang xem
+    boolean save(); // Cập nhật thực thể đang xem
 
     void cancle(); // Xóa thực thể đang xem
 
@@ -95,7 +95,7 @@ public interface QlyTonController {
     }
     
     default void showChangePasswordJDialog(JFrame frame) {
-        this.showJDialog(new ChangePassword(frame, true));
+        this.showJDialog(new ChangePasswordJDialog(frame, true));
     }
 
     default void showHistoryJDialog(JFrame frame) {
@@ -107,7 +107,7 @@ public interface QlyTonController {
     }
 
     default void showUserManagerJDialog(JFrame frame) {
-        this.showJDialog(new UserManager(frame, true));
+        this.showJDialog(new UserManagerJDialog(frame, true));
     }
 
     default void showBillManagerJDialog(JFrame frame) {
@@ -115,15 +115,15 @@ public interface QlyTonController {
     }
 
     default void showProductManagerJDialog(JFrame frame) {
-        this.showJDialog(new ProductJDialog(frame, true));
+        this.showJDialog(new ProductManagerJDialog(frame, true));
     }
 
     default void showProductTypeManagerJDialog(JFrame frame) {
-        this.showJDialog(new ProductTypeJDialog(frame, true));
+        this.showJDialog(new ProductTypeManagerJDialog(frame, true));
     }
 
     default void showThicknessManagerJDialog(JFrame frame) {
-        this.showJDialog(new ThicknessJDialog(frame, true));
+        this.showJDialog(new ThicknessManagerJDialog(frame, true));
     }
 
     default void showCustomerManagerJDialog(JFrame frame) {

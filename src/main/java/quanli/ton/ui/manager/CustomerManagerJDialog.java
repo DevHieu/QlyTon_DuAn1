@@ -8,11 +8,13 @@ import java.awt.Font;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import quanli.ton.controller.CustomerController;
-import quanli.ton.dao.CustomerDao;
-import quanli.ton.dao.impl.CustomerDaoImpl;
+import quanli.ton.dao.impl.CustomerDAOImpl;
 import quanli.ton.entity.Customer;
 import quanli.ton.util.XDialog;
+import quanli.ton.util.XStr;
+import quanli.ton.dao.CustomerDAO;
 
 /**
  *
@@ -20,7 +22,7 @@ import quanli.ton.util.XDialog;
  */
 public class CustomerManagerJDialog extends javax.swing.JDialog implements CustomerController {
 
-    CustomerDao customerDao = new CustomerDaoImpl();
+    CustomerDAO customerDao = new CustomerDAOImpl();
     List<Customer> customerList = List.of();
 
     /**
@@ -45,7 +47,18 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblCustomer = new javax.swing.JTable();
+        tblCustomer = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         btnDeleteCheckedItems = new javax.swing.JButton();
         btnUncheckAll = new javax.swing.JButton();
         btnCheckAll = new javax.swing.JButton();
@@ -172,6 +185,8 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         tabs.addTab("DANH SÁCH", jPanel1);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel2.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 263, 811, 10));
 
         btnCreate.setBackground(new java.awt.Color(0, 102, 102));
         btnCreate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -182,6 +197,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnCreateActionPerformed(evt);
             }
         });
+        jPanel2.add(btnCreate, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 285, -1, 40));
 
         btnUpdate.setBackground(new java.awt.Color(0, 102, 102));
         btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -192,6 +208,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnUpdateActionPerformed(evt);
             }
         });
+        jPanel2.add(btnUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(101, 285, -1, 40));
 
         btnDelete.setBackground(new java.awt.Color(0, 102, 102));
         btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -202,6 +219,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnDeleteActionPerformed(evt);
             }
         });
+        jPanel2.add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(204, 285, -1, 40));
 
         btnClear.setBackground(new java.awt.Color(0, 102, 102));
         btnClear.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -212,6 +230,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnClearActionPerformed(evt);
             }
         });
+        jPanel2.add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(286, 285, -1, 40));
 
         btnMoveNext.setBackground(new java.awt.Color(0, 102, 102));
         btnMoveNext.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -222,6 +241,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnMoveNextActionPerformed(evt);
             }
         });
+        jPanel2.add(btnMoveNext, new org.netbeans.lib.awtextra.AbsoluteConstraints(619, 285, 90, 40));
 
         btnMoveLast.setBackground(new java.awt.Color(0, 102, 102));
         btnMoveLast.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -232,6 +252,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnMoveLastActionPerformed(evt);
             }
         });
+        jPanel2.add(btnMoveLast, new org.netbeans.lib.awtextra.AbsoluteConstraints(715, 285, 52, 40));
 
         btnMovePrevious.setBackground(new java.awt.Color(0, 102, 102));
         btnMovePrevious.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -242,6 +263,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnMovePreviousActionPerformed(evt);
             }
         });
+        jPanel2.add(btnMovePrevious, new org.netbeans.lib.awtextra.AbsoluteConstraints(523, 285, 90, 40));
 
         btnMoveFirst.setBackground(new java.awt.Color(0, 102, 102));
         btnMoveFirst.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -252,99 +274,42 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 btnMoveFirstActionPerformed(evt);
             }
         });
+        jPanel2.add(btnMoveFirst, new org.netbeans.lib.awtextra.AbsoluteConstraints(465, 285, 52, 40));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Tên khách hàng:");
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 39, -1, -1));
 
         txtCustomerName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtCustomerName.setPreferredSize(new java.awt.Dimension(200, 32));
+        jPanel2.add(txtCustomerName, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 71, 368, -1));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel11.setText("Số điện thoại:");
+        jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 121, -1, -1));
 
         txtPhoneNumber.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtPhoneNumber.setPreferredSize(new java.awt.Dimension(200, 32));
         txtPhoneNumber.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtPhoneNumberFocusLost(evt);
             }
         });
+        jPanel2.add(txtPhoneNumber, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 153, 368, -1));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Địa chỉ:");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(467, 39, -1, -1));
 
         txtAddress.setColumns(20);
         txtAddress.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtAddress.setRows(5);
-        txtAddress.setPreferredSize(new java.awt.Dimension(200, 104));
+        txtAddress.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         jScrollPane2.setViewportView(txtAddress);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(btnCreate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDelete)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnClear)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
-                .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                    .addComponent(txtCustomerName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtCustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8))
-        );
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(467, 69, 304, 120));
 
         tabs.addTab("BIỂU MẪU", jPanel2);
 
@@ -586,6 +551,9 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     @Override
     public void create() {
         Customer entity = this.getForm();
+        if (!isValidInput()) {
+            return;
+        }
         customerDao.create(entity);
         this.fillToTable();
         this.clear();
@@ -594,6 +562,9 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     @Override
     public void update() {
         Customer entity = this.getForm();
+        if (!isValidInput()) {
+            return;
+        }
         customerDao.update(entity);
         this.fillToTable();
         this.clear();
@@ -622,7 +593,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
     }
-    
+
     @Override
     public void moveFirst() {
         this.moveTo(0);
@@ -658,9 +629,11 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public boolean isValidInput() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return XStr.isBlank(txtPhoneNumber, "Số điện thoại khách hàng không được bỏ trống")
+                && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống");
+
     }
-    
+
     @Override
     public void checkAll() {
         this.setCheckedAll(true);
@@ -670,7 +643,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     public void uncheckAll() {
         this.setCheckedAll(false);
     }
-    
+
     private void setCheckedAll(boolean checked) {
         for (int i = 0; i < tblCustomer.getRowCount(); i++) {
             tblCustomer.setValueAt(checked, i, 4);
@@ -688,6 +661,5 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
             this.fillToTable();
         }
     }
-    
-    
+
 }

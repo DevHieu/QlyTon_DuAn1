@@ -12,6 +12,6 @@ import quanli.ton.entity.Bills;
  *
  * @author hieud
  */
-public interface QlyTonDao extends CrudDAO<Bills, Long>{
+public interface QlyTonDAO extends CrudDAO<Bills, Long>{
         public List<Bills> findByTimeRange(Date begin, Date end);
 }

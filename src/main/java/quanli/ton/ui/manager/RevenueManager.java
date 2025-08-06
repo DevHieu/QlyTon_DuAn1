@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.UIManager;
+import javax.swing.table.JTableHeader;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -35,7 +36,7 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.util.XFile;
-import quanli.ton.util.XPDF;
+import quanli.ton.util.XPdf;
 
 /**
  *
@@ -152,6 +153,8 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         lblTotal.setText(moneyFormat.format(total));
 
         double totalCost = items.stream().mapToDouble(Revenue.ByCategory::getCost).sum();
+        System.out.println(totalCost);
+        System.out.println(total);
         double profit = total - totalCost;
         lblProfit.setText(moneyFormat.format(profit));
     }
@@ -188,7 +191,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
         Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
         String fileName = "DoanhThuTungLoai-" + txtBegin.getText() + "-" + txtEnd.getText();
-        String[] header = new String[]{"Loại", "Doanh thu", "Số lượng", "Giá thấp nhất", "Giá cao nhất", "Giá trung bình"};
+        String[] header = new String[]{"Loại", "Doanh thu", "Số lượng", "Giá thấp nhất", "Giá cao nhất", "Giá trung bình", "Lợi nhuận"};
         List<Revenue.ByCategory> listObjs = dao.getByCategory(begin, end);
         String title = "Doanh thu của từng loại hàng - " + txtBegin.getText() + " - " + txtEnd.getText();
         XFile.fileExport(this, header, listObjs, fileName, title);
@@ -202,51 +205,6 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         List<Revenue.ByUser> listObjs = dao.getByUser(begin, end);
         String title = "Doanh thu của từng nhân viên - " + txtBegin.getText() + " - " + txtEnd.getText();
         XFile.fileExport(this, header, listObjs, fileName, title);
-    }
-    
-    void productTypePDFExport() {
-        try {
-            Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
-            Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
-            List<Revenue.ByCategory> listObjs = dao.getByCategory(begin, end);
-            String filePath = XFile.saveFile("pdf");
-            if (filePath != null) {
-                XPDF.createRevenuePDF(filePath, listObjs);
-                quanli.ton.util.XDialog.alert("Xuất PDF thành công!");
-            }
-        } catch (Exception e) {
-            quanli.ton.util.XDialog.alert("Lỗi xuất PDF: " + e.getMessage());
-        }
-    }
-    
-    void EmployeePDFExport() {
-        try {
-            Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
-            Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
-            List<Revenue.ByUser> listObjs = dao.getByUser(begin, end);
-            String filePath = XFile.saveFile("pdf");
-            if (filePath != null) {
-                // Tạo PDF cho báo cáo nhân viên
-                quanli.ton.util.XPDF.setTitle("BÁO CÁO DOANH THU THEO NHÂN VIÊN");
-                quanli.ton.util.XPDF.setHeaders(new String[]{"Nhân viên", "Doanh thu", "Số lượng", "Thời gian đầu", "Thời gian cuối"});
-                
-                List<Object[]> data = new ArrayList<>();
-                for (Revenue.ByUser item : listObjs) {
-                    data.add(new Object[]{
-                        item.getUser(),
-                        String.format("%,.0f", item.getRevenue()),
-                        item.getQuantity(),
-                        XDate.format(item.getFirstTime(), "dd-MM-yyyy"),
-                        XDate.format(item.getLastTime(), "dd-MM-yyyy")
-                    });
-                }
-                quanli.ton.util.XPDF.setData(data);
-                quanli.ton.util.XPDF.createPDF(filePath);
-                quanli.ton.util.XDialog.alert("Xuất PDF thành công!");
-            }
-        } catch (Exception e) {
-            quanli.ton.util.XDialog.alert("Lỗi xuất PDF: " + e.getMessage());
-        }
     }
 
     private void addBarChart(List<Revenue.ByUser> list) {
@@ -308,6 +266,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
+        panel1 = new java.awt.Panel();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtBegin = new javax.swing.JTextField();
@@ -318,7 +277,18 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         tabs = new javax.swing.JTabbedPane();
         RevenueByType = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblByCategory = new javax.swing.JTable();
+        tblByCategory = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         jLabel3 = new javax.swing.JLabel();
         donutChart = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -331,7 +301,18 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         RevenueByEmployee = new javax.swing.JPanel();
         btnEmployeeExport = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblByUser = new javax.swing.JTable();
+        tblByUser = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         BarChat = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         lblTotalAmountUser = new javax.swing.JLabel();
@@ -346,6 +327,17 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jMenu2.setText("Edit");
         jMenuBar1.add(jMenu2);
 
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
@@ -354,11 +346,13 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jLabel1.setText("Từ ngày:");
 
         txtBegin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Đến ngày:");
 
         txtEnd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         btnFilter.setBackground(new java.awt.Color(0, 102, 102));
         btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -742,8 +736,17 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         this.fillRevenue();
     }//GEN-LAST:event_tabsStateChanged
 
-    private void btnTypeExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypeExportActionPerformed
+    private void btnTypePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypePDFActionPerformed
         // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnTypePDFActionPerformed
+
+    private void btnEmployeePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmployeePDFActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEmployeePDFActionPerformed
+
+    private void btnTypeExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypeExportActionPerformed
+        // TODO add your handling code here:ư
         productTypeFileExport();
     }//GEN-LAST:event_btnTypeExportActionPerformed
 
@@ -751,16 +754,6 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         // TODO add your handling code here:
         EmployeeFileExport();
     }//GEN-LAST:event_btnEmployeeExportActionPerformed
-
-    private void btnTypePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypePDFActionPerformed
-        // TODO add your handling code here:
-        productTypePDFExport();
-    }//GEN-LAST:event_btnTypePDFActionPerformed
-
-    private void btnEmployeePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmployeePDFActionPerformed
-        // TODO add your handling code here:
-        EmployeePDFExport();
-    }//GEN-LAST:event_btnEmployeePDFActionPerformed
 
     /**
      * @param args the command line arguments
@@ -799,10 +792,8 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     private javax.swing.JPanel RevenueByEmployee;
     private javax.swing.JPanel RevenueByType;
     private javax.swing.JButton btnEmployeeExport;
-    private javax.swing.JButton btnEmployeePDF;
     private javax.swing.JButton btnFilter;
     private javax.swing.JButton btnTypeExport;
-    private javax.swing.JButton btnTypePDF;
     private javax.swing.JComboBox<String> cboTimeRanges;
     private javax.swing.JPanel donutChart;
     private javax.swing.JLabel jLabel1;
@@ -826,6 +817,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     private javax.swing.JLabel lblProfit;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel lblTotalAmountUser;
+    private java.awt.Panel panel1;
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblByCategory;
     private javax.swing.JTable tblByUser;

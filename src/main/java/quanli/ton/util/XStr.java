@@ -2,11 +2,16 @@ package quanli.ton.util;
 
 import java.util.Base64;
 import java.util.UUID;
+import javax.swing.JTextField;
 
 public class XStr {
 
-    public static boolean isBlank(String text) {
-        return text == null || text.trim().length() == 0;
+    public static boolean isBlank(JTextField field, String message) {
+        if (field.getText().trim().isEmpty()) {
+            XDialog.error(message);
+            return false;
+        }
+        return true;
     }
 
     public static String valueOf(Object object) {

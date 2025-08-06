@@ -7,18 +7,18 @@ package quanli.ton.ui;
 import javax.swing.UIManager;
 
 import quanli.ton.controller.ChangePasswordController;
-import quanli.ton.dao.UserDao;
 import quanli.ton.dao.impl.UserDAOImpl;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
+import quanli.ton.dao.UserDAO;
 
 /**
  *
  * @author hieud
  */
-public class ChangePassword extends javax.swing.JDialog implements ChangePasswordController {
+public class ChangePasswordJDialog extends javax.swing.JDialog implements ChangePasswordController {
 
-    UserDao dao = new UserDAOImpl();
+    UserDAO dao = new UserDAOImpl();
 
     // Các biến GUI như txtUsername, txtPassword... đã có trong class này.
 
@@ -69,7 +69,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
     /**
      * Creates new form ChangePassword
      */
-    public ChangePassword(java.awt.Frame parent, boolean modal) {
+    public ChangePasswordJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
@@ -82,7 +82,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
@@ -121,17 +121,19 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel6)
-                                .addContainerGap(22, Short.MAX_VALUE)));
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
+                .addContainerGap(22, Short.MAX_VALUE))
+        );
         jPanel1Layout.setVerticalGroup(
-                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(80, 80, 80)
-                                .addComponent(jLabel6)
-                                .addContainerGap(175, Short.MAX_VALUE)));
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addComponent(jLabel6)
+                .addContainerGap(175, Short.MAX_VALUE))
+        );
 
         jPanel2.add(jPanel1);
         jPanel1.setBounds(0, 0, 340, 500);
@@ -139,13 +141,15 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Xác nhận mật khẩu mới:");
         jPanel2.add(jLabel5);
-        jLabel5.setBounds(580, 230, 180, 17);
+        jLabel5.setBounds(580, 230, 180, 20);
 
+        txtNewPassword.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtNewPassword.setMinimumSize(new java.awt.Dimension(100, 30));
         txtNewPassword.setPreferredSize(new java.awt.Dimension(100, 30));
         jPanel2.add(txtNewPassword);
         txtNewPassword.setBounds(360, 260, 200, 30);
 
+        txtUsername.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtUsername.setEnabled(false);
         txtUsername.setMinimumSize(new java.awt.Dimension(100, 30));
         txtUsername.setPreferredSize(new java.awt.Dimension(100, 30));
@@ -172,11 +176,13 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jPanel2.add(jLabel1);
         jLabel1.setBounds(480, 20, 190, 30);
 
+        txtConfirm.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtConfirm.setMinimumSize(new java.awt.Dimension(100, 30));
         txtConfirm.setPreferredSize(new java.awt.Dimension(100, 30));
         jPanel2.add(txtConfirm);
         txtConfirm.setBounds(580, 260, 200, 30);
 
+        txtCurrentPassword.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtCurrentPassword.setMinimumSize(new java.awt.Dimension(100, 30));
         txtCurrentPassword.setPreferredSize(new java.awt.Dimension(100, 30));
         jPanel2.add(txtCurrentPassword);
@@ -185,7 +191,7 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Mật khẩu mới:");
         jPanel2.add(jLabel4);
-        jLabel4.setBounds(360, 230, 120, 17);
+        jLabel4.setBounds(360, 230, 120, 20);
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel2.add(jSeparator1);
@@ -207,12 +213,12 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Tên đăng nhập:");
         jPanel2.add(jLabel2);
-        jLabel2.setBounds(360, 150, 130, 17);
+        jLabel2.setBounds(360, 150, 130, 20);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Mật khẩu hiện tại:");
         jPanel2.add(jLabel3);
-        jLabel3.setBounds(580, 150, 150, 17);
+        jLabel3.setBounds(580, 150, 150, 20);
 
         jCheckBox1.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
         jCheckBox1.setText("Hiện Mật Khẩu");
@@ -222,20 +228,20 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
             }
         });
         jPanel2.add(jCheckBox1);
-        jCheckBox1.setBounds(663, 300, 120, 22);
+        jCheckBox1.setBounds(663, 300, 120, 23);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -259,9 +265,9 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
             txtConfirm.setEchoChar((char) 0);
         } else {
             // Nếu checkbox không được chọn, ẩn mật khẩu bằng ký tự '*'
-            txtCurrentPassword.setEchoChar('*');
-            txtNewPassword.setEchoChar('*');
-            txtConfirm.setEchoChar('*');
+            txtCurrentPassword.setEchoChar('•');
+            txtNewPassword.setEchoChar('•');
+            txtConfirm.setEchoChar('•');
         }
     }// GEN-LAST:event_jCheckBox1ActionPerformed
 
@@ -286,15 +292,16 @@ public class ChangePassword extends javax.swing.JDialog implements ChangePasswor
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChangePassword.class.getName()).log(java.util.logging.Level.SEVERE, null,
+            java.util.logging.Logger.getLogger(ChangePasswordJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        // </editor-fold>
         // </editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ChangePassword dialog = new ChangePassword(new javax.swing.JFrame(), true);
+                ChangePasswordJDialog dialog = new ChangePasswordJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

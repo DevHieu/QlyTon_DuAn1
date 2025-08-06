@@ -4,7 +4,6 @@
  */
 package quanli.ton.dao.impl;
 
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,16 +17,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import quanli.ton.dao.BillDao;
 import quanli.ton.entity.Bills;
+import quanli.ton.util.XDialog;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
+import quanli.ton.dao.BillDAO;
 
 /**
  *
  * @author hieud
  */
-public class BillDaoImpl implements BillDao {
+public class BillDAOImpl implements BillDAO {
+
     String createSql = "INSERT INTO Bills(CustomerId, Username, Checkin, Checkout, Note, Discount, Deposit, Status) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE Bills SET CustomerId=?, Username=?, Checkin=?, Checkout=?, Note=?, Discount=?, Deposit=?, Status=? WHERE Id=?";
     String deleteSql = "DELETE FROM Bills WHERE Id=?";
@@ -35,7 +36,7 @@ public class BillDaoImpl implements BillDao {
     String findByIdSql = "SELECT * FROM Bills WHERE Id=?";
     String findByTimeRangeSql = "SELECT * FROM Bills WHERE Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
     String findAllOfCustomerId = "SELECT * FROM Bills WHERE CustomerId = ?";
-  
+    String findByUserAndTimeRangeSql = "SELECT b.Id, b.Username, c.FullName, b.Checkin, b.Checkout, b.Status FROM Bills b JOIN Customers c ON b.CustomerId = c.PhoneNumber WHERE Username=? AND b.Checkin BETWEEN ? AND ? ORDER BY b.Checkin DESC";
     String findNameByCustomer = "SELECT FullName FROM Customers WHERE PhoneNumber=?";
     // SQL mới cho selectByTimeRange để lấy thông tin chi tiết hơn
     String selectByTimeRangeSql = "SELECT b.Id, b.Username, c.FullName, b.Checkin, b.Checkout, b.Status FROM Bills b JOIN Customers c ON b.CustomerId = c.PhoneNumber WHERE b.Checkin BETWEEN ? AND ? ORDER BY b.Checkin DESC"; //
@@ -72,8 +73,12 @@ public class BillDaoImpl implements BillDao {
                     }
                 }
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(BillDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (java.sql.SQLIntegrityConstraintViolationException e) {
+            XDialog.error("Tên người tạo đơn hàng không tồn tại");
+            return null;
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(BillDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return entity;
     }
@@ -173,18 +178,41 @@ public class BillDaoImpl implements BillDao {
             throw new RuntimeException(e);
         }
         return list;
-        
-     }
+
+    }
 
     @Override
     public List<Bills> findOperatingAllOfCustomerId(String id) {
         return XQuery.getBeanList(Bills.class, findOperatingAllOfCustomerId, id);
-    };
+    }
+
+    ;
 
     @Override
     public String findNameByCustomerId(String customerId) {
         return XQuery.getSingleValue(findNameByCustomer, customerId);
     }
 
+    @Override
+    public List<Object[]> findByUserAndTimeRange(String username, Date begin, Date end) {
+        List<Object[]> list = new ArrayList<>();
+        try {
+            ResultSet rs = XJdbc.executeQuery(findByUserAndTimeRangeSql, username, begin, end);
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getLong("Id"),
+                    rs.getString("Username"),
+                    rs.getString("FullName"),
+                    rs.getTimestamp("Checkin"),
+                    rs.getTimestamp("Checkout"),
+                    rs.getInt("Status") == 1 ? "Hoàn thành" : (rs.getInt("Status") == 0 ? "Đang xử lý" : "Đã hủy")
+                };
+                list.add(row);
+            }
+            rs.getStatement().getConnection().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 }
-

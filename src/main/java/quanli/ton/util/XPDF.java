@@ -1,400 +1,338 @@
 package quanli.ton.util;
 
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.font.*;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.layout.*;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.properties.*;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
+
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
-import java.util.Date;
 import quanli.ton.dao.ProductsDAO;
 import quanli.ton.dao.ProductTypeDAO;
 import quanli.ton.dao.impl.ProductsDAOimpl;
 import quanli.ton.dao.impl.ProductTypeDAOImpl;
+import quanli.ton.entity.BillDetails;
+import quanli.ton.entity.Bills;
 
 /**
- * Utility class để xuất dữ liệu ra file PDF
+ * Utility class để xuất dữ liệu ra file PDF (iTextPDF 8.0.0)
  */
-public class XPDF {
-    
+public class XPdf {
+
     private static String title = "";
     private static String[] headers = {};
     private static List<Object[]> data = null;
-    
+
     /**
      * Thiết lập tiêu đề cho PDF
      */
     public static void setTitle(String title) {
-        XPDF.title = title;
+        XPdf.title = title;
     }
-    
+
     /**
      * Thiết lập headers cho bảng
      */
     public static void setHeaders(String[] headers) {
-        XPDF.headers = headers;
+        XPdf.headers = headers;
     }
-    
+
     /**
      * Thiết lập dữ liệu cho bảng
      */
     public static void setData(List<Object[]> data) {
-        XPDF.data = data;
+        XPdf.data = data;
     }
-    
-    /**
-     * Tạo file PDF
-     */
-    public static void createPDF(String filePath) throws Exception {
-        Document document = new Document(PageSize.A4, 20, 20, 20, 20);
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        
-        document.open();
-        
-        // Thêm tiêu đề
-        if (!title.isEmpty()) {
-            Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-            Paragraph titleParagraph = new Paragraph(title, titleFont);
-            titleParagraph.setAlignment(Element.ALIGN_CENTER);
-            titleParagraph.setSpacingAfter(20);
-            document.add(titleParagraph);
-        }
-        
-        // Tạo bảng
-        if (data != null && !data.isEmpty()) {
-            PdfPTable table = new PdfPTable(headers.length);
-            table.setWidthPercentage(100);
-            
-            // Thêm headers
-            Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-            for (String header : headers) {
-                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                cell.setPadding(5);
-                table.addCell(cell);
-            }
-            
-            // Thêm dữ liệu
-            Font dataFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL);
-            for (Object[] row : data) {
-                for (Object cell : row) {
-                    String cellValue = cell != null ? cell.toString() : "";
-                    PdfPCell pdfCell = new PdfPCell(new Phrase(cellValue, dataFont));
-                    pdfCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    pdfCell.setPadding(3);
-                    table.addCell(pdfCell);
-                }
-            }
-            
-            document.add(table);
-        }
-        
-        // Thêm thông tin cuối trang
-        Font footerFont = new Font(Font.FontFamily.TIMES_ROMAN, 8, Font.ITALIC);
-        Paragraph footer = new Paragraph("Được tạo vào: " + XDate.format(new java.util.Date(), "dd-MM-yyyy HH:mm:ss"), footerFont);
-        footer.setAlignment(Element.ALIGN_CENTER);
-        footer.setSpacingBefore(20);
-        document.add(footer);
-        
-        document.close();
-    }
-    
-    /**
-     * Tạo PDF cho báo cáo doanh thu
-     */
-    public static void createRevenuePDF(String filePath, List<quanli.ton.entity.Revenue.ByCategory> revenueData) throws Exception {
-        Document document = new Document(PageSize.A4, 20, 20, 20, 20);
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        
-        document.open();
-        
-        // Tiêu đề
-        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-        Paragraph titleParagraph = new Paragraph("BÁO CÁO DOANH THU THEO DANH MỤC", titleFont);
-        titleParagraph.setAlignment(Element.ALIGN_CENTER);
-        titleParagraph.setSpacingAfter(20);
-        document.add(titleParagraph);
-        
-        // Tạo bảng
-        PdfPTable table = new PdfPTable(6);
-        table.setWidthPercentage(100);
-        
-        // Headers
-        String[] headers = {"Danh mục", "Doanh thu", "Số lượng", "Giá min", "Giá max", "Giá TB"};
-        Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-        for (String header : headers) {
-            PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setPadding(5);
-            table.addCell(cell);
-        }
-        
-        // Dữ liệu
-        Font dataFont = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL);
-        double totalRevenue = 0;
-        long totalQuantity = 0;
-        
-        for (quanli.ton.entity.Revenue.ByCategory item : revenueData) {
-            table.addCell(new PdfPCell(new Phrase(item.getCategory(), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%,.0f", item.getRevenue()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(item.getQuantity()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%,.0f", item.getMinPrice()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%,.0f", item.getMaxPrice()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%,.0f", item.getAvgPrice()), dataFont)));
-            
-            totalRevenue += item.getRevenue();
-            totalQuantity += item.getQuantity();
-        }
-        
-        document.add(table);
-        
-        // Tổng cộng
-        Font totalFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-        Paragraph totalParagraph = new Paragraph();
-        totalParagraph.add(new Chunk("Tổng doanh thu: ", totalFont));
-        totalParagraph.add(new Chunk(String.format("%,.0f VNĐ", totalRevenue), totalFont));
-        totalParagraph.add(new Chunk(" | Tổng số lượng: ", totalFont));
-        totalParagraph.add(new Chunk(String.valueOf(totalQuantity), totalFont));
-        totalParagraph.setSpacingBefore(20);
-        document.add(totalParagraph);
-        
-        // Footer
-        Font footerFont = new Font(Font.FontFamily.TIMES_ROMAN, 8, Font.ITALIC);
-        Paragraph footer = new Paragraph("Được tạo vào: " + XDate.format(new java.util.Date(), "dd-MM-yyyy HH:mm:ss"), footerFont);
-        footer.setAlignment(Element.ALIGN_CENTER);
-        footer.setSpacingBefore(20);
-        document.add(footer);
-        
-        document.close();
-    }
-    
-    /**
-     * Tạo PDF cho báo cáo kho hàng
-     */
-    public static void createStockPDF(String filePath, List<quanli.ton.entity.Product> products) throws Exception {
-        Document document = new Document(PageSize.A4, 20, 20, 20, 20);
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        
-        document.open();
-        
-        // Tiêu đề
-        Font titleFont = createVietnameseFont(18, Font.BOLD);
-        Paragraph titleParagraph = new Paragraph("BÁO CÁO TÌNH TRẠNG KHO HÀNG", titleFont);
-        titleParagraph.setAlignment(Element.ALIGN_CENTER);
-        titleParagraph.setSpacingAfter(20);
-        document.add(titleParagraph);
-        
-        // Tạo bảng
-        PdfPTable table = new PdfPTable(4);
-        table.setWidthPercentage(100);
-        
-        // Headers
-        String[] headers = {"Tên sản phẩm", "Số lượng", "Giá bán", "Trạng thái"};
-        Font headerFont = createVietnameseFont(12, Font.BOLD);
-        for (String header : headers) {
-            PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            cell.setPadding(5);
-            table.addCell(cell);
-        }
-        
-        // Dữ liệu
-        Font dataFont = createVietnameseFont(10, Font.NORMAL);
-        int outOfStock = 0;
-        int lowStock = 0;
-        int normalStock = 0;
-        
-        for (quanli.ton.entity.Product product : products) {
-            table.addCell(new PdfPCell(new Phrase(product.getName(), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(product.getQuantity()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%,.0f", product.getUnitPrice()), dataFont)));
-            
-            String status;
-            Font statusFont;
-            if (product.getQuantity() == 0) {
-                status = "HẾT HÀNG";
-                statusFont = createVietnameseFont(10, Font.BOLD);
-                statusFont.setColor(BaseColor.RED);
-                outOfStock++;
-            } else if (product.getQuantity() <= 100) {
-                status = "SẮP HẾT";
-                statusFont = createVietnameseFont(10, Font.BOLD);
-                statusFont.setColor(BaseColor.ORANGE);
-                lowStock++;
-            } else {
-                status = "ĐỦ HÀNG";
-                statusFont = createVietnameseFont(10, Font.NORMAL);
-                normalStock++;
-            }
-            
-            PdfPCell statusCell = new PdfPCell(new Phrase(status, statusFont));
-            statusCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.addCell(statusCell);
-        }
-        
-        document.add(table);
-        
-        // Thống kê tổng quan
-        Font statTitleFont = createVietnameseFont(14, Font.BOLD);
-        Paragraph statTitleParagraph = new Paragraph("THỐNG KÊ TỔNG QUAN:", statTitleFont);
-        statTitleParagraph.setSpacingBefore(20);
-        statTitleParagraph.setSpacingAfter(10);
-        document.add(statTitleParagraph);
-        
-        // Chi tiết thống kêx
-        Font statFont = createVietnameseFont(12, Font.BOLD);
-        Paragraph statParagraph = new Paragraph();
-        statParagraph.add(new Chunk("• Tổng số sản phẩm: " + products.size() + "\n", statFont));
-        statParagraph.add(new Chunk("• Sản phẩm hết hàng: " + outOfStock + "\n", statFont));
-        statParagraph.add(new Chunk("• Sản phẩm sắp hết: " + lowStock + "\n", statFont));
-        statParagraph.add(new Chunk("• Sản phẩm đủ hàng: " + normalStock, statFont));
-        statParagraph.setSpacingBefore(10);
-        document.add(statParagraph);
-        
-        // Footer
-        Font footerFont = createVietnameseFont(8, Font.ITALIC);
-        Paragraph footer = new Paragraph("Được tạo vào: " + XDate.format(new java.util.Date(), "dd-MM-yyyy HH:mm:ss"), footerFont);
-        footer.setAlignment(Element.ALIGN_CENTER);
-        footer.setSpacingBefore(20);
-        document.add(footer);
-        
-        document.close();
-    }
-    
+
     /**
      * Tạo phiếu giao hàng
      */
-    public static void createDeliveryNote(String filePath, quanli.ton.entity.Bills bill, 
-                                        List<quanli.ton.entity.BillDetails> billDetails,
-                                        quanli.ton.entity.Customer customer) throws Exception {
-        
-        // Debug: In ra thông tin để kiểm tra
-        System.out.println("=== DEBUG PHIEU GIAO HANG ===");
-        System.out.println("Bill ID: " + bill.getId());
-        System.out.println("Customer: " + customer.getFullName());
-        System.out.println("Bill Details count: " + billDetails.size());
-        
-        for (int i = 0; i < billDetails.size(); i++) {
-            quanli.ton.entity.BillDetails detail = billDetails.get(i);
-            System.out.println("Detail " + i + ": ProductID=" + detail.getProductId() + 
-                             ", Quantity=" + detail.getQuantity() + 
-                             ", UnitPrice=" + detail.getUnitPrice());
-        }
-        System.out.println("=== END DEBUG ===");
-        Document document = new Document(PageSize.A4, 20, 20, 20, 20);
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        
-        document.open();
-        
+    public static void createBillNote(String filePath, Bills bill,
+            List<BillDetails> billDetails,
+            quanli.ton.entity.Customer customer) throws Exception {
+
+        PdfWriter writer = new PdfWriter(new FileOutputStream(filePath));
+        PdfDocument pdfDoc = new PdfDocument(writer);
+        Document document = new Document(pdfDoc, PageSize.A4);
+        document.setMargins(20, 20, 20, 20);
+
         // Tiêu đề công ty
-        Font companyFont = createVietnameseFont(14, Font.BOLD);
-        Paragraph companyTitle = new Paragraph("NHÀ MÁY TÔN - SẮT THÉP", companyFont);
-        companyTitle.setAlignment(Element.ALIGN_CENTER);
+        PdfFont companyFont = createVietnameseFont();
+        Paragraph companyTitle = new Paragraph("NHÀ MÁY TÔN HOA MAI")
+                .setFont(companyFont)
+                .setFontSize(14)
+                .setBold()
+                .setTextAlignment(TextAlignment.LEFT);
         document.add(companyTitle);
-        
+
         // Thông tin công ty
-        Font infoFont = createVietnameseFont(10, Font.NORMAL);
-        Paragraph companyInfo = new Paragraph("DNTN SẮT THÉP ĐỨC ĐỨC MINH\n" +
-                                           "Ấp 1B, Phước Thái, LT - ĐN (đối diện bưu điện Phước Thái)\n" +
-                                           "ĐT: 0933 341 307 - 0946 708 306", infoFont);
-        companyInfo.setAlignment(Element.ALIGN_CENTER);
+        PdfFont infoFont = createVietnameseFont();
+        Paragraph companyInfo = new Paragraph("Địa chỉ: Phòng T1015, QTSC 9 Building, Đ. Tô Ký, Tân Chánh Hiệp, Quận 12, Hồ Chí Minh, Việt Nam)\n"
+                + "SĐT: 0912 873 456 - 0964 273 612")
+                .setFont(infoFont)
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.LEFT);
         document.add(companyInfo);
-        
+
         // Serial và tiêu đề phiếu
-        Paragraph serialParagraph = new Paragraph("Serial: " + bill.getId(), infoFont);
-        serialParagraph.setAlignment(Element.ALIGN_RIGHT);
+        Paragraph serialParagraph = new Paragraph("Serial: " + bill.getId())
+                .setFont(infoFont)
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.RIGHT);
         document.add(serialParagraph);
-        
-        Font titleFont = createVietnameseFont(16, Font.BOLD);
-        Paragraph deliveryTitle = new Paragraph("PHIẾU GIAO HÀNG", titleFont);
-        deliveryTitle.setAlignment(Element.ALIGN_CENTER);
-        deliveryTitle.setSpacingAfter(10);
+
+        PdfFont titleFont = createVietnameseFont();
+        Paragraph deliveryTitle = new Paragraph("PHIẾU GIAO HÀNG")
+                .setFont(titleFont)
+                .setFontSize(16)
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(10);
         document.add(deliveryTitle);
-        
-        // Thông tin phiếu và khách hàng
-        String billNumber = String.format("Số phiếu: %06d/%02d/%04d", bill.getId(), 
-                                        XDate.parse(XDate.format(bill.getCheckin(), "dd-MM-yyyy"), "dd-MM-yyyy").getMonth() + 1,
-                                        XDate.parse(XDate.format(bill.getCheckin(), "dd-MM-yyyy"), "dd-MM-yyyy").getYear() + 1900);
-        String billDate = "Ngày: " + XDate.format(bill.getCheckin(), "dd/MM/yy");
+
+        String billNumber = String.format("Số phiếu: %06d/%02d/%04d", bill.getId(),
+                XDate.parse(XDate.format(bill.getCheckin(), "dd-MM-yyyy"), "dd-MM-yyyy").getMonth() + 1,
+                XDate.parse(XDate.format(bill.getCheckin(), "dd-MM-yyyy"), "dd-MM-yyyy").getYear() + 1900);
+        String billDate = "Ngày lập đơn: " + XDate.format(bill.getCheckin(), "dd/MM/yyyy");
         String customerInfo = "Khách hàng: " + customer.getFullName() + " - " + customer.getPhoneNumber();
-        
-        document.add(new Paragraph(billNumber + "    " + billDate, infoFont));
-        document.add(new Paragraph(customerInfo, infoFont));
-        
+
+        Table headerTable = new Table(UnitValue.createPercentArray(new float[]{50, 50}))
+                .useAllAvailableWidth();
+
+        Cell leftCell = new Cell().add(new Paragraph(billNumber).setFont(infoFont).setFontSize(10))
+                .setBorder(Border.NO_BORDER)
+                .setTextAlignment(TextAlignment.LEFT);
+
+        Cell rightCell = new Cell().add(new Paragraph(billDate).setFont(infoFont).setFontSize(10))
+                .setBorder(Border.NO_BORDER)
+                .setTextAlignment(TextAlignment.RIGHT);
+
+        headerTable.addCell(leftCell);
+        headerTable.addCell(rightCell);
+
+        document.add(headerTable);
+        document.add(new Paragraph(customerInfo).setFont(infoFont).setFontSize(10));
+
         // Bảng hàng hóa
-        float[] columnWidths = {30, 200, 80, 80, 100};
-        PdfPTable table = new PdfPTable(columnWidths);
-        table.setWidthPercentage(100);
-        
-        // Headers
-        Font headerFont = createVietnameseFont(10, Font.BOLD);
-        table.addCell(createCell("STT", headerFont, true));
-        table.addCell(createCell("Tên hàng hóa", headerFont, true));
-        table.addCell(createCell("S/ Lượng", headerFont, true));
-        table.addCell(createCell("Đơn giá", headerFont, true));
-        table.addCell(createCell("Thành tiền", headerFont, true));
-        
-        // Dữ liệu sản phẩm
-        Font dataFont = createVietnameseFont(9, Font.NORMAL);
+        float[] columnWidths = {30, 180, 50, 50, 50, 80, 100};
+        Table table = new Table(UnitValue.createPointArray(columnWidths));
+        table.setWidth(UnitValue.createPercentValue(100));
+
+        PdfFont headerFont = createVietnameseFont();
+        table.addCell(createCell("STT", headerFont, true, 10));
+        table.addCell(createCell("Tên hàng hóa", headerFont, true, 10));
+        table.addCell(createCell("ĐVT", headerFont, true, 10));
+        table.addCell(createCell("Chiều dài", headerFont, true, 10));
+        table.addCell(createCell("S/ Lượng", headerFont, true, 10));
+        table.addCell(createCell("Đơn giá", headerFont, true, 10));
+        table.addCell(createCell("Thành tiền", headerFont, true, 10));
+
+        PdfFont dataFont = createVietnameseFont();
         double totalAmount = 0;
-        
+
         for (int i = 0; i < billDetails.size(); i++) {
             quanli.ton.entity.BillDetails detail = billDetails.get(i);
             quanli.ton.entity.Product product = getProductById(detail.getProductId());
-            
-            table.addCell(createCell(String.valueOf(i + 1), dataFont, false));
-            
-            // Xử lý trường hợp product null
+
+            table.addCell(createCell(String.valueOf(i + 1), dataFont, false, 9));
+
             String productName = (product != null) ? product.getName() : "Sản phẩm không xác định";
             String productUnit = (product != null) ? getProductUnit(product.getTypeId()) : "cái";
-            
-            table.addCell(createCell(productName, dataFont, false));
-            table.addCell(createCell(detail.getQuantity() + " " + productUnit, dataFont, false));
-            table.addCell(createCell(String.format("%,.0f", detail.getUnitPrice()), dataFont, false));
-            
-            double itemTotal = detail.getQuantity() * detail.getUnitPrice();
+
+            table.addCell(createCell(productName, dataFont, false, 9));
+            table.addCell(createCell(productUnit, dataFont, false, 9));
+
+            String lengthStr = (detail.getLength() == 0) ? "-" : String.format("%.2f", detail.getLength());
+            table.addCell(createCell(lengthStr, dataFont, false, 9));
+            table.addCell(createCell(String.valueOf((int) detail.getQuantity()), dataFont, false, 9));
+            table.addCell(
+                    createCell(String.format("%,.0f VNĐ", detail.getUnitPrice()), dataFont, false, 9)
+                            .setTextAlignment(TextAlignment.RIGHT) // Căn phải
+            );
+
+            double price;
+
+            if (detail.getLength() == 0) {
+                // Trường hợp không có chiều dài → tính theo cây
+                price = detail.getUnitPrice();
+            } else if (detail.getDefaultLength() == null) {
+                // Không có defaultLength → tính theo mét
+                price = detail.getUnitPrice() * detail.getLength();
+            } else {
+                // Có chiều dài và defaultLength → tính theo tỉ lệ mét
+                price = (detail.getUnitPrice() / detail.getDefaultLength()) * detail.getLength();
+            }
+
+            // Tính tiền sau chiết khấu
+            double discountedPrice = price - (price * detail.getDiscount() / 100);
+            double itemTotal = discountedPrice * detail.getQuantity();
+
             totalAmount += itemTotal;
-            table.addCell(createCell(String.format("%,.0f", itemTotal), dataFont, false));
+            table.addCell(
+                    createCell(String.format("%,.0f VNĐ", itemTotal), dataFont, false, 9)
+                            .setTextAlignment(TextAlignment.RIGHT) // Căn phải
+            );
         }
-        
+
         // Tổng cộng
-        PdfPCell totalLabel = createCell("TỔNG CỘNG", headerFont, true);
-        totalLabel.setColspan(4);
-        totalLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        Cell totalLabel = new Cell(1, 5)
+                .add(new Paragraph("TỔNG CỘNG:"))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
         table.addCell(totalLabel);
-        
-        PdfPCell totalValue = createCell(String.format("%,.0f", totalAmount), headerFont, true);
+
+        Cell totalValue = new Cell(1, 2)
+                .add(new Paragraph(String.format("%,.0f VNĐ", totalAmount)))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
         table.addCell(totalValue);
-        
+
+        Cell discountLabel = new Cell(1, 5)
+                .add(new Paragraph("GIẢM GIÁ:"))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
+        table.addCell(discountLabel);
+
+        double discount = totalAmount / 100 * bill.getDiscount();
+        Cell discountValue = new Cell(1, 2)
+                .add(new Paragraph(String.format("%,.0f VNĐ", discount)))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
+        table.addCell(discountValue);
+
+        Cell depositLabel = new Cell(1, 5)
+                .add(new Paragraph("ĐẶT CỌC:"))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
+        table.addCell(depositLabel);
+
+        Cell depositValue = new Cell(1, 2)
+                .add(new Paragraph(String.format("%,.0f VNĐ", bill.getDeposit())))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
+        table.addCell(depositValue);
+
+        Cell remainingLabel = new Cell(1, 5)
+                .add(new Paragraph("CÒN LẠI PHẢI TRẢ:"))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
+        table.addCell(remainingLabel);
+
+        double remaining = totalAmount - discount - bill.getDeposit();
+        Cell remainingValue = new Cell(1, 2)
+                .add(new Paragraph(String.format("%,.0f VNĐ", remaining)))
+                .setFont(headerFont)
+                .setFontSize(10)
+                .setBold()
+                .setBorder(Border.NO_BORDER)
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.RIGHT);
+        table.addCell(remainingValue);
         document.add(table);
-        
-        // Bằng chữ
-        Font italicFont = createVietnameseFont(9, Font.ITALIC);
-        String amountInWords = convertToVietnameseWords((long)totalAmount);
-        document.add(new Paragraph("(Bằng chữ: " + amountInWords + ")", italicFont));
-        
-        // Ký tên
-        document.add(new Paragraph("\nLập phiếu                                                 (Ký và ghi rõ họ tên)"));
-        
+
+        // Bằng chữ - canh phải
+        PdfFont italicFont = createVietnameseFont();
+        String amountInWords = convertToVietnameseWords((long) totalAmount);
+        document.add(new Paragraph("(Bằng chữ: " + amountInWords + ")")
+                .setFont(italicFont)
+                .setFontSize(9)
+                .setItalic()
+                .setTextAlignment(TextAlignment.RIGHT));
+
+        // Ghi chú của đơn hàng
+        document.add(new Paragraph("Ghi chú: " + bill.getNote())
+                .setFont(italicFont)
+                .setFontSize(10))
+                .setItalic();
+
+        // Lập phiếu ↔ Ký tên
+        Table signTable = new Table(UnitValue.createPercentArray(new float[]{50, 50}))
+                .useAllAvailableWidth();
+
+// Người lập phiếu
+        Paragraph signer1 = new Paragraph()
+                .add("Người lập phiếu\n")
+                .add(new Text("(Ký và ghi rõ họ tên)").setFontSize(9))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFont(infoFont)
+                .setFontSize(10);
+
+        Cell cell1 = new Cell()
+                .add(signer1)
+                .setBorder(Border.NO_BORDER);
+
+// Người nhận hàng
+        Paragraph signer2 = new Paragraph()
+                .add("Người nhận hàng\n")
+                .add(new Text("(Ký và ghi rõ họ tên)").setFontSize(9))
+                .setTextAlignment(TextAlignment.CENTER)
+                .setFont(infoFont)
+                .setFontSize(10);
+
+        Cell cell2 = new Cell()
+                .add(signer2)
+                .setBorder(Border.NO_BORDER);
+
+        signTable.addCell(cell1);
+        signTable.addCell(cell2);
+
+        document.add(signTable);
+
         document.close();
     }
-    
+
     /**
      * Tạo cell cho bảng
      */
-    private static PdfPCell createCell(String text, Font font, boolean isBold) {
+    private static Cell createCell(String text, PdfFont font, boolean isBold, int fontSize) {
+        Cell cell = new Cell().add(new Paragraph(text))
+                .setFont(font)
+                .setFontSize(fontSize)
+                .setBorder(new SolidBorder(1))
+                .setPadding(3)
+                .setTextAlignment(TextAlignment.CENTER);
+
         if (isBold) {
-            font.setStyle(Font.BOLD);
+            cell.setBold();
         }
-        PdfPCell cell = new PdfPCell(new Phrase(text, font));
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
         return cell;
     }
-    
+
     /**
      * Lấy thông tin sản phẩm theo ID
      */
@@ -411,7 +349,7 @@ public class XPDF {
             return null;
         }
     }
-    
+
     /**
      * Lấy đơn vị sản phẩm
      */
@@ -424,23 +362,25 @@ public class XPDF {
             return "cái";
         }
     }
-    
+
     /**
      * Chuyển số thành chữ tiếng Việt
      */
     private static String convertToVietnameseWords(long number) {
-        if (number == 0) return "không đồng";
-        
+        if (number == 0) {
+            return "không đồng";
+        }
+
         String[] units = {"", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"};
         String[] numbers = {"không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"};
-        
+
         if (number < 1000) {
-            return convertLessThanOneThousand((int)number, numbers) + " đồng";
+            return convertLessThanOneThousand((int) number, numbers) + " đồng";
         }
-        
+
         int unitIndex = 0;
         StringBuilder result = new StringBuilder();
-        
+
         while (number > 0) {
             int group = (int) (number % 1000);
             if (group != 0) {
@@ -456,21 +396,23 @@ public class XPDF {
             number /= 1000;
             unitIndex++;
         }
-        
+
         return result.toString() + " đồng";
     }
-    
+
     private static String convertLessThanOneThousand(int number, String[] numbers) {
-        if (number == 0) return "";
-        
+        if (number == 0) {
+            return "";
+        }
+
         if (number < 10) {
             return numbers[number];
         }
-        
+
         if (number < 20) {
             return "mười " + (number == 11 ? "một" : numbers[number - 10]);
         }
-        
+
         if (number < 100) {
             String result = numbers[number / 10] + " mươi";
             if (number % 10 != 0) {
@@ -478,7 +420,7 @@ public class XPDF {
             }
             return result;
         }
-        
+
         String result = numbers[number / 100] + " trăm";
         int remainder = number % 100;
         if (remainder != 0) {
@@ -490,33 +432,30 @@ public class XPDF {
         }
         return result;
     }
-    
+
     /**
      * Tạo font hỗ trợ tiếng Việt
      */
-    private static Font createVietnameseFont(int size, int style) {
+    private static PdfFont createVietnameseFont() {
         try {
-            // Thử tạo font với encoding Unicode tốt hơn
-            BaseFont baseFont = BaseFont.createFont("Helvetica", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-            return new Font(baseFont, size, style);
+            // Load font từ resources - cần file font hỗ trợ Unicode
+            String fontPath = "src/main/resources/fonts/SVN-Arial.ttf";
+            return PdfFontFactory.createFont(fontPath, PdfEncodings.IDENTITY_H);
         } catch (Exception e) {
             try {
-                // Thử với encoding khác
-                BaseFont baseFont2 = BaseFont.createFont("Helvetica", BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                return new Font(baseFont2, size, style);
-            } catch (Exception e2) {
+                // Fallback về Helvetica với Unicode support
+                return PdfFontFactory.createFont(StandardFonts.HELVETICA, PdfEncodings.IDENTITY_H);
+            } catch (Exception ex) {
                 try {
-                    // Thử với font Times New Roman
-                    BaseFont baseFont3 = BaseFont.createFont("Times-Roman", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                    return new Font(baseFont3, size, style);
-                } catch (Exception e3) {
-                    // Fallback về font thường
-                    return new Font(Font.FontFamily.HELVETICA, size, style);
+                    // Last fallback
+                    return PdfFontFactory.createFont(StandardFonts.HELVETICA);
+                } catch (Exception exx) {
+                    throw new RuntimeException("Không thể tạo font", exx);
                 }
             }
         }
     }
-    
+
     /**
      * Clear dữ liệu
      */
@@ -525,4 +464,4 @@ public class XPDF {
         headers = new String[0];
         data = null;
     }
-} 
+}
