@@ -43,8 +43,28 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
     }
 
     public boolean isValidInput() {
-        return XStr.isBlank(txtName, "Tên sản phẩm không được bỏ trống")
-                && XStr.isBlank(txtPriceImport, "Giá nhập hàng không được bỏ trống")
+
+        try {
+            if (Double.parseDouble(txtPriceImport.getText()) <= 0) {
+                XDialog.error("Giá nhập vào của sản phẩm phải lớn hơn 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Giá nhập vào phải là số hợp lệ.");
+            return false;
+        }
+
+        try {
+            if (Double.parseDouble(txtQuantity.getText()) <= 0) {
+                XDialog.error("Số lượng nhập hàng của sản phẩm phải lớn hơn 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số Lượng phải là số nguyên hợp lệ.");
+            return false;
+        }
+
+        return XStr.isBlank(txtPriceImport, "Giá nhập hàng không được bỏ trống")
                 && XStr.isBlank(txtQuantity, "Số lượng không được bỏ trống");
     }
 
@@ -255,21 +275,11 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
             return;
         }
 
-        try {
-            quantityToAdd = Integer.parseInt(txtPriceImport.getText()); // Số Lượng
-            importQuantity = quantityToAdd;
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số Lượng phải là số nguyên hợp lệ.");
-            return;
-        }
+        quantityToAdd = Integer.parseInt(txtPriceImport.getText()); // Số Lượng
+        importQuantity = quantityToAdd;
 
-        try {
-            newImportPrice = Double.parseDouble(txtQuantity.getText()); // Giá Nhập Vào
-            importPrice = newImportPrice;
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Giá Nhập Vào phải là số hợp lệ.");
-            return;
-        }
+        newImportPrice = Double.parseDouble(txtQuantity.getText()); // Giá Nhập Vào
+        importPrice = newImportPrice;
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 

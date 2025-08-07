@@ -710,8 +710,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
         // TODO add your handling code here:
-        Customer customer  = this.findCustomer(txtPhoneNumber.getText());
-        
+        Customer customer = this.findCustomer(txtPhoneNumber.getText());
+
         if (customer != null) {
             txtCustomerName.setText(customer.getFullName());
             txtAddress.setText(customer.getAddress());
@@ -731,7 +731,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-                try {
+        try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(QlyTonJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
@@ -870,7 +870,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public Customer findCustomer(String phoneNumber) {
-        return(customerDao.findById(phoneNumber));
+        return (customerDao.findById(phoneNumber));
     }
 
     @Override
@@ -879,7 +879,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         this.selectTimeRange();
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        
+
     }
 
     @Override
@@ -947,12 +947,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
         Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
         items = dao.findByTimeRange(begin, end);
-    
-        
+
         items.forEach(item -> {
             Customer customer = customerDao.findById(item.getCustomerId()); // Lấy Customer từ id
-            
-            customerItem.add(customer); 
+
+            customerItem.add(customer);
             Object[] row = {
                 item.getId(),
                 customer.getFullName(),
@@ -982,18 +981,24 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             return;
         }
 
-        Customer customer = this.getCustomerForm();
-        if (!customerDao.isCustomerExisted(customer.getPhoneNumber())) { // Nếu như customer chưa tồn tại sẽ tạo customer mới
-            customerDao.create(customer);
-        } else {
-            customerDao.update(customer);
+        try {
+            Customer customer = this.getCustomerForm();
+            if (!customerDao.isCustomerExisted(customer.getPhoneNumber())) {
+                customerDao.create(customer);
+            } else {
+                customerDao.update(customer);
+            }
+
+            Bills bill = this.getForm();
+            dao.create(bill);
+
+            XDialog.notify("Tạo hóa đơn thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo hóa đơn: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        Bills bill = this.getForm();
-        dao.create(bill);
-
-        this.fillToTable();
-        this.clear();
     }
 
     @Override
@@ -1002,21 +1007,39 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             return;
         }
 
-        Bills bill = this.getForm();
-        dao.update(bill);
+        try {
+            Bills bill = this.getForm();
+            dao.update(bill);
 
-        Customer customer = this.getCustomerForm();
-        customerDao.update(customer);
+            Customer customer = this.getCustomerForm();
+            customerDao.update(customer);
 
-        this.fillToTable();
-        this.clear();
+            XDialog.notify("Cập nhật hóa đơn thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhật hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
-        dao.deleteById(Long.valueOf(txtId.getText()));
-        this.fillToTable();
-        this.clear();
+        if (!XDialog.confirm("Bạn thực sự muốn xóa?")) {
+            return;
+        }
+
+        try {
+            long id = Long.parseLong(txtId.getText());
+            dao.deleteById(id);
+
+            XDialog.notify("Xóa hóa đơn thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi xóa hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -1102,9 +1125,15 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public boolean isValidInput() {
-        return XStr.isBlank(txtUsername, "Tên người tạo hóa đơn không được bỏ trống") 
+        if (txtPhoneNumber.getText().length() > 10) {
+            XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
+            return false;
+        }
+
+        return XStr.isBlank(txtUsername, "Tên người tạo hóa đơn không được bỏ trống")
                 && XStr.isBlank(txtPhoneNumber, "Số điện thoại khách hàng không được bỏ trống")
-                && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống");
+                && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống")
+                && XStr.isBlank(txtAddress, "Địa chỉ khách hàng không được bỏ trống");
     }
 
     @Override

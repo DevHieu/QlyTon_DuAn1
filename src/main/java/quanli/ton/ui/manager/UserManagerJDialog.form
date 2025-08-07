@@ -304,7 +304,7 @@
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="jLabel3" min="-2" pref="133" max="-2" attributes="0"/>
                                               <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                                              <Component id="txtSdt" min="-2" pref="268" max="-2" attributes="0"/>
+                                              <Component id="txtPhoneNumber" min="-2" pref="268" max="-2" attributes="0"/>
                                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                                               <Component id="txtPassword" min="-2" pref="265" max="-2" attributes="0"/>
                                               <Group type="102" attributes="0">
@@ -383,7 +383,7 @@
                                   <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                                  <Component id="txtSdt" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtPhoneNumber" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
@@ -578,7 +578,7 @@
                     <Property name="text" type="java.lang.String" value="H&#x1ecd; v&#xe0; t&#xea;n"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="txtSdt">
+                <Component class="javax.swing.JTextField" name="txtPhoneNumber">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">

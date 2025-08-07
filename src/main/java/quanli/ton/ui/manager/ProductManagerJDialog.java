@@ -90,9 +90,6 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
                 cboModel.setSelectedIndex(0);
                 fillcboThickness2(null); // Điền cboThickness2 với tất cả độ dày nếu không có loại nào được chọn
             }
-        } else {
-            cboModel.setSelectedIndex(0);
-            fillcboThickness2(null); // Điền cboThickness2 với tất cả độ dày nếu không có loại nào được chọn
         }
 
         // Lấy đối tượng Thickness trực tiếp từ DAO
@@ -139,7 +136,6 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
                 return null;
             }
         }
-
         product.setDiscount(slGiamGia.getValue());
 
         // Xử lý TypeId từ cboCategory
@@ -181,10 +177,10 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
     public void open() {
         this.setLocationRelativeTo(null);
         productsDAO = new ProductsDAOimpl();
+        this.clear();
         fillProductType();
         fillModel();
         fillToTable(null, null);
-        this.clear();
     }
 
     private void fillToTable(String productTypeId, Integer thicknessId) {
@@ -280,19 +276,19 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
         if (!isValidInput()) {
             return;
         }
+
         Product newProduct = getForm();
         if (newProduct != null) {
             try {
                 productsDAO.create(newProduct);
-                JOptionPane.showMessageDialog(this, "Sản phẩm đã được tạo thành công!");
+                XDialog.notify("Tạo sản phẩm thành công!");
                 this.applyFilters();
                 this.clear();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi tạo sản phẩm: " + e.getMessage());
+                XDialog.error("Lỗi khi tạo sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-
     }
 
     @Override
@@ -300,18 +296,16 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
         if (!isValidInput()) {
             return;
         }
+
         Product updatedProduct = getForm();
         if (updatedProduct != null) {
             try {
-                productsDAO.update(updatedProduct); // Cập nhật sản phẩm
-                if (importQuantity > 0) {
-                    productsDAO.importProduct(updatedProduct.getId(), importQuantity, updatedProduct.getImportPrice());
-                }
-                JOptionPane.showMessageDialog(this, "Sản phẩm đã được cập nhật thành công!");
+                productsDAO.update(updatedProduct);
+                XDialog.notify("Cập nhật sản phẩm thành công!");
                 this.applyFilters();
                 this.clear();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật sản phẩm: " + e.getMessage());
+                XDialog.error("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -321,20 +315,20 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
     public void delete() {
         String productIdToDelete = txtId.getText();
         if (productIdToDelete.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã Sản Phẩm để xóa.");
+            XDialog.alert("Vui lòng nhập Mã Sản Phẩm để xóa.");
             return;
         }
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa sản phẩm này không?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
+
+        if (XDialog.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
             try {
-                productsDAO.deleteById(productIdToDelete); // Xóa sản phẩm
-                JOptionPane.showMessageDialog(this, "Sản phẩm đã được xóa thành công!");
-                clear(); // Xóa form
+                productsDAO.deleteById(productIdToDelete);
+                XDialog.notify("Xóa sản phẩm thành công!");
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi xóa sản phẩm: " + e.getMessage());
+                XDialog.error("Lỗi khi xóa sản phẩm: " + e.getMessage());
                 e.printStackTrace();
             }
         }
+
         this.applyFilters();
         this.clear();
     }
@@ -1130,9 +1124,11 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
         importGoodsDialog.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
-                importQuantity = importGoodsDialog.getImportQuantity();
-                txtQuantity.setText(String.format("%.2f", Double.parseDouble(txtQuantity.getText()) + importQuantity));
-                txtCostPrice.setText(String.valueOf(importGoodsDialog.getImportPrice()));
+                if (importGoodsDialog.getImportQuantity() > 0 && importGoodsDialog.getImportPrice() > 0) {
+                    importQuantity = importGoodsDialog.getImportQuantity();
+                    txtQuantity.setText(String.format("%.2f", Double.parseDouble(txtQuantity.getText()) + importQuantity));
+                    txtCostPrice.setText(String.valueOf(importGoodsDialog.getImportPrice()));
+                }
             }
         });
     }//GEN-LAST:event_btnImportGoodsActionPerformed

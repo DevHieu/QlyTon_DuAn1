@@ -1,4 +1,4 @@
- /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
@@ -25,7 +25,7 @@ import quanli.ton.dao.UserDAO;
  *
  * @author Admin
  */
-public class UserManagerJDialog extends javax.swing.JDialog implements UserManagerController{
+public class UserManagerJDialog extends javax.swing.JDialog implements UserManagerController {
 
     /**
      * Creates new form UserManager
@@ -35,11 +35,11 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         initComponents();
         this.open();
     }
-    
+
     UserDAO dao = (UserDAO) new UserDAOImpl();
     List<User> items = List.of();
     File imageFile = null;
-    
+
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
@@ -47,14 +47,14 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
-    
+
     @Override
     public void setForm(User entity) {
         txtUsername.setText(entity.getUsername());
         txtFullname.setText(entity.getFullname());
         txtPassword.setText(entity.getPassword());
         txtRepeatPassword.setText(entity.getPassword());
-        txtSdt.setText(entity.getPhoneNumber()); // Added to handle phone number
+        txtPhoneNumber.setText(entity.getPhoneNumber()); // Added to handle phone number
         cboGender.setSelectedIndex(entity.isGender() ? 0 : 1);
         XIcon.setIcon(lbAvatar, "images/users/" + entity.getPhoto());
         imageFile = new File("images/users/" + entity.getPhoto());
@@ -83,7 +83,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         user.setUsername(txtUsername.getText());
         user.setFullname(txtFullname.getText());
         user.setPassword(txtPassword.getText());
-        String sdt = txtSdt.getText().trim();
+        String sdt = txtPhoneNumber.getText().trim();
         if (sdt.isEmpty()) {
             XDialog.alert("Số điện thoại không được để trống!", "Lỗi");
             return null; // Prevent saving if sdt is empty
@@ -95,7 +95,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         user.setGender(cboGender.getSelectedIndex() == 0);
         return user;
     }
-    
+
     @Override
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
@@ -105,19 +105,19 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         items.forEach(item -> {
             Object[] row = {
                 item.getUsername(),
-                item.getFullname(),    // <-- Kiểm tra thứ tự cột trong JTable của bạn
+                item.getFullname(), // <-- Kiểm tra thứ tự cột trong JTable của bạn
                 item.getPassword(),
                 item.getPhoto(),
                 item.getPhoneNumber(),
                 item.isGender() ? "Nam" : "Nữ",
-                item.isManager()? "Quản lí" : "Nhân viên", // <-- Truyền Boolean trực tiếp (true/false)
+                item.isManager() ? "Quản lí" : "Nhân viên", // <-- Truyền Boolean trực tiếp (true/false)
                 item.isEnabled() ? "Hoạt động" : "Tạm dừng", // <-- Truyền Boolean trực tiếp (true/false)
                 false
             };
             model.addRow(row);
         });
     }
-    
+
     @Override
     public void edit() {
         User entity = items.get(tblUser.getSelectedRow());
@@ -135,45 +135,53 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
     public void uncheckAll() {
         this.setCheckedAll(false);
     }
+
     private void setCheckedAll(boolean checked) {
         for (int i = 0; i < tblUser.getRowCount(); i++) {
-            tblUser.setValueAt(checked, i, 6);
+            tblUser.setValueAt(checked, i, 8);
         }
     }
 
     @Override
     public void deleteCheckedItems() {
-    if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
-        for (int i = 0; i < tblUser.getRowCount(); i++) {
-            if ((Boolean) tblUser.getValueAt(i, 6)) {
-                String username = items.get(i).getUsername();
+        if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
+            for (int i = 0; i < tblUser.getRowCount(); i++) {
+                if ((Boolean) tblUser.getValueAt(i, 8)) {
+                    String username = items.get(i).getUsername();
 
-                if (username.equals(XAuth.user.getUsername())) {
-                    XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
-                    continue;
+                    if (username.equals(XAuth.user.getUsername())) {
+                        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+                        continue;
+                    }
+
+                    if (dao.hasTransaction(username)) {
+                        XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
+                        continue;
+                    }
+
+                    dao.deleteById(username);
                 }
-
-                if (dao.hasTransaction(username)) {
-                    XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
-                    continue;
-                }
-
-                dao.deleteById(username);
             }
-        }
             this.fillToTable();
         }
     }
-    
+
     @Override
     public void create() {
         if (!isValidInput()) {
             return;
         }
-        User user = this.getForm();
-        dao.create(user);
-        this.fillToTable();
-        this.clear();
+
+        try {
+            User user = this.getForm();
+            dao.create(user);
+            XDialog.notify("Người dùng đã được tạo thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Người dùng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -181,30 +189,42 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         if (!isValidInput()) {
             return;
         }
-        User user = this.getForm();
-        dao.update(user);
-        this.fillToTable();
-        this.clear();
+
+        try {
+            User user = this.getForm();
+            dao.update(user);
+            XDialog.notify("Người dùng đã được cập nhập thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhập Người dùng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         String username = txtUsername.getText();
 
-    if (username.equals(XAuth.user.getUsername())) {
-        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
-        return;
-    }
+        if (username.equals(XAuth.user.getUsername())) {
+            XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+            return;
+        }
 
-    if (dao.hasTransaction(username)) {
-        XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
-        return;
-    }
+        if (dao.hasTransaction(username)) {
+            XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
+            return;
+        }
 
-        
-        dao.deleteById(txtUsername.getText());
-        this.fillToTable();
-        this.clear();
+        try {
+            dao.deleteById(txtUsername.getText());
+            XDialog.notify("Xóa người dùng thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi xóa Người dùng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -260,6 +280,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
             this.edit();
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -301,7 +322,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         jLabel7 = new javax.swing.JLabel();
         txtRepeatPassword = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtSdt = new javax.swing.JTextField();
+        txtPhoneNumber = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         rdoManager = new javax.swing.JRadioButton();
@@ -463,8 +484,8 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setText("Họ và tên");
 
-        txtSdt.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        txtSdt.setPreferredSize(new java.awt.Dimension(200, 30));
+        txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtPhoneNumber.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("Chức vụ");
@@ -588,7 +609,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel5)
-                                    .addComponent(txtSdt, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel6)
                                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -651,7 +672,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
                         .addGap(14, 14, 14)
                         .addComponent(jLabel5)
                         .addGap(10, 10, 10)
-                        .addComponent(txtSdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
                         .addComponent(jLabel6)
                         .addGap(10, 10, 10)
@@ -882,8 +903,8 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
     private javax.swing.JTable tblUser;
     private javax.swing.JTextField txtFullname;
     private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JTextField txtRepeatPassword;
-    private javax.swing.JTextField txtSdt;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
@@ -912,10 +933,20 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
     }
 
     @Override
-    public boolean isValidInput() {        
+    public boolean isValidInput() {
+        if (!txtPassword.getText().equals(txtRepeatPassword.getText())) {
+            XDialog.error("Vui lòng đảm bảo mật khẩu và xác nhận mật khẩu giống nhau.");
+            return false;
+        }
+
+        if (txtPhoneNumber.getText().length() > 10) {
+            XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
+            return false;
+        }
+
         return XStr.isBlank(txtUsername, "Tên đăng nhập không được bỏ trống")
-                && XStr.isBlank(txtSdt, "Số điện thoại không được bỏ trống")
-                && XStr.isBlank(txtFullname, "Số lượng không được bỏ trống")
+                && XStr.isBlank(txtPhoneNumber, "Số điện thoại không được bỏ trống")
+                && XStr.isBlank(txtFullname, "Họ tên không được bỏ trống")
                 && XStr.isBlank(txtPassword, "Mật khẩu không được bỏ trống")
                 && XStr.isBlank(txtRepeatPassword, "Vui lòng xác nhận mật khẩu");
 

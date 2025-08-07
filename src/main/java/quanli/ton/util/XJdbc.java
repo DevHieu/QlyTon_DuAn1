@@ -1,5 +1,6 @@
 package quanli.ton.util;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -89,6 +90,10 @@ public class XJdbc {
                 XDialog.alert("Id đã tồn tại. Vui lòng chọn id khác", "Lỗi trùng khóa");
             }
             throw new RuntimeException(ex.getMessage());
+        }
+        catch (MysqlDataTruncation e) {
+            XDialog.error("Một số trường thông tin quá dài so với quy định. Bạn vui lòng kiểm tra lại nội dung nhập.");
+            throw new RuntimeException(e);
         }
         catch (SQLException ex) {
             throw new RuntimeException(ex);

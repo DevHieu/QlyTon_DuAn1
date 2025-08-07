@@ -1869,8 +1869,14 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     @Override
     public boolean isValidInput() {
+        if (txtPhoneNumber.getText().length() > 10) {
+            XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
+            return false;
+        }
+
         return XStr.isBlank(txtPhoneNumber, "Số điện thoại khách hàng không được bỏ trống")
-                && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống");
+                && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống")
+                && XStr.isBlank(txtAddress, "Địa chỉ khách hàng không được bỏ trống");
     }
 
     @Override

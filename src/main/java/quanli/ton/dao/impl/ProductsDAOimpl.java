@@ -17,7 +17,7 @@ import quanli.ton.util.XQuery;
 public class ProductsDAOimpl implements ProductsDAO {
 
     String insertSql = "INSERT INTO Products (Id, Name, Photo, Quantity, UnitPrice, ImportPrice, Discount, TypeId, ThickID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    String updateSql = "UPDATE Products SET Name=?, Photo=?, Discount=?, TypeId=?, ThickID=? WHERE Id=?";
+    String updateSql = "UPDATE Products SET Name=?, Photo=?, UnitPrice = ?, Discount=?, TypeId=?, ThickID=? WHERE Id=?";
     String deleteSql = "DELETE FROM Products WHERE Id=?";
     String findAllSql = "SELECT * FROM Products";
     String findByIdSql = "SELECT * FROM Products WHERE Id=?";
@@ -32,10 +32,11 @@ public class ProductsDAOimpl implements ProductsDAO {
     @Override
     public void update(Product product) {
         Object[] args = {
-            product.getName(), product.getPhoto(), product.getDiscount(), product.getTypeId(), product.getThickId(),
+            product.getName(), product.getPhoto(), product.getUnitPrice(), product.getDiscount(), product.getTypeId(), product.getThickId(),
             product.getId()
         };
         XJdbc.executeUpdate(updateSql, args);
+        this.importProduct(product.getId(), product.getQuantity(), product.getImportPrice());
     }
 
     @Override

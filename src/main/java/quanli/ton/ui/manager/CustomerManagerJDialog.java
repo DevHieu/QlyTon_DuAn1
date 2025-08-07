@@ -113,8 +113,6 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
                 return canEdit [columnIndex];
             }
         });
-        tblCustomer.setSelectionBackground(new java.awt.Color(255, 204, 51));
-        tblCustomer.setSelectionForeground(new java.awt.Color(255, 0, 0));
         tblCustomer.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblCustomerMouseClicked(evt);
@@ -550,33 +548,51 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public void create() {
-        Customer entity = this.getForm();
         if (!isValidInput()) {
             return;
         }
-        customerDao.create(entity);
-        this.fillToTable();
-        this.clear();
+        try {
+            Customer entity = this.getForm();
+            customerDao.create(entity);
+            XDialog.notify("Tạo khách hàng thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Khách hàng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void update() {
-        Customer entity = this.getForm();
         if (!isValidInput()) {
             return;
         }
-        customerDao.update(entity);
-        this.fillToTable();
-        this.clear();
+        try {
+            Customer entity = this.getForm();
+            customerDao.update(entity);
+            XDialog.notify("Cập nhật khách hàng thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhật Khách hàng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
-            String id = txtPhoneNumber.getText();
-            customerDao.deleteById(id);
-            this.fillToTable();
-            this.clear();
+            try {
+                String id = txtPhoneNumber.getText();
+                customerDao.deleteById(id);
+                XDialog.notify("Xóa khách hàng thành công!");
+                this.fillToTable();
+                this.clear();
+            } catch (Exception e) {
+                XDialog.error("Lỗi khi xóa Khách hàng: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -629,6 +645,16 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     @Override
     public boolean isValidInput() {
+        if (txtPhoneNumber.getText().length() > 10) {
+            XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
+            return false;
+        }
+
+        if (txtAddress.getText().equals("")) {
+            XDialog.error("Địa chỉ khách hàng không được bỏ trống");
+            return false;
+        }
+
         return XStr.isBlank(txtPhoneNumber, "Số điện thoại khách hàng không được bỏ trống")
                 && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống");
 
@@ -646,7 +672,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
 
     private void setCheckedAll(boolean checked) {
         for (int i = 0; i < tblCustomer.getRowCount(); i++) {
-            tblCustomer.setValueAt(checked, i, 4);
+            tblCustomer.setValueAt(checked, i, 3);
         }
     }
 
@@ -654,7 +680,7 @@ public class CustomerManagerJDialog extends javax.swing.JDialog implements Custo
     public void deleteCheckedItems() {
         if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
             for (int i = 0; i < tblCustomer.getRowCount(); i++) {
-                if ((Boolean) tblCustomer.getValueAt(i, 4)) {
+                if ((Boolean) tblCustomer.getValueAt(i, 3)) {
                     customerDao.deleteById(customerList.get(i).getPhoneNumber());
                 }
             }

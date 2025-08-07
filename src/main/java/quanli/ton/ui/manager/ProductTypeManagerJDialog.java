@@ -135,14 +135,16 @@ public class ProductTypeManagerJDialog extends javax.swing.JDialog implements Pr
         if (!isValidInput()) {
             return;
         }
-        ProductType entity = this.getForm();
-        dao.create(entity);
-        this.fillToTable();
-        this.clear();
-
-        ckbCoPhanLoai.setSelected(false);
-        ckbDoDayMacDinh.setSelected(false);
-        ckbNhapDoDai.setSelected(false);
+        try {
+            ProductType entity = this.getForm();
+            dao.create(entity);
+            XDialog.notify("Tạo loại sản phẩm thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Loại sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -150,19 +152,31 @@ public class ProductTypeManagerJDialog extends javax.swing.JDialog implements Pr
         if (!isValidInput()) {
             return;
         }
-        ProductType entity = this.getForm();
-        dao.update(entity);
-        this.fillToTable();
-        this.clear();
+        try {
+            ProductType entity = this.getForm();
+            dao.update(entity);
+            XDialog.notify("Cập nhật loại sản phẩm thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhật Loại sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
-            String id = txtId.getText();
-            dao.deleteById(id);
-            this.fillToTable();
-            this.clear();
+            try {
+                String id = txtId.getText();
+                dao.deleteById(id);
+                XDialog.notify("Xóa loại sản phẩm thành công!");
+                this.fillToTable();
+                this.clear();
+            } catch (Exception e) {
+                XDialog.error("Lỗi khi xóa Loại sản phẩm: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -184,6 +198,12 @@ public class ProductTypeManagerJDialog extends javax.swing.JDialog implements Pr
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
+        
+        int rowCount = tblProductType.getRowCount();
+        btnMoveFirst.setEnabled(editable && rowCount > 0);
+        btnMovePrevious.setEnabled(editable && rowCount > 0);
+        btnMoveNext.setEnabled(editable && rowCount > 0);
+        btnMoveLast.setEnabled(editable && rowCount > 0);
     }
 
     @Override

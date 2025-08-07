@@ -155,10 +155,16 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         if (!isValidInput()) {
             return;
         }
-        Thickness entity = this.getForm();
-        dao.create(entity);
-        this.fillToTable();
-        this.clear();
+        try {
+            Thickness entity = this.getForm();
+            dao.create(entity);
+            XDialog.notify("Tạo độ dày thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Độ dày: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -166,24 +172,38 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         if (!isValidInput()) {
             return;
         }
-        Thickness entity = this.getForm();
-        dao.update(entity);
-        this.fillToTable();
+        try {
+            Thickness entity = this.getForm();
+            dao.update(entity);
+            XDialog.notify("Cập nhập độ dày thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhập Độ dày: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
             String id = txtId.getText();
-            dao.deleteById(Integer.parseInt(id));
-            this.fillToTable();
-            this.clear();
+            
+            try {
+                Thickness entity = this.getForm();
+                dao.deleteById(Integer.parseInt(id));
+                XDialog.notify("Xóa độ dày thành công!");
+                this.fillToTable();
+                this.clear();
+            } catch (Exception e) {
+                XDialog.error("Lỗi khi xóa Độ dày: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public void setEditable(boolean editable) {
-        txtId.setEnabled(!editable);
         txtThickness.setEnabled(true);
         cboType.setEditable(true);
         btnCreate.setEnabled(!editable);
