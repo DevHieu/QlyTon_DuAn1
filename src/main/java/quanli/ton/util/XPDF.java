@@ -266,7 +266,7 @@ public class XPdf {
 
         // Bằng chữ - canh phải
         PdfFont italicFont = createVietnameseFont();
-        String amountInWords = convertToVietnameseWords((long) totalAmount);
+        String amountInWords = convertToVietnameseWords((long) remaining);
         document.add(new Paragraph("(Bằng chữ: " + amountInWords + ")")
                 .setFont(italicFont)
                 .setFontSize(9)

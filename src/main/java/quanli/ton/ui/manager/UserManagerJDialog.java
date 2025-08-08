@@ -246,6 +246,14 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         btnMovePrevious.setEnabled(editable && rowCount > 0);
         btnMoveNext.setEnabled(editable && rowCount > 0);
         btnMoveLast.setEnabled(editable && rowCount > 0);
+
+        if (XAuth.user.getUsername().equals(txtUsername.getText())) {
+            rdoManager.setEnabled(false);
+            rdoEmployee.setEnabled(false);
+            rdoOperating.setEnabled(false);
+            rdoStop.setEnabled(false);
+
+        }
     }
 
     @Override

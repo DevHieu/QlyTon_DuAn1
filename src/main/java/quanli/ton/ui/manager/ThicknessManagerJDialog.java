@@ -77,7 +77,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
     public void edit() {
         Thickness entity = items.get(tblThickness.getSelectedRow());
         this.setForm(entity);
-        this.setEditable(true);
+        this.setEditable(false);
         tabs.setSelectedIndex(1);
     }
 

@@ -22,7 +22,7 @@ public class ProductsDAOimpl implements ProductsDAO {
     String findAllSql = "SELECT * FROM Products";
     String findByIdSql = "SELECT * FROM Products WHERE Id=?";
     String importProduct = "{CALL ImportProduct(?, ?, ?)}";
-    String findProductByNameSql = "SELECT * FROM Products WHERE Name = ?";
+    String findProductByNameSql = "SELECT * FROM Products WHERE Name LIKE ?";
     String findProductByTypeSql = "SELECT * FROM Products WHERE TypeId = ?";
     String findProductByThickSql = "SELECT * FROM Products WHERE ThickID = ?";
 
@@ -73,7 +73,7 @@ public class ProductsDAOimpl implements ProductsDAO {
 
     @Override
     public List<Product> findProductByName(String textInput) {
-        return XQuery.getBeanList(Product.class, findProductByNameSql, textInput);
+        return XQuery.getBeanList(Product.class, findProductByNameSql, "%" + textInput + "%");
     }
 
     @Override

@@ -4,6 +4,7 @@
  */
 package quanli.ton.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -11,6 +12,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -688,11 +690,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 sldDiscountStateChanged(evt);
             }
         });
-        sldDiscount.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                sldDiscountMouseReleased(evt);
-            }
-        });
 
         txtDiscountPercent.setText("0%");
 
@@ -725,7 +722,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
-        btnRefresh.setBackground(new java.awt.Color(158, 158, 158));
+        btnRefresh.setBackground(new java.awt.Color(0, 122, 204));
         btnRefresh.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnRefresh.setForeground(new java.awt.Color(255, 255, 255));
         btnRefresh.setText("Làm mới");
@@ -1121,6 +1118,35 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
     }//GEN-LAST:event_lbStockMouseClicked
 
+    private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDepositKeyReleased
+        // TODO add your handling code here:
+        try {
+            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
+            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
+            if (overallText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double overall = Double.parseDouble(overallText);
+
+            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
+            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
+            if (depositText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double value = Double.parseDouble(depositText);
+
+            if (value > overall) {
+                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
+                txtDeposit.setText(moneyFormat.format(txtDeposit.getValue())); // hiển thị về lại giá trị trước đó
+            }
+
+            this.billTotalChange(overall);
+            isBillChanging = true;
+        } catch (NumberFormatException e) {
+            // Bỏ qua lỗi parse nếu text không phải số
+        }
+    }//GEN-LAST:event_txtDepositKeyReleased
+
     private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnProductSearchActionPerformed
         // TODO add your handling code here:
         String textInput = txtProductSearch.getText();
@@ -1154,40 +1180,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         this.applyFilters();
     }// GEN-LAST:event_cboThicknessActionPerformed
 
-    private void lbMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lbMouseClicked
-        // TODO add your handling code here:
-        this.showStockManagementDialog(this);
-    }// GEN-LAST:event_lbMouseClicked
-
-    private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txtDepositKeyReleased
-        // TODO add your handling code here:
-        try {
-            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
-            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
-            if (overallText.isEmpty()) {
-                return; // Nếu text rỗng thì không làm gì
-            }
-            double overall = Double.parseDouble(overallText);
-
-            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
-            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
-            if (depositText.isEmpty()) {
-                return; // Nếu text rỗng thì không làm gì
-            }
-            double value = Double.parseDouble(depositText);
-
-            if (value > overall) {
-                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
-                txtDeposit.setText(moneyFormat.format(txtDeposit.getValue())); // hiển thị về lại giá trị trước đó
-            }
-
-            this.billTotalChange(overall);
-            isBillChanging = true;
-        } catch (NumberFormatException e) {
-            // Bỏ qua lỗi parse nếu text không phải số
-        }
-    }// GEN-LAST:event_txtDepositKeyReleased
-
     private void lblCloseMenuMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_lblCloseMenuMouseClicked
         this.closeMenu();
         // TODO add your handling code here:
@@ -1206,15 +1198,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private void sldDiscountStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_sldDiscountStateChanged
         // TODO add your handling code here:
         txtDiscountPercent.setText(sldDiscount.getValue() + "%");
-    }// GEN-LAST:event_sldDiscountStateChanged
-
-    private void sldDiscountMouseReleased(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_sldDiscountMouseReleased
-        // TODO add your handling code here:
-        String overall = txtOverall.getText().replaceAll("[^\\d.]", ""); // Xóa hết ký tự không phải số hoặc dấu chấm (
-        // VNĐ )
+        String overall = txtOverall.getText().replaceAll("[^\\d.]", ""); // Xóa hết ký tự không phải số hoặc dấu chấm (VNĐ )
         this.billTotalChange(Long.parseLong(overall));
         isBillChanging = true;
-    }// GEN-LAST:event_sldDiscountMouseReleased
+    }// GEN-LAST:event_sldDiscountStateChanged
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
@@ -1809,28 +1796,28 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         isBillChanging = true;
         currentBill.setStatus(Bills.Status.COMPLETED.ordinal());
         currentBill.setCheckout(new Date());
-        this.save();
-
         // Hỏi người dùng có muốn xuất phiếu giao hàng không
-        boolean choice = XDialog.confirm("Bạn có muốn xuất phiếu giao hàng không?");
-        if (choice) { // true = YES
-            try {
-                String filePath = XFile.saveFile("pdf");
-                if (filePath != null) {
-                    // Lấy thông tin khách hàng
-                    Customer customer = customerDao.findById(currentBill.getCustomerId());
+        if (this.save()) {
+            boolean choice = XDialog.confirm("Bạn có muốn xuất phiếu giao hàng không?");
+            if (choice) { // true = YES
+                try {
+                    String filePath = XFile.saveFile("pdf");
+                    if (filePath != null) {
+                        // Lấy thông tin khách hàng
+                        Customer customer = customerDao.findById(currentBill.getCustomerId());
 
-                    // Lấy chi tiết hóa đơn
-                    List<BillDetails> billDetails = billDetailDao.findByBillId(currentBill.getId());
+                        // Lấy chi tiết hóa đơn
+                        List<BillDetails> billDetails = billDetailDao.findByBillId(currentBill.getId());
 
-                    XPdf.createBillNote(filePath, currentBill, billDetails, customer);
-                    if (XDialog.confirm("Xuất phiếu giao hàng thành công! \n Bạn có muốn mở và in file không") == true) {
-                        Desktop desktop = Desktop.getDesktop();
-                        desktop.print(new File(filePath));
+                        XPdf.createBillNote(filePath, currentBill, billDetails, customer);
+                        if (XDialog.confirm("Xuất phiếu giao hàng thành công! \n Bạn có muốn mở và in file không") == true) {
+                            Desktop desktop = Desktop.getDesktop();
+                            desktop.print(new File(filePath));
+                        }
                     }
+                } catch (Exception e) {
+                    XDialog.alert("Lỗi xuất phiếu giao hàng: " + e.getMessage());
                 }
-            } catch (Exception e) {
-                XDialog.alert("Lỗi xuất phiếu giao hàng: " + e.getMessage());
             }
         }
     }
@@ -1940,7 +1927,20 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void loadProduct() {// tải và hiển thị các thẻ lên cửa sổ bán hàng
         pnlProducts.removeAll();
-        productList.forEach(product -> pnlProducts.add(this.createProduct(product)));
+        if (productList.isEmpty()) {
+            JLabel lblEmpty = new JLabel("Không có sản phẩm");
+            lblEmpty.setFont(new Font("Segoe UI", Font.BOLD, 22));
+            lblEmpty.setForeground(new Color(0, 102, 102));
+            lblEmpty.setHorizontalAlignment(SwingConstants.CENTER);
+            lblEmpty.setVerticalAlignment(SwingConstants.CENTER);
+
+            pnlProducts.setLayout(new BorderLayout()); // Tạm thời đổi layout
+            pnlProducts.add(lblEmpty, BorderLayout.CENTER);
+        } else {
+            pnlProducts.setLayout(new GridLayout(0, 4, 5, 5)); // Khôi phục GridLayout nếu có sản phẩm
+            productList.forEach(product -> pnlProducts.add(this.createProduct(product)));
+        }
+
         pnlProducts.revalidate();
         pnlProducts.repaint();
     }
