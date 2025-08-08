@@ -6,16 +6,16 @@ package quanli.ton.dao.impl;
 
 import java.util.Date;
 import java.util.List;
-import quanli.ton.dao.QlyTonDao;
 import quanli.ton.entity.Bills;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
+import quanli.ton.dao.QlyTonDAO;
 
 /**
  *
  * @author hieud
  */
-public class QlyTonDaoImpl implements QlyTonDao{
+public class QlyTonDAOImpl implements QlyTonDAO{
 
     String createSql = "INSERT INTO Bills(CustomerId, Username, Checkin, Checkout, Note, Status) VALUES(?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE Bills SET CustomerId=?, Username=?, Checkin=?, Checkout=?, Note=?, Status=? WHERE Id=?";

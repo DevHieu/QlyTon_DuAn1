@@ -8,32 +8,36 @@ import java.awt.Font;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import quanli.ton.controller.ProductTypeController;
 import quanli.ton.dao.ProductTypeDAO;
 import quanli.ton.dao.impl.ProductTypeDAOImpl;
 import quanli.ton.entity.ProductType;
 import quanli.ton.util.XDialog;
+import quanli.ton.util.XStr;
 
 /**
  *
  * @author USER
  */
-public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTypeController{
+public class ProductTypeManagerJDialog extends javax.swing.JDialog implements ProductTypeController {
+
     ProductTypeDAO dao = new ProductTypeDAOImpl();
     List<ProductType> items = List.of();
+
     /**
      * Creates new form ProductType
      */
-    public ProductTypeJDialog(java.awt.Frame parent, boolean modal) {
+    public ProductTypeManagerJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.open();
     }
-    
+
     public void hasSize(boolean selected) {
         txtSize.setEnabled(selected);
     }
-    
+
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
@@ -47,10 +51,10 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblProductType.getModel();
         model.setRowCount(0);
-        
+
         items = dao.findAll();
         items.forEach(item -> {
-            
+
             Object[] rowData = {
                 item.getId(),
                 item.getName(),
@@ -60,7 +64,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             };
             model.addRow(rowData);
         });
- 
+
     }
 
     @Override
@@ -80,6 +84,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void uncheckAll() {
         this.setCheckedAll(false);
     }
+
     private void setCheckedAll(boolean checked) {
         for (int i = 0; i < tblProductType.getRowCount(); i++) {
             tblProductType.setValueAt(checked, i, 4);
@@ -102,8 +107,11 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     public void setForm(ProductType entity) {
         txtId.setText(entity.getId());
         txtName.setText(entity.getName());
-        txtUnit.setText(entity.getName()); //new
+        txtUnit.setText(entity.getUnit()); //new
         txtSize.setText(entity.getDefaultLength() != null ? String.valueOf(entity.getDefaultLength()) : "");
+        ckbCoPhanLoai.setSelected(entity.isHasThickness());
+        ckbNhapDoDai.setSelected(entity.isRequiresSize());
+        ckbDoDayMacDinh.setSelected(entity.getDefaultLength() != null);
     }
 
     @Override
@@ -111,8 +119,8 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         ProductType entity = new ProductType();
         entity.setId(txtId.getText());
         entity.setName(txtName.getText());
-        entity.setUnit(txtUnit.getText()); //new
-        entity.setRequiresSize(ckbDoDayMacDinh.isSelected());
+        entity.setUnit(txtUnit.getText());
+        entity.setRequiresSize(ckbNhapDoDai.isSelected());
         if (ckbDoDayMacDinh.isSelected()) {
             entity.setDefaultLength(Float.parseFloat(txtSize.getText()));
         } else {
@@ -124,31 +132,51 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
 
     @Override
     public void create() {
-        ProductType entity = this.getForm();
-        dao.create(entity);
-        this.fillToTable();
-        this.clear();
-        
-        ckbCoPhanLoai.setSelected(false);
-        ckbDoDayMacDinh.setSelected(false);
-        ckbNhapDoDai.setSelected(false);
+        if (!isValidInput()) {
+            return;
+        }
+        try {
+            ProductType entity = this.getForm();
+            dao.create(entity);
+            XDialog.notify("Tạo loại sản phẩm thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Loại sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void update() {
-        ProductType entity = this.getForm();
-        dao.update(entity);
-        this.fillToTable();
-        this.clear();
+        if (!isValidInput()) {
+            return;
+        }
+        try {
+            ProductType entity = this.getForm();
+            dao.update(entity);
+            XDialog.notify("Cập nhật loại sản phẩm thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhật Loại sản phẩm: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
-            String id = txtId.getText();
-            dao.deleteById(id);
-            this.fillToTable();
-            this.clear();
+            try {
+                String id = txtId.getText();
+                dao.deleteById(id);
+                XDialog.notify("Xóa loại sản phẩm thành công!");
+                this.fillToTable();
+                this.clear();
+            } catch (Exception e) {
+                XDialog.error("Lỗi khi xóa Loại sản phẩm: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -170,8 +198,14 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
         btnDelete.setEnabled(editable);
+        
+        int rowCount = tblProductType.getRowCount();
+        btnMoveFirst.setEnabled(editable && rowCount > 0);
+        btnMovePrevious.setEnabled(editable && rowCount > 0);
+        btnMoveNext.setEnabled(editable && rowCount > 0);
+        btnMoveLast.setEnabled(editable && rowCount > 0);
     }
-    
+
     @Override
     public void moveFirst() {
         this.moveTo(0);
@@ -222,7 +256,18 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblProductType = new javax.swing.JTable();
+        tblProductType = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         btnUncheckAll = new javax.swing.JButton();
         btnCheckAll = new javax.swing.JButton();
         btnDeleteCheckedItems = new javax.swing.JButton();
@@ -287,9 +332,16 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         tblProductType.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -363,11 +415,15 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setPreferredSize(new java.awt.Dimension(750, 480));
 
+        txtId.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Mã loại:");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Tên loại:");
+
+        txtName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Kích thước:");
@@ -412,6 +468,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
             }
         });
 
+        txtSize.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtSize.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSizeActionPerformed(evt);
@@ -448,6 +505,7 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Đơn vị tính:");
 
+        txtUnit.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtUnit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUnitActionPerformed(evt);
@@ -586,10 +644,10 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(203, 203, 203)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(215, Short.MAX_VALUE)
                 .addComponent(jLabel11)
-                .addContainerGap(211, Short.MAX_VALUE))
+                .addGap(199, 199, 199))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -726,16 +784,18 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProductTypeJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
+            java.util.logging.Logger.getLogger(ProductTypeManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ProductTypeJDialog dialog = new ProductTypeJDialog(new javax.swing.JFrame(), true);
+                ProductTypeManagerJDialog dialog = new ProductTypeManagerJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -782,10 +842,14 @@ public class ProductTypeJDialog extends javax.swing.JDialog implements ProductTy
     private javax.swing.JTextField txtUnit;
     // End of variables declaration//GEN-END:variables
 
-
     @Override
     public boolean isValidInput() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (ckbDoDayMacDinh.isSelected() && txtSize.getText().equals("")) {
+            XDialog.alert("Độ dài mặc định không được bỏ trống");
+            return false;
+        }
+
+        return XStr.isBlank(txtId, "Mã loại không được để trống") && XStr.isBlank(txtName, "Tên loại không được để trống") && XStr.isBlank(txtUnit, "Vui lòng điền đơn vị tính");
     }
 
 }

@@ -17,13 +17,14 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import lombok.Getter;
 import quanli.ton.controller.HistoryController;
-import quanli.ton.dao.BillDao;
-import quanli.ton.dao.impl.BillDaoImpl;
+import quanli.ton.dao.impl.BillDAOImpl;
 import quanli.ton.entity.Bills;
-import quanli.ton.ui.manager.RevenueManager;
 import quanli.ton.util.TimeRange;
+import quanli.ton.util.XAuth;
 import quanli.ton.util.XDate;
+import quanli.ton.dao.BillDAO;
 
 /**
  *
@@ -31,8 +32,10 @@ import quanli.ton.util.XDate;
  */
 public class HistoryJDialog extends javax.swing.JDialog implements HistoryController{
 
-    private BillDao billDao = new BillDaoImpl();; // Sử dụng interface
-    private List<Bills> bills;
+    private BillDAO billDao = new BillDAOImpl();; // Sử dụng interface
+    private List<Object[]> billList;
+    @Getter
+    private Bills selectedBill = null;
     
     private void initTable() {
         // Cập nhật các cột hiển thị để khớp với dữ liệu từ selectByTimeRange
@@ -105,8 +108,8 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
         
         // Set ngày hiện tại cho textfield
         Date today = new Date();
-        txtBegin.setText(XDate.format(today, "dd-MM-yyyy HH:mm:ss"));
-        txtEnd.setText(XDate.format(today, "dd-MM-yyyy HH:mm:ss"));
+        txtBegin.setText(XDate.format(today, "dd-MM-yyyy"));
+        txtEnd.setText(XDate.format(today, "dd-MM-yyyy"));
         
         // Chọn "Hôm nay" và điền dữ liệu
         cboTimeRanges.setSelectedIndex(0);
@@ -137,19 +140,24 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
         }
 
         // Tải hóa đơn từ DAO
-        List<Object[]> fetchedBills = billDao.selectByTimeRange(beginDate, endDate);
+        String username = XAuth.user.getUsername();
+        billList =  billDao.findByUserAndTimeRange(username,beginDate, endDate);
 
         // Đổ dữ liệu vào bảng
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
-        for (Object[] row : fetchedBills) {
+        for (Object[] row : billList) {
             model.addRow(row);
         }
     }
+    
 
     @Override
     public void showBillJDialog() {
         int selectedRow = jTable1.getSelectedRow();
+        long id = (Long) billList.get(selectedRow)[0];
+        selectedBill = billDao.findById(id);
+        this.dispose();
     } 
 
     @Override
@@ -183,12 +191,9 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
         
         // Cập nhật textfield với ngày tương ứng
         if (beginDate != null && endDate != null) {
-            txtBegin.setText(XDate.format(beginDate, "dd-MM-yyyy HH:mm:ss"));
-            txtEnd.setText(XDate.format(endDate, "dd-MM-yyyy HH:mm:ss"));
+            txtBegin.setText(XDate.format(beginDate, "dd-MM-yyyy"));
+            txtEnd.setText(XDate.format(endDate, "dd-MM-yyyy"));
         }
-        
-        // Cập nhật lại bảng
-        fillBills();
     }
     /**
      * Creates new form HistoryJDialog
@@ -216,7 +221,18 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
         jButton1 = new javax.swing.JButton();
         cboTimeRanges = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         jSeparator2 = new javax.swing.JSeparator();
         jLabel11 = new javax.swing.JLabel();
 
@@ -231,12 +247,14 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
         jLabel1.setToolTipText("");
 
         txtBegin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Đến ngày:");
         jLabel2.setToolTipText("");
 
         txtEnd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jButton1.setBackground(new java.awt.Color(0, 102, 102));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -266,7 +284,15 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
             new String [] {
                 "Mã Hoá Đơn ", "Người Tạo", "Tên Khách Hàng", "Thời Điểm Tạo Phiếu", "Thời Điểm Thanh Toán", "Trạng Thái"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
@@ -285,42 +311,41 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 741, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(273, Short.MAX_VALUE)
+                .addComponent(jLabel11)
+                .addGap(240, 240, 240))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jSeparator2)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(238, 238, 238)
-                                    .addComponent(jLabel11))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(30, 30, 30)
-                                    .addComponent(jLabel1)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabel2)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(64, 64, 64)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(30, 30, 30)
+                            .addComponent(jLabel1)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jLabel2)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(64, 64, 64)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(0, 34, Short.MAX_VALUE))
                         .addComponent(jScrollPane1))
                     .addContainerGap()))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 620, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11)
+                .addContainerGap(583, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jLabel11)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGap(44, 44, 44)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

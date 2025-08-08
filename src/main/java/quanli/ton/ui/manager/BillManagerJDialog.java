@@ -11,13 +11,11 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import quanli.ton.controller.BillManagerController;
-import quanli.ton.dao.BillDao;
-import quanli.ton.dao.BillDetailDao;
-import quanli.ton.dao.CustomerDao;
-import quanli.ton.dao.impl.BillDaoImpl;
+import quanli.ton.dao.impl.BillDAOImpl;
 import quanli.ton.dao.impl.BillDetailDAOImpl;
-import quanli.ton.dao.impl.CustomerDaoImpl;
+import quanli.ton.dao.impl.CustomerDAOImpl;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
@@ -25,6 +23,10 @@ import quanli.ton.ui.QlyTonJFrame;
 import quanli.ton.util.TimeRange;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
+import quanli.ton.util.XStr;
+import quanli.ton.dao.BillDAO;
+import quanli.ton.dao.BillDetailDAO;
+import quanli.ton.dao.CustomerDAO;
 
 /**
  *
@@ -32,13 +34,13 @@ import quanli.ton.util.XDialog;
  */
 public class BillManagerJDialog extends javax.swing.JDialog implements BillManagerController {
 
-    BillDao dao = new BillDaoImpl();
+    BillDAO dao = new BillDAOImpl();
     List<Bills> items = List.of(); // phiếu bán hàng
-    BillDetailDao billDetailDao = new BillDetailDAOImpl();
+    BillDetailDAO billDetailDao = new BillDetailDAOImpl();
     List<BillDetails> details = List.of(); // chi tiết phiếu bán hàng
     List<Customer> customerItem = new ArrayList<Customer>();
     ;
-    CustomerDao customerDao = new CustomerDaoImpl();
+    CustomerDAO customerDao = new CustomerDAOImpl();
 
     /**
      * Creates new form BillJDialog
@@ -65,7 +67,18 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblBills = new javax.swing.JTable();
+        tblBills = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         btnDeleteCheckedItems = new javax.swing.JButton();
         btnUncheckAll = new javax.swing.JButton();
         btnCheckAll = new javax.swing.JButton();
@@ -97,7 +110,18 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         txtUsername = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        tblBillDetails = new javax.swing.JTable();
+        tblBillDetails = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         txtCheckout = new javax.swing.JFormattedTextField();
         txtCheckin = new javax.swing.JFormattedTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -154,8 +178,6 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 return canEdit [columnIndex];
             }
         });
-        tblBills.setSelectionBackground(new java.awt.Color(255, 204, 51));
-        tblBills.setSelectionForeground(new java.awt.Color(255, 0, 0));
         tblBills.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblBillsMouseClicked(evt);
@@ -196,6 +218,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setText("Từ ngày:");
 
+        txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtBegin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -219,6 +242,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
         });
 
+        txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtEnd.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -362,6 +386,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
         txtId.setEditable(false);
         txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtId.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtId.setEnabled(false);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -389,6 +414,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         jLabel9.setText("Người tạo:");
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtUsername.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel10.setText("Phiếu chi tiết:");
@@ -411,19 +437,23 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         });
         jScrollPane3.setViewportView(tblBillDetails);
 
+        txtCheckout.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtCheckout.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
 
+        txtCheckin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtCheckin.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("HH:mm:ss dd-MM-yyyy"))));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Tên khách hàng:");
 
         txtCustomerName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel11.setText("Số điện thoại:");
 
         txtPhoneNumber.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtPhoneNumber.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtPhoneNumberFocusLost(evt);
@@ -434,6 +464,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         jLabel5.setText("Địa chỉ:");
 
         txtAddress.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtAddress.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -567,27 +598,27 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 870, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(299, Short.MAX_VALUE)
+                .addComponent(jLabel12)
+                .addGap(252, 252, 252))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(tabs)
-                        .addComponent(jSeparator2)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGap(250, 250, 250)
-                            .addComponent(jLabel12)
-                            .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jSeparator2))
                     .addContainerGap()))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel12)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jLabel12)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGap(44, 44, 44)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
                     .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 713, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -679,8 +710,8 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     private void txtPhoneNumberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneNumberFocusLost
         // TODO add your handling code here:
-        Customer customer  = this.findCustomer(txtPhoneNumber.getText());
-        
+        Customer customer = this.findCustomer(txtPhoneNumber.getText());
+
         if (customer != null) {
             txtCustomerName.setText(customer.getFullName());
             txtAddress.setText(customer.getAddress());
@@ -700,7 +731,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-                try {
+        try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(QlyTonJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
@@ -809,7 +840,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 d.getProductName(),
                 moneyFormat.format(d.getUnitPrice()),
                 String.format("%.0f%%", d.getDiscount()),
-                (d.getLength() != 0 ? d.getLength() + "m" : "-"),
+                (d.getLength() != 0 ? String.format("%.2f", d.getQuantity()) + "m" : "-"),
                 d.getQuantity(),
                 moneyFormat.format(total)
             };
@@ -839,7 +870,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public Customer findCustomer(String phoneNumber) {
-        return(customerDao.findById(phoneNumber));
+        return (customerDao.findById(phoneNumber));
     }
 
     @Override
@@ -848,7 +879,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         this.selectTimeRange();
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        
+
     }
 
     @Override
@@ -889,12 +920,12 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             XDialog.alert("Ngày giờ bạn nhập bị sai");
             return null;
         }
-
+        bill.setId(Long.parseLong(txtId.getText()));
         bill.setCustomerId(txtPhoneNumber.getText());
         bill.setCheckin(checkIn);
         bill.setCheckout(checkOut);
         bill.setUsername(txtUsername.getText());
-        bill.setStatus(rdoProcessing.isSelected() ? 0 : rdoComplete.isSelected() ? 1 : 2);
+        bill.setStatus(rdoProcessing.isSelected() ? Bills.Status.PROCESSING.ordinal() : rdoComplete.isSelected() ? Bills.Status.COMPLETED.ordinal() : Bills.Status.CANCELED.ordinal());
         return bill;
     }
 
@@ -916,12 +947,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
         Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
         items = dao.findByTimeRange(begin, end);
-    
-        
+
         items.forEach(item -> {
             Customer customer = customerDao.findById(item.getCustomerId()); // Lấy Customer từ id
-            
-            customerItem.add(customer); 
+
+            customerItem.add(customer);
             Object[] row = {
                 item.getId(),
                 customer.getFullName(),
@@ -951,18 +981,24 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             return;
         }
 
-        Customer customer = this.getCustomerForm();
-        if (!customerDao.isCustomerExisted(customer.getPhoneNumber())) { // Nếu như customer chưa tồn tại sẽ tạo customer mới
-            customerDao.create(customer);
-        } else {
-            customerDao.update(customer);
+        try {
+            Customer customer = this.getCustomerForm();
+            if (!customerDao.isCustomerExisted(customer.getPhoneNumber())) {
+                customerDao.create(customer);
+            } else {
+                customerDao.update(customer);
+            }
+
+            Bills bill = this.getForm();
+            dao.create(bill);
+
+            XDialog.notify("Tạo hóa đơn thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo hóa đơn: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        Bills bill = this.getForm();
-        dao.create(bill);
-
-        this.fillToTable();
-        this.clear();
     }
 
     @Override
@@ -971,21 +1007,39 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             return;
         }
 
-        Bills bill = this.getForm();
-        dao.update(bill);
+        try {
+            Bills bill = this.getForm();
+            dao.update(bill);
 
-        Customer customer = this.getCustomerForm();
-        customerDao.update(customer);
+            Customer customer = this.getCustomerForm();
+            customerDao.update(customer);
 
-        this.fillToTable();
-        this.clear();
+            XDialog.notify("Cập nhật hóa đơn thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhật hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
-        dao.deleteById(Long.valueOf(txtId.getText()));
-        this.fillToTable();
-        this.clear();
+        if (!XDialog.confirm("Bạn thực sự muốn xóa?")) {
+            return;
+        }
+
+        try {
+            long id = Long.parseLong(txtId.getText());
+            dao.deleteById(id);
+
+            XDialog.notify("Xóa hóa đơn thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi xóa hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -996,7 +1050,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public void setEditable(boolean editable) {
-        txtId.setEnabled(!editable);
+        txtUsername.setEnabled(!editable);
         txtPhoneNumber.setEnabled(!editable);
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
@@ -1071,12 +1125,15 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
     @Override
     public boolean isValidInput() {
-        if (txtUsername.getText().equals("")) {
-            XDialog.alert("Tên người tạo hóa đơn không được bỏ trống");
+        if (txtPhoneNumber.getText().length() > 10) {
+            XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
             return false;
         }
 
-        return true;
+        return XStr.isBlank(txtUsername, "Tên người tạo hóa đơn không được bỏ trống")
+                && XStr.isBlank(txtPhoneNumber, "Số điện thoại khách hàng không được bỏ trống")
+                && XStr.isBlank(txtCustomerName, "Tên khách hàng không được bỏ trống")
+                && XStr.isBlank(txtAddress, "Địa chỉ khách hàng không được bỏ trống");
     }
 
     @Override

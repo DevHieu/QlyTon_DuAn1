@@ -6,16 +6,16 @@ package quanli.ton.dao.impl;
 
 import java.sql.ResultSet;
 import java.util.List;
-import quanli.ton.dao.CustomerDao;
 import quanli.ton.entity.Customer;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
+import quanli.ton.dao.CustomerDAO;
 
 /**
  *
  * @author hieud
  */
-public class CustomerDaoImpl implements CustomerDao {
+public class CustomerDAOImpl implements CustomerDAO {
 
     String createSql = "INSERT INTO Customers(PhoneNumber, FullName, Address) VALUES(?, ?, ?)";
     String updateSql = "UPDATE Customers SET FullName=?,  Address=?  WHERE PhoneNumber=?";

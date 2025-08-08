@@ -2,57 +2,72 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package quanli.ton.ui.manager;
+package quanli.ton.ui.components;
 
 import javax.swing.JOptionPane; // Để hiển thị thông báo
 import quanli.ton.dao.ProductsDAO; // Import DAO để tương tác với CSDL
 import quanli.ton.dao.impl.ProductsDAOimpl; // Import cài đặt DAO
-import quanli.ton.entity.Product; // Import lớp Product
-import java.util.List;
-import quanli.ton.controller.ImportgoodsController;
-import javax.swing.JDialog; // Import JDialog
 import java.awt.Frame; // Import Frame cho constructor của JDialog
 import javax.swing.UIManager;
+import lombok.Getter;
 import lombok.Setter;
 import quanli.ton.util.XDialog;
+import quanli.ton.util.XStr;
 
 /**
  *
  * @author huynhtrunghieu
  */
+public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi từ JFrame sang JDialog
 
-public class Importgoods extends javax.swing.JDialog implements ImportgoodsController{ // Đã đổi từ JFrame sang JDialog
     private ProductsDAO productsDAO = new ProductsDAOimpl();
-    
+
     @Setter
     String id;
     @Setter
     String productName;
+
+    @Getter
+    double importQuantity;
+    @Getter
+    double importPrice;
+
     /**
      * Creates new form Importgoods
      */
     // Constructor cho JDialog cần thêm tham số parent Frame và boolean modal
-    public Importgoods(Frame parent, boolean modal) { // Thêm tham số parent và modal
+    public ImportgoodsJDialog(Frame parent, boolean modal) { // Thêm tham số parent và modal
         super(parent, modal); // Gọi constructor của lớp cha JDialog
         initComponents();
         this.setLocationRelativeTo(null);
     }
-    
-    @Override
-    public boolean handleImportProduct(String productId, int quantityToAdd, double newUnitPrice) throws Exception {
-        Product existingProduct = null;
-        existingProduct = productsDAO.findById(productId);
-        
-        if (existingProduct != null) {
-            existingProduct.setQuantity(existingProduct.getQuantity() + quantityToAdd);
-            existingProduct.setUnitPrice(newUnitPrice);
-            productsDAO.update(existingProduct); 
-            return true;
-        } else {
+
+    public boolean isValidInput() {
+
+        try {
+            if (Double.parseDouble(txtPriceImport.getText()) <= 0) {
+                XDialog.error("Giá nhập vào của sản phẩm phải lớn hơn 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Giá nhập vào phải là số hợp lệ.");
             return false;
         }
+
+        try {
+            if (Double.parseDouble(txtQuantity.getText()) <= 0) {
+                XDialog.error("Số lượng nhập hàng của sản phẩm phải lớn hơn 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số Lượng phải là số nguyên hợp lệ.");
+            return false;
+        }
+
+        return XStr.isBlank(txtPriceImport, "Giá nhập hàng không được bỏ trống")
+                && XStr.isBlank(txtQuantity, "Số lượng không được bỏ trống");
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -66,9 +81,9 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
         jPanel1 = new javax.swing.JPanel();
         jSeparator2 = new javax.swing.JSeparator();
         jButton1 = new javax.swing.JButton();
-        jTextField4 = new javax.swing.JTextField();
+        txtQuantity = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtPriceImport = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -100,22 +115,24 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
             }
         });
 
-        jTextField4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextField4.setPreferredSize(new java.awt.Dimension(100, 30));
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtQuantity.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtQuantity.setPreferredSize(new java.awt.Dimension(100, 30));
+        txtQuantity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                txtQuantityActionPerformed(evt);
             }
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Giá nhập hàng:");
 
-        jTextField3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextField3.setPreferredSize(new java.awt.Dimension(100, 30));
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        txtPriceImport.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtPriceImport.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtPriceImport.setPreferredSize(new java.awt.Dimension(100, 30));
+        txtPriceImport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                txtPriceImportActionPerformed(evt);
             }
         });
 
@@ -123,6 +140,7 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
         jLabel4.setText("Số lượng:");
 
         txtName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtName.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtName.setEnabled(false);
         txtName.setPreferredSize(new java.awt.Dimension(100, 30));
 
@@ -130,6 +148,7 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
         jLabel3.setText("Tên sản phẩm:");
 
         txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtId.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtId.setEnabled(false);
         txtId.setPreferredSize(new java.awt.Dimension(100, 30));
 
@@ -161,9 +180,9 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
                         .addGap(48, 48, 48)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtPriceImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(71, 71, 71)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(txtQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -215,8 +234,8 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPriceImport, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -238,54 +257,35 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void txtPriceImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceImportActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_txtPriceImportActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void txtQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantityActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_txtQuantityActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String productId = txtId.getText(); // Id Hàng
-                    int quantityToAdd;
-                    double newUnitPrice;
+        int quantityToAdd;
+        double newImportPrice;
 
-                    try {
-                        quantityToAdd = Integer.parseInt(jTextField3.getText()); // Số Lượng
-                    } catch (NumberFormatException e) {
-                        JOptionPane.showMessageDialog(this, "Số Lượng phải là số nguyên hợp lệ.");
-                        return;
-                    }
+        if (!isValidInput()) {
+            return;
+        }
 
-                    try {
-                        newUnitPrice = Double.parseDouble(jTextField4.getText()); // Giá Nhập Vào
-                    } catch (NumberFormatException e) {
-                        JOptionPane.showMessageDialog(this, "Giá Nhập Vào phải là số hợp lệ.");
-                        return;
-                    }
+        quantityToAdd = Integer.parseInt(txtPriceImport.getText()); // Số Lượng
+        importQuantity = quantityToAdd;
 
-                    try {
-                        // Gọi phương thức xử lý nhập hàng
-                        boolean success = handleImportProduct(productId, quantityToAdd, newUnitPrice);
-
-                        if (success) {
-                            JOptionPane.showMessageDialog(this, "Đã nhập hàng thành công và cập nhật sản phẩm!");
-                            // Đóng dialog sau khi nhập thành công
-                            this.dispose(); 
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm với Mã ID: " + productId);
-                        }
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(this, "Lỗi khi nhập hàng: " + e.getMessage());
-                        e.printStackTrace();
-                    }
+        newImportPrice = Double.parseDouble(txtQuantity.getText()); // Giá Nhập Vào
+        importPrice = newImportPrice;
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-                txtId.setText(id);
+        txtId.setText(id);
         txtName.setText(productName);
     }//GEN-LAST:event_formWindowOpened
 
@@ -308,7 +308,7 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Importgoods.class.getName()).log(java.util.logging.Level.SEVERE, null,
+            java.util.logging.Logger.getLogger(ImportgoodsJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
 
@@ -321,7 +321,7 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
                 // Khi tạo JDialog trong main, bạn cần truyền một Frame cha.
                 // Có thể tạo một JFrame tạm thời hoặc truyền null nếu không có parent cụ thể.
                 // Ở đây mình tạo một JFrame tạm thời để làm parent.
-                new Importgoods(new javax.swing.JFrame(), true).setVisible(true); // true ở đây là để dialog là modal (chặn tương tác với cửa sổ cha)
+                new ImportgoodsJDialog(new javax.swing.JFrame(), true).setVisible(true); // true ở đây là để dialog là modal (chặn tương tác với cửa sổ cha)
             }
         });
     }
@@ -337,10 +337,10 @@ public class Importgoods extends javax.swing.JDialog implements ImportgoodsContr
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtPriceImport;
+    private javax.swing.JTextField txtQuantity;
     // End of variables declaration//GEN-END:variables
 
 }

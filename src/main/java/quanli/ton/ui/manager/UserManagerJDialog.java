@@ -1,4 +1,4 @@
- /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
@@ -12,33 +12,34 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import quanli.ton.controller.UserManagerController;
-import quanli.ton.dao.UserDao;
 import quanli.ton.dao.impl.UserDAOImpl;
 import quanli.ton.entity.User;
 import quanli.ton.util.FileTypeFilter;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XIcon;
+import quanli.ton.util.XStr;
+import quanli.ton.dao.UserDAO;
 
 /**
  *
  * @author Admin
  */
-public class UserManager extends javax.swing.JDialog implements UserManagerController{
+public class UserManagerJDialog extends javax.swing.JDialog implements UserManagerController {
 
     /**
      * Creates new form UserManager
      */
-    public UserManager(java.awt.Frame parent, boolean modal) {
+    public UserManagerJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.open();
     }
-    
-    UserDao dao = (UserDao) new UserDAOImpl();
+
+    UserDAO dao = (UserDAO) new UserDAOImpl();
     List<User> items = List.of();
     File imageFile = null;
-    
+
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
@@ -46,15 +47,15 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
-    
+
     @Override
     public void setForm(User entity) {
         txtUsername.setText(entity.getUsername());
         txtFullname.setText(entity.getFullname());
         txtPassword.setText(entity.getPassword());
         txtRepeatPassword.setText(entity.getPassword());
-        txtSdt.setText(entity.getPhoneNumber()); // Added to handle phone number
-
+        txtPhoneNumber.setText(entity.getPhoneNumber()); // Added to handle phone number
+        cboGender.setSelectedIndex(entity.isGender() ? 0 : 1);
         XIcon.setIcon(lbAvatar, "images/users/" + entity.getPhoto());
         imageFile = new File("images/users/" + entity.getPhoto());
 
@@ -82,7 +83,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         user.setUsername(txtUsername.getText());
         user.setFullname(txtFullname.getText());
         user.setPassword(txtPassword.getText());
-        String sdt = txtSdt.getText().trim();
+        String sdt = txtPhoneNumber.getText().trim();
         if (sdt.isEmpty()) {
             XDialog.alert("Số điện thoại không được để trống!", "Lỗi");
             return null; // Prevent saving if sdt is empty
@@ -91,10 +92,10 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         user.setPhoto(imageName);
         user.setManager(rdoManager.isSelected());
         user.setEnabled(rdoOperating.isSelected());
-
+        user.setGender(cboGender.getSelectedIndex() == 0);
         return user;
     }
-    
+
     @Override
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
@@ -104,18 +105,19 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         items.forEach(item -> {
             Object[] row = {
                 item.getUsername(),
-                item.getFullname(),    // <-- Kiểm tra thứ tự cột trong JTable của bạn
+                item.getFullname(), // <-- Kiểm tra thứ tự cột trong JTable của bạn
                 item.getPassword(),
                 item.getPhoto(),
                 item.getPhoneNumber(),
-                item.isManager()? "Quản lí" : "Nhân viên", // <-- Truyền Boolean trực tiếp (true/false)
+                item.isGender() ? "Nam" : "Nữ",
+                item.isManager() ? "Quản lí" : "Nhân viên", // <-- Truyền Boolean trực tiếp (true/false)
                 item.isEnabled() ? "Hoạt động" : "Tạm dừng", // <-- Truyền Boolean trực tiếp (true/false)
                 false
             };
             model.addRow(row);
         });
     }
-    
+
     @Override
     public void edit() {
         User entity = items.get(tblUser.getSelectedRow());
@@ -133,70 +135,96 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
     public void uncheckAll() {
         this.setCheckedAll(false);
     }
+
     private void setCheckedAll(boolean checked) {
         for (int i = 0; i < tblUser.getRowCount(); i++) {
-            tblUser.setValueAt(checked, i, 6);
+            tblUser.setValueAt(checked, i, 8);
         }
     }
 
     @Override
     public void deleteCheckedItems() {
-    if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
-        for (int i = 0; i < tblUser.getRowCount(); i++) {
-            if ((Boolean) tblUser.getValueAt(i, 6)) {
-                String username = items.get(i).getUsername();
+        if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
+            for (int i = 0; i < tblUser.getRowCount(); i++) {
+                if ((Boolean) tblUser.getValueAt(i, 8)) {
+                    String username = items.get(i).getUsername();
 
-                if (username.equals(XAuth.user.getUsername())) {
-                    XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
-                    continue;
+                    if (username.equals(XAuth.user.getUsername())) {
+                        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+                        continue;
+                    }
+
+                    if (dao.hasTransaction(username)) {
+                        XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
+                        continue;
+                    }
+
+                    dao.deleteById(username);
                 }
-
-                if (dao.hasTransaction(username)) {
-                    XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
-                    continue;
-                }
-
-                dao.deleteById(username);
             }
-        }
             this.fillToTable();
         }
     }
-    
+
     @Override
     public void create() {
-        User user = this.getForm();
-        dao.create(user);
-        this.fillToTable();
-        this.clear();
+        if (!isValidInput()) {
+            return;
+        }
+
+        try {
+            User user = this.getForm();
+            dao.create(user);
+            XDialog.notify("Người dùng đã được tạo thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Người dùng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void update() {
-        User user = this.getForm();
-        dao.update(user);
-        this.fillToTable();
-        this.clear();
+        if (!isValidInput()) {
+            return;
+        }
+
+        try {
+            User user = this.getForm();
+            dao.update(user);
+            XDialog.notify("Người dùng đã được cập nhập thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhập Người dùng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         String username = txtUsername.getText();
 
-    if (username.equals(XAuth.user.getUsername())) {
-        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
-        return;
-    }
+        if (username.equals(XAuth.user.getUsername())) {
+            XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+            return;
+        }
 
-    if (dao.hasTransaction(username)) {
-        XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
-        return;
-    }
+        if (dao.hasTransaction(username)) {
+            XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
+            return;
+        }
 
-        
-        dao.deleteById(txtUsername.getText());
-        this.fillToTable();
-        this.clear();
+        try {
+            dao.deleteById(txtUsername.getText());
+            XDialog.notify("Xóa người dùng thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi xóa Người dùng: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -218,6 +246,14 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         btnMovePrevious.setEnabled(editable && rowCount > 0);
         btnMoveNext.setEnabled(editable && rowCount > 0);
         btnMoveLast.setEnabled(editable && rowCount > 0);
+
+        if (XAuth.user.getUsername().equals(txtUsername.getText())) {
+            rdoManager.setEnabled(false);
+            rdoEmployee.setEnabled(false);
+            rdoOperating.setEnabled(false);
+            rdoStop.setEnabled(false);
+
+        }
     }
 
     @Override
@@ -252,6 +288,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             this.edit();
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -293,7 +330,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         jLabel7 = new javax.swing.JLabel();
         txtRepeatPassword = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtSdt = new javax.swing.JTextField();
+        txtPhoneNumber = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         rdoManager = new javax.swing.JRadioButton();
@@ -308,6 +345,8 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         btnDelete = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnCreate = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        cboGender = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
 
@@ -322,24 +361,24 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
 
         tblUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "Họ và tên", "Mật khẩu", "Hình ảnh", "Số điện thoại", "Chức vụ", "Trạng thái", ""
+                "Tên đăng nhập", "Họ và tên", "Mật khẩu", "Hình ảnh", "Số điện thoại", "Giới tính", "Chức vụ", "Trạng thái", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -391,7 +430,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -429,27 +468,32 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Tên đăng nhập");
 
+        txtUsername.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtUsername.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Số điện thoại");
 
+        txtFullname.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtFullname.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel6.setText("Mật khẩu");
 
+        txtPassword.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtPassword.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setText("Xác nhận mật khẩu");
 
+        txtRepeatPassword.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtRepeatPassword.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setText("Họ và tên");
 
-        txtSdt.setPreferredSize(new java.awt.Dimension(200, 30));
+        txtPhoneNumber.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtPhoneNumber.setPreferredSize(new java.awt.Dimension(200, 30));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("Chức vụ");
@@ -553,114 +597,133 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
             }
         });
 
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel12.setText("Giới tính");
+
+        cboGender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nam", "Nữ" }));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(20, 20, 20)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(20, 20, 20)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5)
+                                    .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel6)
-                                    .addComponent(jLabel9)
+                                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(rdoManager)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(rdoEmployee))
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(15, 15, 15))))
+                                        .addGap(17, 17, 17)
+                                        .addComponent(rdoEmployee))))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel9))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel5)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(rdoOperating)
-                        .addGap(18, 18, 18)
-                        .addComponent(rdoStop))
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel10)
-                    .addComponent(txtSdt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtRepeatPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
+                        .addComponent(btnClear)))
+                .addGap(42, 42, 42)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(61, 61, 61))
+                        .addGap(6, 6, 6)
+                        .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel10))
+                    .addComponent(jLabel8)
+                    .addComponent(txtFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12)
+                    .addComponent(cboGender, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtRepeatPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(rdoOperating)
+                        .addGap(19, 19, 19)
+                        .addComponent(rdoStop)))
+                .addGap(46, 46, 46))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel5)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel6)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)
+                        .addGap(4, 4, 4)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rdoManager)
+                            .addComponent(rdoEmployee)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel12)
+                        .addGap(10, 10, 10)
+                        .addComponent(cboGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel7)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtRepeatPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel10)
+                        .addGap(4, 4, 4)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rdoOperating)
+                            .addComponent(rdoStop))))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(17, 17, 17)
-                        .addComponent(jLabel5)
-                        .addGap(5, 5, 5)
-                        .addComponent(txtSdt, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel7)
-                        .addGap(5, 5, 5)
-                        .addComponent(txtRepeatPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rdoOperating)
-                            .addComponent(rdoStop)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel3)
-                                .addGap(5, 5, 5)
-                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)
-                                .addGap(11, 11, 11)
-                                .addComponent(txtFullname, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel6)
-                                .addGap(5, 5, 5)
-                                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(55, 55, 55)
-                                .addComponent(lbAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(rdoManager)
-                            .addComponent(rdoEmployee))))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                            .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnMoveNext, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnMoveLast, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
 
         tabs.addTab("BIỂU MẪU", jPanel2);
@@ -676,12 +739,12 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
             .addComponent(jSeparator2)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(260, 260, 260)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel11)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(260, 260, 260))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -689,7 +752,7 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -697,13 +760,16 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         pack();
@@ -786,15 +852,16 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UserManager.class.getName()).log(java.util.logging.Level.SEVERE, null,
+            java.util.logging.Logger.getLogger(UserManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                UserManager dialog = new UserManager(new javax.swing.JFrame(), true);
+                UserManagerJDialog dialog = new UserManagerJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -820,8 +887,10 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
     private javax.swing.JButton btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JComboBox<String> cboGender;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -842,8 +911,8 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
     private javax.swing.JTable tblUser;
     private javax.swing.JTextField txtFullname;
     private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JTextField txtRepeatPassword;
-    private javax.swing.JTextField txtSdt;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
@@ -873,6 +942,21 @@ public class UserManager extends javax.swing.JDialog implements UserManagerContr
 
     @Override
     public boolean isValidInput() {
-        return true;
+        if (!txtPassword.getText().equals(txtRepeatPassword.getText())) {
+            XDialog.error("Vui lòng đảm bảo mật khẩu và xác nhận mật khẩu giống nhau.");
+            return false;
+        }
+
+        if (txtPhoneNumber.getText().length() > 10) {
+            XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
+            return false;
+        }
+
+        return XStr.isBlank(txtUsername, "Tên đăng nhập không được bỏ trống")
+                && XStr.isBlank(txtPhoneNumber, "Số điện thoại không được bỏ trống")
+                && XStr.isBlank(txtFullname, "Họ tên không được bỏ trống")
+                && XStr.isBlank(txtPassword, "Mật khẩu không được bỏ trống")
+                && XStr.isBlank(txtRepeatPassword, "Vui lòng xác nhận mật khẩu");
+
     }
 }

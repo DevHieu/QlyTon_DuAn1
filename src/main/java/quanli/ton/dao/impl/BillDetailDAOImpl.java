@@ -9,16 +9,16 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import quanli.ton.dao.BillDetailDao;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
+import quanli.ton.dao.BillDetailDAO;
 
 /**
  *
  * @author hieud
  */
-public class BillDetailDAOImpl implements BillDetailDao {
+public class BillDetailDAOImpl implements BillDetailDAO {
     // Thêm ImportPrice vào INSERT
     String createSql = "INSERT INTO BillDetails(BillId, ProductId, UnitPrice, ImportPrice, Discount, Quantity, Length) VALUES(?, ?, ?, ?, ?, ?, ?)";
     
@@ -45,6 +45,8 @@ public class BillDetailDAOImpl implements BillDetailDao {
     
     // Sửa query này - SELECT TRUE thay vì True
     String isBillDetailExistedSql = "SELECT 1 FROM BillDetails WHERE Id = ?";
+    
+    String getOldQuantitySql = "SELECT Quantity FROM BillDetails WHERE Id = ?";
     
     @Override
     public List<BillDetails> findByBillId(Long billId) {
@@ -107,5 +109,19 @@ public class BillDetailDAOImpl implements BillDetailDao {
             Logger.getLogger(BillDetailDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+    
+        @Override
+    public int getOldQuantity(long billDetailId) {
+        int quantity = 0;
+        try {
+            ResultSet rs = XJdbc.executeQuery(getOldQuantitySql, billDetailId);
+            if (rs.next()) {
+                quantity = rs.getInt("Quantity");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return quantity;
     }
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import quanli.ton.controller.ThicknessController;
 import quanli.ton.dao.ProductTypeDAO;
 import quanli.ton.dao.ThicknessDAO;
@@ -19,26 +20,28 @@ import quanli.ton.dao.impl.ThicknessDAOImpl;
 import quanli.ton.entity.ProductType;
 import quanli.ton.entity.Thickness;
 import quanli.ton.util.XDialog;
+import quanli.ton.util.XStr;
 
 /**
  *
  * @author USER
  */
-public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessController{
+public class ThicknessManagerJDialog extends javax.swing.JDialog implements ThicknessController {
+
     ThicknessDAO dao = new ThicknessDAOImpl();
     List<Thickness> items = List.of();
     ProductTypeDAO prodDao = new ProductTypeDAOImpl();
     List<ProductType> prodItems = prodDao.findHasThicknessTrue();
-    
+
     /**
      * Creates new form Thickness
      */
-    public ThicknessJDialog(java.awt.Frame parent, boolean modal) {
+    public ThicknessManagerJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         this.open();
     }
-    
+
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
@@ -47,7 +50,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
-  
+
     @Override
     public void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblThickness.getModel();
@@ -65,21 +68,21 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
                 typeName,
                 false
             };
-            model.addRow(rowData);  
+            model.addRow(rowData);
         });
         this.clear();
     }
-    
+
     @Override
     public void edit() {
         Thickness entity = items.get(tblThickness.getSelectedRow());
         this.setForm(entity);
-        this.setEditable(true);
+        this.setEditable(false);
         tabs.setSelectedIndex(1);
     }
 
     @Override
-    public void deleteCheckedItems(){
+    public void deleteCheckedItems() {
         if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
             for (int i = 0; i < tblThickness.getRowCount(); i++) {
                 if ((Boolean) tblThickness.getValueAt(i, 3)) {
@@ -89,99 +92,119 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
             this.fillToTable();
         }
     }
-    public void setCheckedAll(boolean checked){
-        for(int i = 0; i < tblThickness.getRowCount(); i++){
+
+    public void setCheckedAll(boolean checked) {
+        for (int i = 0; i < tblThickness.getRowCount(); i++) {
             tblThickness.setValueAt(checked, i, 3);
         }
     }
+
     @Override
     public void checkAll() {
         this.setCheckedAll(true);
     }
-    
+
     @Override
     public void uncheckAll() {
         this.setCheckedAll(false);
     }
-    
+
     @Override
-    public void fillProductType(){
+    public void fillProductType() {
         DefaultComboBoxModel cboModel = (DefaultComboBoxModel) cboType.getModel();
         cboModel.removeAllElements();
 
         prodItems.forEach(productType -> {
             cboModel.addElement(productType);
         });
- 
+
     }
-    
+
     @Override
     public void setForm(Thickness entity) {
+        int index = 0;
+        for (int i = 0; i < prodItems.size(); i++) {
+            if (entity.getTypeId() == null ? prodItems.get(i).getId() == null : entity.getTypeId().equals(prodItems.get(i).getId())) {
+                index = i;
+                break;
+            }
+        }
+
         txtId.setText(String.valueOf(entity.getId()));
-        txtName.setText(entity.getThick());
+        txtThickness.setText(entity.getThick());
+        cboType.setSelectedIndex(index);
     }
-    
-//    @Override 
-//    public Thickness getForm() {
-//        try {
-//            Integer idText = Integer.parseInt(txtId.getText().trim());
-//            String thickText = txtName.getText().trim();
-//            ProductType selectedType = (ProductType) cboType.getSelectedItem();
-//
-//            return Thickness.builder()
-//                    .id(idText)
-//                    .thick(thickText)
-//                    .typeId(selectedType.getId())
-//                    .build();
-//        } catch (Exception e) {
-//            throw e;
-//        }
-//    }
-    
-    @Override 
+
+    @Override
     public Thickness getForm() {
         return Thickness.builder()
                 .id(Integer.parseInt(txtId.getText()))
-                .thick(txtName.getText())
+                .thick(txtThickness.getText())
                 .typeId(((ProductType) cboType.getSelectedItem()).getId())
                 .build();
     }
-    
+
     @Override
-    public void clear(){
+    public void clear() {
         this.setForm(new Thickness());
         this.setEditable(false);
     }
-    
+
     @Override
     public void create() {
-        Thickness entity = this.getForm();
-        dao.create(entity);
-        this.fillToTable();
-        this.clear();
+        if (!isValidInput()) {
+            return;
+        }
+        try {
+            Thickness entity = this.getForm();
+            dao.create(entity);
+            XDialog.notify("Tạo độ dày thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi tạo Độ dày: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void update() {
-        Thickness entity = this.getForm();
-        dao.update(entity);
-        this.fillToTable();
+        if (!isValidInput()) {
+            return;
+        }
+        try {
+            Thickness entity = this.getForm();
+            dao.update(entity);
+            XDialog.notify("Cập nhập độ dày thành công!");
+            this.fillToTable();
+            this.clear();
+        } catch (Exception e) {
+            XDialog.error("Lỗi khi cập nhập Độ dày: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void delete() {
         if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
             String id = txtId.getText();
-            dao.deleteById(Integer.parseInt(id));
-            this.fillToTable();
-            this.clear();
+            
+            try {
+                Thickness entity = this.getForm();
+                dao.deleteById(Integer.parseInt(id));
+                XDialog.notify("Xóa độ dày thành công!");
+                this.fillToTable();
+                this.clear();
+            } catch (Exception e) {
+                XDialog.error("Lỗi khi xóa Độ dày: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
-    
+
     @Override
     public void setEditable(boolean editable) {
-        txtId.setEnabled(!editable);
-        txtName.setEnabled(true);
+        txtThickness.setEnabled(true);
         cboType.setEditable(true);
         btnCreate.setEnabled(!editable);
         btnUpdate.setEnabled(editable);
@@ -223,9 +246,10 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
 
     @Override
     public boolean isValidInput() {
-        return true;
+        return XStr.isBlank(txtId, "Mã độ dày không được bỏ trống")
+                && XStr.isBlank(txtThickness, "Độ dày không được bỏ trống");
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -239,7 +263,18 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblThickness = new javax.swing.JTable();
+        tblThickness = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         btnCheckAll = new javax.swing.JButton();
         btnUncheckAll = new javax.swing.JButton();
         btnDeleteCheckedItems = new javax.swing.JButton();
@@ -247,7 +282,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         jLabel1 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtName = new javax.swing.JTextField();
+        txtThickness = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         cboType = new javax.swing.JComboBox<>();
         btnClear = new javax.swing.JButton();
@@ -262,7 +297,6 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         jSeparator2 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(682, 380));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -363,11 +397,14 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         jLabel1.setText("Mã sản phẩm:");
 
         txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtId.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtId.setEnabled(false);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Độ dày:");
 
-        txtName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtThickness.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtThickness.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setText("Loại sản phẩm:");
@@ -474,10 +511,10 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel2)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(txtName, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtThickness, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnCreate)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnUpdate)
                                         .addGap(4, 4, 4)
                                         .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -509,7 +546,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtThickness, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -626,7 +663,7 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
 
     private void tblThicknessMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblThicknessMouseClicked
         // TODO add your handling code here:
-        if(evt.getClickCount() == 2){
+        if (evt.getClickCount() == 2) {
             this.edit();
         }
     }//GEN-LAST:event_tblThicknessMouseClicked
@@ -663,16 +700,18 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ThicknessJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
+            java.util.logging.Logger.getLogger(ThicknessManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ThicknessJDialog dialog = new ThicknessJDialog(new javax.swing.JFrame(), true);
+                ThicknessManagerJDialog dialog = new ThicknessManagerJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -709,6 +748,6 @@ public class ThicknessJDialog extends javax.swing.JDialog implements ThicknessCo
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblThickness;
     private javax.swing.JTextField txtId;
-    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtThickness;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,5 +1,6 @@
 package quanli.ton.util;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -28,7 +29,7 @@ public class XJdbc {
 
         var driver = "com.mysql.cj.jdbc.Driver";
         var dburl = "jdbc:mysql://localhost:3306/QLyTon?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=True"; // <--- SỬA LẠI CHỖ NÀY
-        var username = "huynhtrunghieu";
+        var username = "root";
         var password = "123";
 
         try {
@@ -89,6 +90,10 @@ public class XJdbc {
                 XDialog.alert("Id đã tồn tại. Vui lòng chọn id khác", "Lỗi trùng khóa");
             }
             throw new RuntimeException(ex.getMessage());
+        }
+        catch (MysqlDataTruncation e) {
+            XDialog.error("Một số trường thông tin quá dài so với quy định. Bạn vui lòng kiểm tra lại nội dung nhập.");
+            throw new RuntimeException(e);
         }
         catch (SQLException ex) {
             throw new RuntimeException(ex);

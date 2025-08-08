@@ -20,13 +20,13 @@ import lombok.NoArgsConstructor;
 public class Product {
     private String id;
     private String name;
-    private String photo = "products.jpg";
+    private String photo = "product.jpg";
     private double unitPrice;
     private double importPrice;
     private double discount;
     private String typeId;
     private Integer thickId;
-    private int quantity;
+    private double quantity;
 }
 
 

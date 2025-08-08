@@ -11,7 +11,8 @@ import quanli.ton.entity.BillDetails;
  *
  * @author hieud
  */
-public interface BillDetailDao extends CrudDAO<BillDetails, Long> {
+public interface BillDetailDAO extends CrudDAO<BillDetails, Long> {
     public List<BillDetails> findByBillId(Long billId);
     public boolean isBillDetailExisted(Long id);
+        int getOldQuantity(long billDetailId);
 }
