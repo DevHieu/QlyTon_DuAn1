@@ -249,7 +249,9 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
         for (ProductType p : typeList) {
             cboModel.addItem(p.getName());
         }
-        this.fillcboThickness2(typeList.get(0).getId());
+        if (!typeList.isEmpty()) {
+            this.fillcboThickness2(typeList.get(0).getId());
+        }
     }
 
     private void fillcboThickness2(String typeId) {

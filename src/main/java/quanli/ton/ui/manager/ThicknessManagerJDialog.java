@@ -122,7 +122,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
 
     @Override
     public void setForm(Thickness entity) {
-        int index = 0;
+        int index = -1;
         for (int i = 0; i < prodItems.size(); i++) {
             if (entity.getTypeId() == null ? prodItems.get(i).getId() == null : entity.getTypeId().equals(prodItems.get(i).getId())) {
                 index = i;
