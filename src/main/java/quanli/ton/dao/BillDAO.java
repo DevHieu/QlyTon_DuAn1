@@ -26,4 +26,6 @@ public interface BillDAO extends CrudDAO<Bills, Long> {
     public Bills findOperatingById(Long id);
     public List<Bills> findOperatingByTimeRange(Date begin, Date end);
     public List<Bills> findOperatingAllOfCustomerId(String id);
+    
+    public void cancleBill(long id);
 }

@@ -47,6 +47,8 @@ public class BillDAOImpl implements BillDAO {
     String findOperatingByIdSql = "SELECT * FROM Bills WHERE Id=? AND Status = 0";
     String findOperatingByTimeRangeSql = "SELECT * FROM Bills WHERE Status = 0 AND Checkin BETWEEN ? AND ? ORDER BY Checkin DESC";
     String findOperatingAllOfCustomerId = "SELECT * FROM Bills WHERE Status = 0 AND CustomerId = ?";
+    
+    String cancleBillSql = "UPDATE Bills SET Status= 2 WHERE Id=?";
 
     @Override
     public Bills create(Bills entity) {
@@ -214,5 +216,10 @@ public class BillDAOImpl implements BillDAO {
             throw new RuntimeException(e);
         }
         return list;
+    }
+
+    @Override
+    public void cancleBill(long id) {
+        XJdbc.executeUpdate(cancleBillSql, id);
     }
 }
