@@ -10,11 +10,11 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import quanli.ton.controller.CustomerController;
-import quanli.ton.dao.impl.CustomerDAOImpl;
+import quanli.ton.dao.impl.CustomerDAOImpl1;
 import quanli.ton.entity.Customer;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XStr;
-import quanli.ton.dao.CustomerDAO;
+import quanli.ton.dao.CustomerDAO1;
 
 /**
  *
@@ -22,7 +22,7 @@ import quanli.ton.dao.CustomerDAO;
  */
 public class CustomerManagerJDialog extends javax.swing.JDialog implements CustomerController {
 
-    CustomerDAO customerDao = new CustomerDAOImpl();
+    CustomerDAO1 customerDao = new CustomerDAOImpl1();
     List<Customer> customerList = List.of();
 
     /**

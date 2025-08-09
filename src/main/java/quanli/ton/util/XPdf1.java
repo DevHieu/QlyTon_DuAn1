@@ -8,6 +8,7 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.*;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
 
@@ -19,11 +20,12 @@ import quanli.ton.dao.impl.ProductsDAOimpl;
 import quanli.ton.dao.impl.ProductTypeDAOImpl;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
+import quanli.ton.entity.Customer;
 
 /**
  * Utility class để xuất dữ liệu ra file PDF (iTextPDF 8.0.0)
  */
-public class XPdf {
+public class XPdf1 {
 
     private static String title = "";
     private static String[] headers = {};
@@ -33,21 +35,21 @@ public class XPdf {
      * Thiết lập tiêu đề cho PDF
      */
     public static void setTitle(String title) {
-        XPdf.title = title;
+        XPdf1.title = title;
     }
 
     /**
      * Thiết lập headers cho bảng
      */
     public static void setHeaders(String[] headers) {
-        XPdf.headers = headers;
+        XPdf1.headers = headers;
     }
 
     /**
      * Thiết lập dữ liệu cho bảng
      */
     public static void setData(List<Object[]> data) {
-        XPdf.data = data;
+        XPdf1.data = data;
     }
 
     /**
@@ -55,7 +57,9 @@ public class XPdf {
      */
     public static void createBillNote(String filePath, Bills bill,
             List<BillDetails> billDetails,
-            quanli.ton.entity.Customer customer) throws Exception {
+            Customer customer,
+            boolean isTransfer
+    ) throws Exception {
 
         PdfWriter writer = new PdfWriter(new FileOutputStream(filePath));
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -179,90 +183,68 @@ public class XPdf {
                             .setTextAlignment(TextAlignment.RIGHT) // Căn phải
             );
         }
+        document.add(table);
 
-        // Tổng cộng
-        Cell totalLabel = new Cell(1, 5)
-                .add(new Paragraph("TỔNG CỘNG:"))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(totalLabel);
+        Table totalTable = new Table(UnitValue.createPercentArray(new float[]{30, 40, 30}))
+                .useAllAvailableWidth()
+                .setMarginTop(10);
 
-        Cell totalValue = new Cell(1, 2)
-                .add(new Paragraph(String.format("%,.0f VNĐ", totalAmount)))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(totalValue);
+        if (isTransfer) {
+            Image img = new Image(ImageDataFactory.create("images/qrcode/qrcode.png"))
+                    .setAutoScale(false)
+                    .setWidth(100) // Có thể điều chỉnh kích thước
+                    .setHeight(100)
+                    .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
-        Cell discountLabel = new Cell(1, 5)
-                .add(new Paragraph("GIẢM GIÁ:"))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(discountLabel);
+            Paragraph qrNote = new Paragraph("Quét mã để chuyển khoản")
+                    .setFont(infoFont)
+                    .setFontSize(10)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginTop(3);
+
+// Gộp ảnh và chú thích vào 1 cell
+            Cell imageCell = new Cell(4, 1)
+                    .add(new Div().add(img).add(qrNote))
+                    .setBorder(Border.NO_BORDER)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setVerticalAlignment(VerticalAlignment.MIDDLE);
+
+            totalTable.addCell(imageCell);
+        } else {
+            // Thêm cell trống để giữ vị trí
+            Cell emptyCell = new Cell(4, 1)
+                    .setBorder(Border.NO_BORDER);
+            totalTable.addCell(emptyCell);
+        }
+
+        totalTable.addCell(new Cell().add(new Paragraph("TỔNG CỘNG:").setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
+
+        totalTable.addCell(new Cell().add(new Paragraph(String.format("%,.0f VNĐ", totalAmount)).setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
+
+        totalTable.addCell(new Cell().add(new Paragraph("GIẢM GIÁ:").setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
 
         double discount = totalAmount / 100 * bill.getDiscount();
-        Cell discountValue = new Cell(1, 2)
-                .add(new Paragraph(String.format("%,.0f VNĐ", discount)))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(discountValue);
 
-        Cell depositLabel = new Cell(1, 5)
-                .add(new Paragraph("ĐẶT CỌC:"))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(depositLabel);
+        totalTable.addCell(new Cell().add(new Paragraph(String.format("%,.0f VNĐ", discount)).setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
 
-        Cell depositValue = new Cell(1, 2)
-                .add(new Paragraph(String.format("%,.0f VNĐ", bill.getDeposit())))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(depositValue);
+        totalTable.addCell(new Cell().add(new Paragraph("ĐẶT CỌC:").setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
 
-        Cell remainingLabel = new Cell(1, 5)
-                .add(new Paragraph("CÒN LẠI PHẢI TRẢ:"))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(remainingLabel);
+        totalTable.addCell(new Cell().add(new Paragraph(String.format("%,.0f VNĐ", bill.getDeposit())).setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
+
+        totalTable.addCell(new Cell().add(new Paragraph("CÒN LẠI PHẢI TRẢ:").setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
 
         double remaining = totalAmount - discount - bill.getDeposit();
-        Cell remainingValue = new Cell(1, 2)
-                .add(new Paragraph(String.format("%,.0f VNĐ", remaining)))
-                .setFont(headerFont)
-                .setFontSize(10)
-                .setBold()
-                .setBorder(Border.NO_BORDER)
-                .setPadding(3)
-                .setTextAlignment(TextAlignment.RIGHT);
-        table.addCell(remainingValue);
-        document.add(table);
+        totalTable.addCell(new Cell().add(new Paragraph(String.format("%,.0f VNĐ", remaining)).setFont(headerFont).setFontSize(10).setBold())
+                .setBorder(Border.NO_BORDER).setPadding(3).setTextAlignment(TextAlignment.RIGHT));
+
+        document.add(totalTable);
 
         // Bằng chữ - canh phải
         PdfFont italicFont = createVietnameseFont();

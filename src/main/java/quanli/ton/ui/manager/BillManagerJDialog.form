@@ -276,7 +276,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="X&#xf3;a c&#xe1;c m&#x1ee5;c &#x111;&#xe3; ch&#x1ecd;n"/>
+                    <Property name="text" type="java.lang.String" value="H&#x1ee7;y c&#xe1;c m&#x1ee5;c &#x111;&#xe3; ch&#x1ecd;n"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteCheckedItemsActionPerformed"/>
@@ -618,7 +618,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="X&#xf3;a"/>
+                    <Property name="text" type="java.lang.String" value="H&#x1ee7;y"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteActionPerformed"/>

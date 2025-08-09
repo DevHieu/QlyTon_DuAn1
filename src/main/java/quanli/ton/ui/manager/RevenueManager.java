@@ -36,7 +36,7 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.util.XFile;
-import quanli.ton.util.XPdf;
+import quanli.ton.util.XPdf1;
 
 /**
  *

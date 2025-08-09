@@ -45,8 +45,8 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
     @Override
     public void open() {
         this.setLocationRelativeTo(null);
-        this.fillToTable();
         this.fillProductType();
+        this.fillToTable();
         this.clear();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
@@ -59,7 +59,6 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         Map<String, String> typeNameMap = new HashMap<>();
         prodDao.findAll().forEach(type -> typeNameMap.put(type.getId(), type.getName()));
 
-        items = dao.findAll();
         items.forEach(item -> {
             String typeName = typeNameMap.getOrDefault(item.getTypeId(), "N/A");
             Object[] rowData = {
@@ -77,7 +76,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
     public void edit() {
         Thickness entity = items.get(tblThickness.getSelectedRow());
         this.setForm(entity);
-        this.setEditable(false);
+        this.setEditable(true);
         tabs.setSelectedIndex(1);
     }
 
@@ -114,15 +113,20 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         DefaultComboBoxModel cboModel = (DefaultComboBoxModel) cboType.getModel();
         cboModel.removeAllElements();
 
+        DefaultComboBoxModel cboModel2 = (DefaultComboBoxModel) cboType2.getModel();
+        cboModel2.removeAllElements();
+        cboModel2.addElement("Tất cả");
+
         prodItems.forEach(productType -> {
             cboModel.addElement(productType);
+            cboModel2.addElement(productType);
         });
 
     }
 
     @Override
     public void setForm(Thickness entity) {
-        int index = -1;
+        int index = 0;
         for (int i = 0; i < prodItems.size(); i++) {
             if (entity.getTypeId() == null ? prodItems.get(i).getId() == null : entity.getTypeId().equals(prodItems.get(i).getId())) {
                 index = i;
@@ -132,7 +136,13 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
 
         txtId.setText(String.valueOf(entity.getId()));
         txtThickness.setText(entity.getThick());
-        cboType.setSelectedIndex(index);
+        System.out.println(prodItems.size());
+        
+        if (cboType.getItemCount() > 0) {
+           cboType.setSelectedIndex(index);
+        } else {
+            cboType.setSelectedIndex(-1);
+        }
     }
 
     @Override
@@ -188,7 +198,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
     public void delete() {
         if (XDialog.confirm("Bạn thực sự muốn xóa?")) {
             String id = txtId.getText();
-            
+
             try {
                 Thickness entity = this.getForm();
                 dao.deleteById(Integer.parseInt(id));
@@ -250,6 +260,11 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
                 && XStr.isBlank(txtThickness, "Độ dày không được bỏ trống");
     }
 
+    private void applyFilters(String typeId) {
+        items = dao.findByProductTypeId(typeId);
+        this.fillToTable();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -278,6 +293,8 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         btnCheckAll = new javax.swing.JButton();
         btnUncheckAll = new javax.swing.JButton();
         btnDeleteCheckedItems = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        cboType2 = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
@@ -362,31 +379,50 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
             }
         });
 
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel10.setText("Loại Sản Phẩm");
+
+        cboType2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cboType2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboType2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnCheckAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnUncheckAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDeleteCheckedItems))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 660, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 10, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10)
+                    .addComponent(cboType2, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 660, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCheckAll)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUncheckAll)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDeleteCheckedItems)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cboType2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnDeleteCheckedItems, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUncheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabs.addTab("DANH SÁCH ", jPanel1);
@@ -551,7 +587,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cboType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -595,9 +631,9 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(57, Short.MAX_VALUE)
-                .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(tabs)
                 .addContainerGap())
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
@@ -605,7 +641,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
                     .addComponent(jLabel11)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(316, Short.MAX_VALUE)))
+                    .addContainerGap(387, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -616,7 +652,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -688,6 +724,18 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         this.moveLast();
     }//GEN-LAST:event_btnMoveLastActionPerformed
 
+    private void cboType2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboType2ActionPerformed
+        // TODO add your handling code here:
+        int index = cboType2.getSelectedIndex();
+        if (index > 0) {
+            String typeId = prodItems.get(index-1).getId();
+            applyFilters(typeId);
+        } else {
+            items = dao.findAll();
+            this.fillToTable();
+        }
+    }//GEN-LAST:event_cboType2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -736,7 +784,9 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
     private javax.swing.JButton btnUncheckAll;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cboType;
+    private javax.swing.JComboBox<String> cboType2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

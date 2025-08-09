@@ -10,7 +10,7 @@ import quanli.ton.controller.ChangePasswordController;
 import quanli.ton.dao.impl.UserDAOImpl;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
-import quanli.ton.dao.UserDAO;
+import quanli.ton.dao.UserDAO1;
 
 /**
  *
@@ -18,7 +18,7 @@ import quanli.ton.dao.UserDAO;
  */
 public class ChangePasswordJDialog extends javax.swing.JDialog implements ChangePasswordController {
 
-    UserDAO dao = new UserDAOImpl();
+    UserDAO1 dao = new UserDAOImpl();
 
     // Các biến GUI như txtUsername, txtPassword... đã có trong class này.
 

@@ -13,9 +13,9 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import quanli.ton.controller.BillManagerController;
-import quanli.ton.dao.impl.BillDAOImpl;
+import quanli.ton.dao.impl.BillDAOImpl1;
 import quanli.ton.dao.impl.BillDetailDAOImpl;
-import quanli.ton.dao.impl.CustomerDAOImpl;
+import quanli.ton.dao.impl.CustomerDAOImpl1;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
@@ -24,9 +24,9 @@ import quanli.ton.util.TimeRange;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XStr;
-import quanli.ton.dao.BillDAO;
-import quanli.ton.dao.BillDetailDAO;
-import quanli.ton.dao.CustomerDAO;
+import quanli.ton.dao.BillDAO1;
+import quanli.ton.dao.BillDetailDAO1;
+import quanli.ton.dao.CustomerDAO1;
 
 /**
  *
@@ -34,13 +34,13 @@ import quanli.ton.dao.CustomerDAO;
  */
 public class BillManagerJDialog extends javax.swing.JDialog implements BillManagerController {
 
-    BillDAO dao = new BillDAOImpl();
+    BillDAO1 dao = new BillDAOImpl1();
     List<Bills> items = List.of(); // phiếu bán hàng
-    BillDetailDAO billDetailDao = new BillDetailDAOImpl();
+    BillDetailDAO1 billDetailDao = new BillDetailDAOImpl();
     List<BillDetails> details = List.of(); // chi tiết phiếu bán hàng
     List<Customer> customerItem = new ArrayList<Customer>();
     ;
-    CustomerDAO customerDao = new CustomerDAOImpl();
+    CustomerDAO1 customerDao = new CustomerDAOImpl1();
 
     /**
      * Creates new form BillJDialog
@@ -188,7 +188,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         btnDeleteCheckedItems.setBackground(new java.awt.Color(0, 102, 102));
         btnDeleteCheckedItems.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnDeleteCheckedItems.setForeground(new java.awt.Color(255, 255, 255));
-        btnDeleteCheckedItems.setText("Xóa các mục đã chọn");
+        btnDeleteCheckedItems.setText("Hủy các mục đã chọn");
         btnDeleteCheckedItems.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteCheckedItemsActionPerformed(evt);
@@ -324,7 +324,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         btnDelete.setBackground(new java.awt.Color(0, 102, 102));
         btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
-        btnDelete.setText("Xóa");
+        btnDelete.setText("Hủy");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
@@ -1024,16 +1024,16 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     }
 
     @Override
-    public void delete() {
-        if (!XDialog.confirm("Bạn thực sự muốn xóa?")) {
+    public void delete() { // Chỉ hủy đơn chứ không xóa
+        if (!XDialog.confirm("Bạn thực sự muốn hủy đơn?")) {
             return;
         }
 
         try {
             long id = Long.parseLong(txtId.getText());
-            dao.deleteById(id);
+            dao.cancleBill(id);
 
-            XDialog.notify("Xóa hóa đơn thành công!");
+            XDialog.notify("Hủy hóa đơn thành công!");
             this.fillToTable();
             this.clear();
         } catch (Exception e) {
@@ -1079,11 +1079,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         }
     }
 
-    public void deleteCheckedItems() {
-        if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) {
+    public void deleteCheckedItems() { // Chỉ hủy đơn chứ không xóa
+        if (XDialog.confirm("Bạn thực sự muốn hủy các đơn chọn?")) {
             for (int i = 0; i < tblBills.getRowCount(); i++) {
                 if ((Boolean) tblBills.getValueAt(i, 6)) {
-                    dao.deleteById(items.get(i).getId());
+                    dao.cancleBill(items.get(i).getId());
                 }
             }
             this.fillToTable();

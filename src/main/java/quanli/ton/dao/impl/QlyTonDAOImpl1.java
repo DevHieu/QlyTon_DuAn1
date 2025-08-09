@@ -9,13 +9,13 @@ import java.util.List;
 import quanli.ton.entity.Bills;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
-import quanli.ton.dao.QlyTonDAO;
+import quanli.ton.dao.QlyTonDAO1;
 
 /**
  *
  * @author hieud
  */
-public class QlyTonDAOImpl implements QlyTonDAO{
+public class QlyTonDAOImpl1 implements QlyTonDAO1{
 
     String createSql = "INSERT INTO Bills(CustomerId, Username, Checkin, Checkout, Note, Status) VALUES(?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE Bills SET CustomerId=?, Username=?, Checkin=?, Checkout=?, Note=?, Status=? WHERE Id=?";

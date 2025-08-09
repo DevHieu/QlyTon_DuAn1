@@ -11,7 +11,7 @@ import quanli.ton.dao.impl.UserDAOImpl;
 import quanli.ton.entity.User;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
-import quanli.ton.dao.UserDAO;
+import quanli.ton.dao.UserDAO1;
 
 /**
  *
@@ -55,7 +55,7 @@ public class LoginJDialog extends javax.swing.JDialog implements LoginController
             return;
         }
 
-        UserDAO dao = (UserDAO) new UserDAOImpl();
+        UserDAO1 dao = (UserDAO1) new UserDAOImpl();
         User user = dao.findById(username);
         if (user == null) {
             XDialog.error("Sai tên đăng nhập!");

@@ -19,12 +19,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import lombok.Getter;
 import quanli.ton.controller.HistoryController;
-import quanli.ton.dao.impl.BillDAOImpl;
+import quanli.ton.dao.impl.BillDAOImpl1;
 import quanli.ton.entity.Bills;
 import quanli.ton.util.TimeRange;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDate;
-import quanli.ton.dao.BillDAO;
+import quanli.ton.dao.BillDAO1;
 
 /**
  *
@@ -32,7 +32,7 @@ import quanli.ton.dao.BillDAO;
  */
 public class HistoryJDialog extends javax.swing.JDialog implements HistoryController{
 
-    private BillDAO billDao = new BillDAOImpl();; // Sử dụng interface
+    private BillDAO1 billDao = new BillDAOImpl1();; // Sử dụng interface
     private List<Object[]> billList;
     @Getter
     private Bills selectedBill = null;

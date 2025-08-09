@@ -8,13 +8,13 @@ import java.util.List;
 import quanli.ton.entity.User;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
-import quanli.ton.dao.UserDAO;
+import quanli.ton.dao.UserDAO1;
 
 /**
  *
  * @author Admin
  */
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl implements UserDAO1 {
 
     String createSql = "INSERT INTO Users(Username, Password, Enabled, Fullname, Photo, Gender, Manager, PhoneNumber) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE USERS SET Password = ?, Enabled = ?, Fullname = ?, Photo = ?, Gender = ?, Manager = ?, PhoneNumber = ? WHERE Username = ?";
