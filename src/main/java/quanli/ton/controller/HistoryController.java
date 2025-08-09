@@ -4,6 +4,9 @@
  */
 package quanli.ton.controller;
 
+import quanli.ton.entity.Bills;
+import quanli.ton.entity.Product;
+
 /**
  *
  * @author huynhtrunghieu

@@ -20,13 +20,23 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
-import javax.swing.BorderFactory;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import javax.swing.UIManager;
+import javax.swing.table.JTableHeader;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
+import quanli.ton.util.XFile;
+import quanli.ton.util.XPdf;
 
 /**
  *
@@ -50,6 +60,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     public void open() {
         this.setLocationRelativeTo(null);
         this.selectTimeRange();
+        tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
     }
 
     @Override
@@ -98,9 +109,13 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         DefaultPieDataset dataset = new DefaultPieDataset();
         items.forEach(item -> dataset.setValue(item.getCategory(), item.getQuantity()));
 
-
         JFreeChart chart = ChartFactory.createPieChart(
                 "Số lượng bán ra", dataset, true, true, false);
+
+        // Đặt legend sang bên trái
+        chart.getLegend().setPosition(RectangleEdge.LEFT);
+        chart.setBackgroundPaint(Color.WHITE);               // nền toàn biểu đồ
+        chart.getPlot().setBackgroundPaint(Color.WHITE);
 
         PiePlot plot = (PiePlot) chart.getPlot();
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})"));
@@ -133,16 +148,17 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
             });
         }
         this.addDonutChart(items);
-        
+
         double total = items.stream().mapToDouble(Revenue.ByCategory::getRevenue).sum();
         lblTotal.setText(moneyFormat.format(total));
-        
+
         double totalCost = items.stream().mapToDouble(Revenue.ByCategory::getCost).sum();
+        System.out.println(totalCost);
+        System.out.println(total);
         double profit = total - totalCost;
         lblProfit.setText(moneyFormat.format(profit));
     }
 
-    
     private void fillRevenueByUser(Date begin, Date end) {
         List<Revenue.ByUser> items = dao.getByUser(begin, end);
         DecimalFormat moneyFormat = new DecimalFormat("#,##0 VNĐ");
@@ -171,33 +187,73 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         lblTotalAmountUser.setText(moneyFormat.format(total));
     }
 
-    
+    void productTypeFileExport() {
+        Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+        Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+        String fileName = "DoanhThuTungLoai-" + txtBegin.getText() + "-" + txtEnd.getText();
+        String[] header = new String[]{"Loại", "Doanh thu", "Số lượng", "Giá thấp nhất", "Giá cao nhất", "Giá trung bình", "Lợi nhuận"};
+        List<Revenue.ByCategory> listObjs = dao.getByCategory(begin, end);
+        String title = "Doanh thu của từng loại hàng - " + txtBegin.getText() + " - " + txtEnd.getText();
+        XFile.fileExport(this, header, listObjs, fileName, title);
+    }
+
+    void EmployeeFileExport() {
+        Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+        Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+        String fileName = "DoanhThuTungNhanVien" + txtBegin.getText() + "-" + txtEnd.getText();
+        String[] header = new String[]{"Nhân viên", "Doanh thu", "Số lượng bill", "Bill đầu tiên", "Bill cuối cùng"};
+        List<Revenue.ByUser> listObjs = dao.getByUser(begin, end);
+        String title = "Doanh thu của từng nhân viên - " + txtBegin.getText() + " - " + txtEnd.getText();
+        XFile.fileExport(this, header, listObjs, fileName, title);
+    }
+
     private void addBarChart(List<Revenue.ByUser> list) {
-        // Tạo dataset cho biểu đồ cột
+        // Tạo dataset
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         list.forEach(item -> dataset.addValue(item.getRevenue(), "Doanh thu", item.getUser()));
 
-        // Tạo biểu đồ cột
+        // Tạo biểu đồ
         JFreeChart chart = ChartFactory.createBarChart(
-                "Top 5 Nhân viên xuất sắc nhất", // Tiêu đề
-                "Nhân viên",                     // Nhãn trục X
-                "Doanh thu (VNĐ)",               // Nhãn trục Y
-                dataset,                         // Dữ liệu
-                PlotOrientation.VERTICAL,        // Hướng biểu đồ
-                true, true, false                // Hiển thị legend, tooltips, URLs
-        );
+                "Top 5 Nhân viên xuất sắc nhất", "Nhân viên", "Doanh thu (VNĐ)", dataset,
+                PlotOrientation.VERTICAL, false, true, false);
 
-        // Tạo panel chứa biểu đồ
+        // Cải thiện hiển thị
+        CategoryPlot plot = chart.getCategoryPlot();
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+
+        // Màu cột
+        renderer.setSeriesPaint(0, new Color(0, 102, 102)); // xanh dương đẹp
+
+        // Bo góc cột
+        renderer.setBarPainter(new StandardBarPainter());
+        renderer.setShadowVisible(false);
+        renderer.setMaximumBarWidth(0.1); // chiều rộng cột
+
+        // Font trục
+        Font axisFont = new Font("Segoe UI", Font.PLAIN, 12);
+        plot.getDomainAxis().setLabelFont(axisFont);
+        plot.getDomainAxis().setTickLabelFont(axisFont);
+        plot.getRangeAxis().setLabelFont(axisFont);
+        plot.getRangeAxis().setTickLabelFont(axisFont);
+
+//    // Xoay nhãn trục X nếu cần
+//    plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        // Nền trắng
+        plot.setBackgroundPaint(Color.WHITE);
+        chart.setBackgroundPaint(Color.WHITE);
+
+        // Chart panel
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(343, 190)); // Kích thước phù hợp với jPanel2
+        chartPanel.setPreferredSize(new Dimension(343, 190));
 
-        // Xóa và thêm biểu đồ vào jPanel2
+        // Gắn vào Panel
         BarChat.removeAll();
         BarChat.setLayout(new BorderLayout());
         BarChat.add(chartPanel, BorderLayout.CENTER);
         BarChat.revalidate();
         BarChat.repaint();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -207,6 +263,10 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
+        panel1 = new java.awt.Panel();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtBegin = new javax.swing.JTextField();
@@ -217,7 +277,18 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         tabs = new javax.swing.JTabbedPane();
         RevenueByType = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tblByCategory = new javax.swing.JTable();
+        tblByCategory = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         jLabel3 = new javax.swing.JLabel();
         donutChart = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -226,24 +297,66 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jPanel2 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         lblProfit = new javax.swing.JLabel();
+        btnTypeExport = new javax.swing.JButton();
         RevenueByEmployee = new javax.swing.JPanel();
+        btnEmployeeExport = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblByUser = new javax.swing.JTable();
+        tblByUser = new javax.swing.JTable() {
+            @Override
+            public JTableHeader getTableHeader() {
+                JTableHeader header = super.getTableHeader();
+                header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                header.setBackground(new java.awt.Color(224, 255, 255));  // pastel xanh ngọc
+                header.setForeground(new java.awt.Color(0, 102, 102));    // xanh đậm
+                ((javax.swing.table.DefaultTableCellRenderer) header.getDefaultRenderer())
+                .setHorizontalAlignment(javax.swing.JLabel.CENTER);
+                return header;
+            }
+        };
         BarChat = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         lblTotalAmountUser = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel11 = new javax.swing.JLabel();
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setText("Từ ngày");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setText("Từ ngày:");
 
+        txtBegin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtBegin.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setText("Đến ngày:");
 
-        btnFilter.setBackground(new java.awt.Color(64, 189, 203));
+        txtEnd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtEnd.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+
+        btnFilter.setBackground(new java.awt.Color(0, 102, 102));
+        btnFilter.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnFilter.setForeground(new java.awt.Color(255, 255, 255));
         btnFilter.setText("Lọc");
         btnFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -251,6 +364,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
             }
         });
 
+        cboTimeRanges.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cboTimeRanges.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay" }));
         cboTimeRanges.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -277,7 +391,15 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
             new String [] {
                 "Loại", "Doanh thu", "Số lượng", "Giá thấp nhất", "Giá cao nhất", "Giá trung bình"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tblByCategory);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -299,21 +421,21 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblTotal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                        .addGap(16, 16, 16)
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel6)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(9, 9, 9)
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
@@ -339,7 +461,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblProfit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -351,24 +473,42 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
+        btnTypeExport.setBackground(new java.awt.Color(0, 102, 51));
+        btnTypeExport.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnTypeExport.setForeground(new java.awt.Color(255, 255, 255));
+        btnTypeExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/excel.png"))); // NOI18N
+        btnTypeExport.setText("Xuất file Excel");
+        btnTypeExport.setBorderPainted(false);
+        btnTypeExport.setDefaultCapable(false);
+        btnTypeExport.setFocusable(false);
+        btnTypeExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTypeExportActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout RevenueByTypeLayout = new javax.swing.GroupLayout(RevenueByType);
         RevenueByType.setLayout(RevenueByTypeLayout);
         RevenueByTypeLayout.setHorizontalGroup(
             RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE)
             .addGroup(RevenueByTypeLayout.createSequentialGroup()
                 .addGroup(RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(RevenueByTypeLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel3))
-                    .addGroup(RevenueByTypeLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
                         .addGroup(RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(donutChart, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                            .addComponent(jLabel3)
+                            .addGroup(RevenueByTypeLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addGroup(RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(donutChart, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(RevenueByTypeLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnTypeExport, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         RevenueByTypeLayout.setVerticalGroup(
             RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -383,13 +523,29 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(donutChart, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnTypeExport, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         tabs.addTab("Doanh thu từng loại", RevenueByType);
 
         RevenueByEmployee.setBackground(new java.awt.Color(255, 255, 255));
+
+        btnEmployeeExport.setBackground(new java.awt.Color(0, 102, 51));
+        btnEmployeeExport.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnEmployeeExport.setForeground(new java.awt.Color(255, 255, 255));
+        btnEmployeeExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/excel.png"))); // NOI18N
+        btnEmployeeExport.setText("Xuất file Excel");
+        btnEmployeeExport.setBorderPainted(false);
+        btnEmployeeExport.setDefaultCapable(false);
+        btnEmployeeExport.setFocusable(false);
+        btnEmployeeExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmployeeExportActionPerformed(evt);
+            }
+        });
 
         tblByUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -399,9 +555,17 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                 {null, null, null, null, null}
             },
             new String [] {
-                "Nhân viên", "Doanh thu", "Số bill", "Bill đầu tiên", "Bill cuối cùng"
+                "Nhân viên", "Doanh thu", "Số lượng bill", "Bill đầu tiên", "Bill cuối cùng"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, true, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tblByUser.setGridColor(new java.awt.Color(255, 204, 204));
         tblByUser.setSelectionBackground(new java.awt.Color(255, 204, 204));
         jScrollPane1.setViewportView(tblByUser);
@@ -422,23 +586,24 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
+                        .addGap(26, 26, 26)
                         .addComponent(jLabel7))
-                    .addComponent(lblTotalAmountUser, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(lblTotalAmountUser, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(53, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addContainerGap()
                 .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblTotalAmountUser, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -448,74 +613,98 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         RevenueByEmployee.setLayout(RevenueByEmployeeLayout);
         RevenueByEmployeeLayout.setHorizontalGroup(
             RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 819, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByEmployeeLayout.createSequentialGroup()
-                .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(RevenueByEmployeeLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnEmployeeExport, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(RevenueByEmployeeLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel4))
-                    .addGroup(RevenueByEmployeeLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
+                        .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addGroup(RevenueByEmployeeLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         RevenueByEmployeeLayout.setVerticalGroup(
             RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByEmployeeLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
                 .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(RevenueByEmployeeLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByEmployeeLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnEmployeeExport, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(167, 167, 167))
         );
 
         tabs.addTab("Doanh thu từng nhân viên", RevenueByEmployee);
+
+        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
+
+        jLabel11.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel11.setText("THỐNG KÊ DOANH THU");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+            .addComponent(jSeparator2)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(tabs)
-                        .addContainerGap())
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jLabel1)
-                        .addGap(7, 7, 7)
-                        .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(61, 61, 61)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23))))
+                .addComponent(tabs)
+                .addContainerGap())
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel1)
+                .addGap(7, 7, 7)
+                .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel11)
+                .addGap(267, 267, 267))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFilter)
+                    .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tabs))
+                .addGap(18, 18, 18)
+                .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 577, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -539,13 +728,32 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
 
     private void cboTimeRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangesActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_cboTimeRangesActionPerformed
 
     private void tabsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabsStateChanged
         // TODO add your handling code here:
         this.fillRevenue();
     }//GEN-LAST:event_tabsStateChanged
+
+    private void btnTypePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypePDFActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnTypePDFActionPerformed
+
+    private void btnEmployeePDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmployeePDFActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEmployeePDFActionPerformed
+
+    private void btnTypeExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTypeExportActionPerformed
+        // TODO add your handling code here:ư
+        productTypeFileExport();
+    }//GEN-LAST:event_btnTypeExportActionPerformed
+
+    private void btnEmployeeExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmployeeExportActionPerformed
+        // TODO add your handling code here:
+        EmployeeFileExport();
+    }//GEN-LAST:event_btnEmployeeExportActionPerformed
 
     /**
      * @param args the command line arguments
@@ -557,20 +765,10 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RevenueManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RevenueManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RevenueManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RevenueManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RevenueManager.class.getName()).log(java.util.logging.Level.SEVERE, null,
+                    ex);
         }
         //</editor-fold>
 
@@ -593,25 +791,33 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     private javax.swing.JPanel BarChat;
     private javax.swing.JPanel RevenueByEmployee;
     private javax.swing.JPanel RevenueByType;
+    private javax.swing.JButton btnEmployeeExport;
     private javax.swing.JButton btnFilter;
+    private javax.swing.JButton btnTypeExport;
     private javax.swing.JComboBox<String> cboTimeRanges;
     private javax.swing.JPanel donutChart;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lblProfit;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel lblTotalAmountUser;
+    private java.awt.Panel panel1;
     private javax.swing.JTabbedPane tabs;
     private javax.swing.JTable tblByCategory;
     private javax.swing.JTable tblByUser;

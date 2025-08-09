@@ -21,10 +21,14 @@ import lombok.NoArgsConstructor;
 public class User {
     private String username;
     private String password;
-    private boolean enabled;
+    @Builder.Default
+    private boolean enabled = true;
     private String fullname;
     private String phoneNumber;
     @Builder.Default
     private String photo  = "user.png";
-    private boolean manager;
+    @Builder.Default
+    private boolean manager = false;
+    @Builder.Default
+    private boolean gender = true;
 }

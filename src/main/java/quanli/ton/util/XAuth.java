@@ -17,6 +17,7 @@ public class XAuth {
             .password("123")
             .enabled(true)
             .manager(true)
+             .gender(true)
             .fullname("Nguyễn Văn Tèo")
             .build(); // biến user này sẽ được thay thế sau khi đăng nhập
 

@@ -6,11 +6,24 @@ package quanli.ton.dao;
 
 import java.util.List;
 import quanli.ton.entity.Product;
-import quanli.ton.ui.manager.Products;
+
 /**
  *
  * @author huynhtrunghieu
  */
-public interface ProductsDAO extends CrudDAO<Product , String> {
+public interface ProductsDAO extends CrudDAO<Product, String> {
+
+    List<Product> findProductByName(String textInput);
+
+    List<Product> findProductByType(String id);
+
+    List<Product> findProductByThick(int id);
+
+    public Product findById(String id);
+
+    void importProduct(String id, double quantity, double importPrice);
+
+    void sellProduct(String productId, double quantity);
     
+    void returnProduct(String productId, double quantity);
 }
