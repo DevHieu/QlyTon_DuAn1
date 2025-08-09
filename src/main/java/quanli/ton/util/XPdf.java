@@ -25,7 +25,7 @@ import quanli.ton.entity.Customer;
 /**
  * Utility class để xuất dữ liệu ra file PDF (iTextPDF 8.0.0)
  */
-public class XPdf1 {
+public class XPdf {
 
     private static String title = "";
     private static String[] headers = {};
@@ -35,21 +35,21 @@ public class XPdf1 {
      * Thiết lập tiêu đề cho PDF
      */
     public static void setTitle(String title) {
-        XPdf1.title = title;
+        XPdf.title = title;
     }
 
     /**
      * Thiết lập headers cho bảng
      */
     public static void setHeaders(String[] headers) {
-        XPdf1.headers = headers;
+        XPdf.headers = headers;
     }
 
     /**
      * Thiết lập dữ liệu cho bảng
      */
     public static void setData(List<Object[]> data) {
-        XPdf1.data = data;
+        XPdf.data = data;
     }
 
     /**

@@ -45,9 +45,9 @@ import quanli.ton.controller.QlyTonController;
 import quanli.ton.dao.ProductTypeDAO;
 import quanli.ton.dao.ProductsDAO;
 import quanli.ton.dao.ThicknessDAO;
-import quanli.ton.dao.impl.BillDAOImpl1;
+import quanli.ton.dao.impl.BillDAOImpl;
 import quanli.ton.dao.impl.BillDetailDAOImpl;
-import quanli.ton.dao.impl.CustomerDAOImpl1;
+import quanli.ton.dao.impl.CustomerDAOImpl;
 import quanli.ton.dao.impl.ProductTypeDAOImpl;
 import quanli.ton.dao.impl.ProductsDAOimpl;
 import quanli.ton.dao.impl.ThicknessDAOImpl;
@@ -65,14 +65,14 @@ import quanli.ton.util.XAuth;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XIcon;
-import quanli.ton.util.XPdf1;
+import quanli.ton.util.XPdf;
 import quanli.ton.util.XFile;
 import quanli.ton.ui.LoginJDialog;
 import quanli.ton.util.XStr;
 import quanli.ton.util.XQrcode;
-import quanli.ton.dao.BillDAO1;
-import quanli.ton.dao.BillDetailDAO1;
-import quanli.ton.dao.CustomerDAO1;
+import quanli.ton.dao.BillDAO;
+import quanli.ton.dao.BillDetailDAO;
+import quanli.ton.dao.CustomerDAO;
 
 /**
  *
@@ -91,9 +91,9 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private DecimalFormat moneyFormat = new DecimalFormat("#,##0 VNĐ"); // format tiền
     JPanel glassPane = new JPanel();
 
-    BillDAO1 billDao = new BillDAOImpl1();
-    BillDetailDAO1 billDetailDao = new BillDetailDAOImpl();
-    CustomerDAO1 customerDao = new CustomerDAOImpl1();
+    BillDAO billDao = new BillDAOImpl();
+    BillDetailDAO billDetailDao = new BillDetailDAOImpl();
+    CustomerDAO customerDao = new CustomerDAOImpl();
     ProductTypeDAO typeDao = new ProductTypeDAOImpl();
     ThicknessDAO thicknessDao = new ThicknessDAOImpl();
     ProductsDAO productDao = new ProductsDAOimpl();
@@ -1877,7 +1877,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                         if (rdoTransfer.isSelected()) {
                             
                         }
-                        XPdf1.createBillNote(filePath, currentBill, billDetails, customer, rdoTransfer.isSelected());
+                        XPdf.createBillNote(filePath, currentBill, billDetails, customer, rdoTransfer.isSelected());
                         if (XDialog.confirm("Xuất phiếu giao hàng thành công! \nBạn có muốn mở và in file không") == true) {
                             Desktop desktop = Desktop.getDesktop();
                             desktop.print(new File(filePath));

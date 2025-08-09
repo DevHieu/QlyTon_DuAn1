@@ -21,13 +21,13 @@ import quanli.ton.entity.Bills;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
-import quanli.ton.dao.BillDAO1;
+import quanli.ton.dao.BillDAO;
 
 /**
  *
  * @author hieud
  */
-public class BillDAOImpl1 implements BillDAO1 {
+public class BillDAOImpl implements BillDAO {
 
     String createSql = "INSERT INTO Bills(CustomerId, Username, Checkin, Checkout, Note, Discount, Deposit, Status) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     String updateSql = "UPDATE Bills SET CustomerId=?, Username=?, Checkin=?, Checkout=?, Note=?, Discount=?, Deposit=?, Status=? WHERE Id=?";
@@ -80,7 +80,7 @@ public class BillDAOImpl1 implements BillDAO1 {
             return null;
         } 
         catch (SQLException ex) {
-            Logger.getLogger(BillDAOImpl1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BillDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return entity;
     }

@@ -12,13 +12,13 @@ import java.util.logging.Logger;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
-import quanli.ton.dao.BillDetailDAO1;
+import quanli.ton.dao.BillDetailDAO;
 
 /**
  *
  * @author hieud
  */
-public class BillDetailDAOImpl implements BillDetailDAO1 {
+public class BillDetailDAOImpl implements BillDetailDAO {
     // Thêm ImportPrice vào INSERT
     String createSql = "INSERT INTO BillDetails(BillId, ProductId, UnitPrice, ImportPrice, Discount, Quantity, Length) VALUES(?, ?, ?, ?, ?, ?, ?)";
     

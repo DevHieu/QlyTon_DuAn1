@@ -9,13 +9,13 @@ import java.util.List;
 import quanli.ton.entity.Customer;
 import quanli.ton.util.XJdbc;
 import quanli.ton.util.XQuery;
-import quanli.ton.dao.CustomerDAO1;
+import quanli.ton.dao.CustomerDAO;
 
 /**
  *
  * @author hieud
  */
-public class CustomerDAOImpl1 implements CustomerDAO1 {
+public class CustomerDAOImpl implements CustomerDAO {
 
     String createSql = "INSERT INTO Customers(PhoneNumber, FullName, Address) VALUES(?, ?, ?)";
     String updateSql = "UPDATE Customers SET FullName=?,  Address=?  WHERE PhoneNumber=?";

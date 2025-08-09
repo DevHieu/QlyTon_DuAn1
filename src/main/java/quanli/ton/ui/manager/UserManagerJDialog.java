@@ -19,7 +19,7 @@ import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XIcon;
 import quanli.ton.util.XStr;
-import quanli.ton.dao.UserDAO1;
+import quanli.ton.dao.UserDAO;
 
 /**
  *
@@ -36,7 +36,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         this.open();
     }
 
-    UserDAO1 dao = (UserDAO1) new UserDAOImpl();
+    UserDAO dao = (UserDAO) new UserDAOImpl();
     List<User> items = List.of();
     File imageFile = null;
 

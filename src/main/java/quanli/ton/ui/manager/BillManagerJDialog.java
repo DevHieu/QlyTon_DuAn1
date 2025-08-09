@@ -13,9 +13,9 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import quanli.ton.controller.BillManagerController;
-import quanli.ton.dao.impl.BillDAOImpl1;
+import quanli.ton.dao.impl.BillDAOImpl;
 import quanli.ton.dao.impl.BillDetailDAOImpl;
-import quanli.ton.dao.impl.CustomerDAOImpl1;
+import quanli.ton.dao.impl.CustomerDAOImpl;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
@@ -24,9 +24,9 @@ import quanli.ton.util.TimeRange;
 import quanli.ton.util.XDate;
 import quanli.ton.util.XDialog;
 import quanli.ton.util.XStr;
-import quanli.ton.dao.BillDAO1;
-import quanli.ton.dao.BillDetailDAO1;
-import quanli.ton.dao.CustomerDAO1;
+import quanli.ton.dao.BillDAO;
+import quanli.ton.dao.BillDetailDAO;
+import quanli.ton.dao.CustomerDAO;
 
 /**
  *
@@ -34,13 +34,13 @@ import quanli.ton.dao.CustomerDAO1;
  */
 public class BillManagerJDialog extends javax.swing.JDialog implements BillManagerController {
 
-    BillDAO1 dao = new BillDAOImpl1();
+    BillDAO dao = new BillDAOImpl();
     List<Bills> items = List.of(); // phiếu bán hàng
-    BillDetailDAO1 billDetailDao = new BillDetailDAOImpl();
+    BillDetailDAO billDetailDao = new BillDetailDAOImpl();
     List<BillDetails> details = List.of(); // chi tiết phiếu bán hàng
     List<Customer> customerItem = new ArrayList<Customer>();
     ;
-    CustomerDAO1 customerDao = new CustomerDAOImpl1();
+    CustomerDAO customerDao = new CustomerDAOImpl();
 
     /**
      * Creates new form BillJDialog
