@@ -137,9 +137,9 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         txtId.setText(String.valueOf(entity.getId()));
         txtThickness.setText(entity.getThick());
         System.out.println(prodItems.size());
-        
+
         if (cboType.getItemCount() > 0) {
-           cboType.setSelectedIndex(index);
+            cboType.setSelectedIndex(index);
         } else {
             cboType.setSelectedIndex(-1);
         }
@@ -169,7 +169,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
             Thickness entity = this.getForm();
             dao.create(entity);
             XDialog.notify("Tạo độ dày thành công!");
-            this.fillToTable();
+            cboType2.setSelectedIndex(0);
             this.clear();
         } catch (Exception e) {
             XDialog.error("Lỗi khi tạo Độ dày: " + e.getMessage());
@@ -186,7 +186,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
             Thickness entity = this.getForm();
             dao.update(entity);
             XDialog.notify("Cập nhập độ dày thành công!");
-            this.fillToTable();
+            cboType2.setSelectedIndex(0);
             this.clear();
         } catch (Exception e) {
             XDialog.error("Lỗi khi cập nhập Độ dày: " + e.getMessage());
@@ -203,7 +203,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
                 Thickness entity = this.getForm();
                 dao.deleteById(Integer.parseInt(id));
                 XDialog.notify("Xóa độ dày thành công!");
-                this.fillToTable();
+                cboType2.setSelectedIndex(0);
                 this.clear();
             } catch (Exception e) {
                 XDialog.error("Lỗi khi xóa Độ dày: " + e.getMessage());
@@ -728,7 +728,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
         // TODO add your handling code here:
         int index = cboType2.getSelectedIndex();
         if (index > 0) {
-            String typeId = prodItems.get(index-1).getId();
+            String typeId = prodItems.get(index - 1).getId();
             applyFilters(typeId);
         } else {
             items = dao.findAll();
