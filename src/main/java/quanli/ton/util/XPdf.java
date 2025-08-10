@@ -421,7 +421,7 @@ public class XPdf {
     private static PdfFont createVietnameseFont() {
         try {
             // Load font từ resources - cần file font hỗ trợ Unicode
-            String fontPath = "src/main/resources/fonts/SVN-Arial.ttf";
+            String fontPath = "/fonts/SVN-Arial.ttf";
             return PdfFontFactory.createFont(fontPath, PdfEncodings.IDENTITY_H);
         } catch (Exception e) {
             try {

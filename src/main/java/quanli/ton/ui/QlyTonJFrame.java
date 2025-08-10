@@ -1631,6 +1631,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             });
             closeTimer.start();
             // Nếu người dùng có chỉnh trong loại hàng, độ dày, mặt hàng thì sẽ cập nhập khi đóng
+            if (currentBill.getId() != 0) { // Nếu đang chỉnh sửa 1 đơn nào đó
+                currentBill = billDao.findById(currentBill.getId());
+                this.fillBill(currentBill);
+            }
             this.fillTypeCbo();
             this.fillProductList(null, null);
         }
@@ -1870,7 +1874,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             if (choice) { // true = YES
                 try {
                     double totalMoney = Double.parseDouble(txtRemaining.getText().replace("VNĐ", "").replace(",", "").trim()); // Lấy text ở txtRemaining chuyển về kiểu double
-                    
+
                     String dateStr = new SimpleDateFormat("yyyyMMdd").format(currentBill.getCheckout());
                     String fileName = currentCustomer.getFullName().replaceAll("\\s+", "_") + "_" + dateStr + ".pdf";
                     // Lưu file
@@ -2274,7 +2278,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
         String keyWord = txtSearch.getText();
         Integer cboSearch = cboSearchType.getSelectedIndex();
-
+        billList.clear();
         switch (cboSearch) {
             case 0:
                 Bills bill = billDao.findOperatingById(Long.valueOf(keyWord));
