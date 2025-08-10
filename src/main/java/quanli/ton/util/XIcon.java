@@ -83,4 +83,23 @@ public class XIcon {
     public static File copyTo(File fromFile) {
         return copyTo(fromFile, "files");
     }
+
+    public static File copyTo(File fromFile, String folder, String fileName) {
+        // Lấy phần mở rộng file (nếu có)
+        String fileExt = "";
+        int dotIndex = fromFile.getName().lastIndexOf(".");
+        if (dotIndex != -1) {
+            fileExt = fromFile.getName().substring(dotIndex);
+        }
+
+        File toFile = new File(folder, fileName + fileExt);
+        toFile.getParentFile().mkdirs();
+
+        try {
+            Files.copy(fromFile.toPath(), toFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return toFile;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }
