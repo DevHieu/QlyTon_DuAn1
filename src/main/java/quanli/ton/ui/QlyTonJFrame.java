@@ -19,6 +19,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,7 +121,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     @Override
     public void init() {
         setLocationRelativeTo(null); // căn giữa màn hình
-        this.setIconImage(XIcon.getIcon("logo_512.png").getImage());
+        this.setIconImage(XIcon.getIcon("/icons/logoTonHoaMai_trang-Photoroom.png").getImage());
 
         if (!this.showWelcomeJDialog(this)) { // Để khi user nhấn nút tắt thì sẽ tắt luôn chương trình thay vì hiện tiếp
             // login
@@ -1858,24 +1860,30 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     @Override
     public void print() {
         isBillChanging = true;
-        currentBill.setStatus(Bills.Status.COMPLETED.ordinal());
-        currentBill.setCheckout(new Date());
+        if (currentBill.getStatus() != 1) { // Nếu đã complete thì không cần làm này nữa
+            currentBill.setStatus(Bills.Status.COMPLETED.ordinal());
+            currentBill.setCheckout(new Date());
+        }
         // Hỏi người dùng có muốn xuất phiếu giao hàng không
         if (this.save()) {
             boolean choice = XDialog.confirm("Bạn có muốn xuất phiếu giao hàng không?");
             if (choice) { // true = YES
                 try {
-                    double totalMoney = Double.parseDouble( txtRemaining.getText().replace("VNĐ", "").replace(",", "").trim()); // Lấy text ở txtRemaining chuyển về kiểu double
-                    String filePath = XFile.saveFile("pdf");
+                    double totalMoney = Double.parseDouble(txtRemaining.getText().replace("VNĐ", "").replace(",", "").trim()); // Lấy text ở txtRemaining chuyển về kiểu double
+                    
+                    String dateStr = new SimpleDateFormat("yyyyMMdd").format(currentBill.getCheckout());
+                    String fileName = currentCustomer.getFullName().replaceAll("\\s+", "_") + "_" + dateStr + ".pdf";
+                    // Lưu file
+                    String filePath = XFile.saveFile("pdf", fileName);
                     if (filePath != null) {
                         // Lấy thông tin khách hàng
                         Customer customer = customerDao.findById(currentBill.getCustomerId());
 
                         // Lấy chi tiết hóa đơn
                         List<BillDetails> billDetails = billDetailDao.findByBillId(currentBill.getId());
-                        
+
                         if (rdoTransfer.isSelected()) {
-                            
+                            XQrcode.createQrcode(totalMoney, customer.getFullName());
                         }
                         XPdf.createBillNote(filePath, currentBill, billDetails, customer, rdoTransfer.isSelected());
                         if (XDialog.confirm("Xuất phiếu giao hàng thành công! \nBạn có muốn mở và in file không") == true) {
@@ -2029,7 +2037,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         lblImage.setVerticalAlignment(SwingConstants.CENTER);
 
         try {
-            ImageIcon icon = new ImageIcon("images/products/product.jpg");
+            ImageIcon icon = new ImageIcon("images/products/" + product.getPhoto());
             Image img = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
             lblImage.setIcon(new ImageIcon(img));
         } catch (Exception e) {

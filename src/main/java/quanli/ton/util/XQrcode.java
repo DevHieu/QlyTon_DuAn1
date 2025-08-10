@@ -5,19 +5,22 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class XQrcode {
+
     public static void createQrcode(double money, String customerName) throws Exception {
         String bankBin = "970436";            // mã BIN ngân hàng (6 chữ số)
         String accountNumber = "1032153715"; // số tk hoặc số thẻ tuỳ dịch vụ
         String accountName = "BUI MINH HIEU";
         long amount = (long) money;                 // 0 => bỏ tag 54
-        String addInfo =  customerName + " Thanh toan hoa don";
+        String addInfo = customerName + " Thanh toan hoa don";
 
         String payload = buildVietQR(bankBin, accountNumber, accountName, amount, addInfo);
         System.out.println("Payload EMVCo: " + payload);
@@ -30,9 +33,12 @@ public class XQrcode {
         BitMatrix matrix = new MultiFormatWriter()
                 .encode(payload, BarcodeFormat.QR_CODE, width, height, hints);
 
-        Path path = Path.of("images/qrcode/qrcode.png");
-        MatrixToImageWriter.writeToPath(matrix, "PNG", path);
-        System.out.println("QR saved to: " + path.toAbsolutePath());
+        Path tempPath = Files.createTempFile("qrcode", ".png");
+        MatrixToImageWriter.writeToPath(matrix, "PNG", tempPath);
+
+// Dùng XIcon.copyTo để copy QR vào folder đích
+        File finalFile = XIcon.copyTo(tempPath.toFile(), "images/qrcode", "qrcode");
+        System.out.println("QR saved to: " + finalFile.getAbsolutePath());
     }
 
     private static String buildVietQR(String bankBin, String accountNumber, String accountName, long amount, String addInfo) {
