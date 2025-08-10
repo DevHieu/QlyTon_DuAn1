@@ -27,6 +27,8 @@ import quanli.ton.util.XStr;
 import quanli.ton.dao.BillDAO;
 import quanli.ton.dao.BillDetailDAO;
 import quanli.ton.dao.CustomerDAO;
+import quanli.ton.dao.ProductsDAO;
+import quanli.ton.dao.impl.ProductsDAOimpl;
 
 /**
  *
@@ -38,9 +40,9 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     List<Bills> items = List.of(); // phiếu bán hàng
     BillDetailDAO billDetailDao = new BillDetailDAOImpl();
     List<BillDetails> details = List.of(); // chi tiết phiếu bán hàng
-    List<Customer> customerItem = new ArrayList<Customer>();
-    ;
+    List<Customer> customerItem = new ArrayList<>();
     CustomerDAO customerDao = new CustomerDAOImpl();
+    boolean isCancel = false;
 
     /**
      * Creates new form BillJDialog
@@ -902,8 +904,10 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 rdoProcessing.setSelected(true);
             case 1 ->
                 rdoComplete.setSelected(true);
-            default ->
+            default -> {
                 rdoCanceled.setSelected(true);
+                isCancel = true;
+            }
         }
 
         this.fillBillDetails();
@@ -1013,6 +1017,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
 
             Customer customer = this.getCustomerForm();
             customerDao.update(customer);
+            this.changeBillStatus(bill.getStatus(), details);
 
             XDialog.notify("Cập nhật hóa đơn thành công!");
             this.fillToTable();
@@ -1032,7 +1037,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         try {
             long id = Long.parseLong(txtId.getText());
             dao.cancleBill(id);
-
+            this.changeBillStatus(2, details);
             XDialog.notify("Hủy hóa đơn thành công!");
             this.fillToTable();
             this.clear();
@@ -1046,6 +1051,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
     public void clear() {
         this.setForm(new Bills(), new Customer());
         this.setEditable(false);
+        isCancel = false;
     }
 
     @Override
@@ -1083,7 +1089,10 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         if (XDialog.confirm("Bạn thực sự muốn hủy các đơn chọn?")) {
             for (int i = 0; i < tblBills.getRowCount(); i++) {
                 if ((Boolean) tblBills.getValueAt(i, 6)) {
-                    dao.cancleBill(items.get(i).getId());
+                    long id = items.get(i).getId();
+                    dao.cancleBill(id);
+                    List<BillDetails> list =billDetailDao.findByBillId(id);
+                    this.changeBillStatus(2, list);
                 }
             }
             this.fillToTable();
@@ -1158,5 +1167,38 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         }
 
         this.fillBillDetails();
+    }
+
+    private void changeBillStatus(int status, List<BillDetails> billDetail) {
+        ProductsDAO productDao = new ProductsDAOimpl();
+
+        if (status != 2) {
+            if (isCancel) {
+                billDetail.forEach(item -> {
+                    double totalQuantity = this.getTotalQuantity(item.getLength(), item.getQuantity(), item.getDefaultLength());
+                    productDao.sellProduct(item.getProductId(), totalQuantity);
+                });
+            }
+        } else {
+            if (!isCancel) {
+                billDetail.forEach(item -> {
+                    double totalQuantity = this.getTotalQuantity(item.getLength(), item.getQuantity(), item.getDefaultLength());
+                    productDao.returnProduct(item.getProductId(), totalQuantity);
+                });
+            }
+        }
+    }
+
+    private double getTotalQuantity(double length, double quantity, Float defaultLength) {
+        double totalQuantity;
+        if (length == 0) {
+            totalQuantity = quantity;
+        } else if (defaultLength == null) {
+            totalQuantity = quantity * length; //Không có độ dài mặc đinh
+        } else {
+            totalQuantity = (length * quantity) / defaultLength; //Những sản phẩm có độ dài mặc định
+        }
+
+        return totalQuantity;
     }
 }

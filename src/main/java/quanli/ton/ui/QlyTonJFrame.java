@@ -1980,15 +1980,15 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     }
 
     public void deleteBillDetailColumn(int row) {
-        if (!XDialog.confirm("Bạn có chắc chắn muốn xóa mặt hàng này?")) {
-            return;
+        if (XDialog.confirm("Bạn có chắc chắn muốn xóa mặt hàng này?")) {
+            BillDetails item = billDetailsList.get(row);
+            double totalQuantity = this.getTotalQuantity(item.getLength(), item.getQuantity(), item.getDefaultLength());
+            productDao.returnProduct(item.getProductId(), totalQuantity);
+            billDetailDao.deleteById(item.getId());
+            billDetailsList.remove(row);
+            this.fillBillDetail();
+            this.applyFilters(); //load lại danh sách product nếu có trừ số lượng sản phẩm
         }
-        BillDetails item = billDetailsList.get(row);
-        productDao.returnProduct(item.getProductId(), item.getQuantity());
-        billDetailDao.deleteById(item.getId());
-        billDetailsList.remove(row);
-        this.fillBillDetail();
-        this.applyFilters(); //load lại danh sách product nếu có trừ số lượng sản phẩm
     }
 
     // isType: Có lọc bằng type hay không
