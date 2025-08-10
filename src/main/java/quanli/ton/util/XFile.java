@@ -57,8 +57,9 @@ public class XFile {
     /**
      * Hiển thị dialog chọn file để lưu
      */
-    public static String saveFile(String extension) {
+    public static String saveFile(String extension, String fileName) {
         String userDocs = System.getProperty("user.home") + "\\Documents";
+        fileName = fileName.replaceAll("[\\\\/:*?\"<>|]", "-");
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(extension.toUpperCase() + " files (*." + extension + ")", extension);
         fileChooser.setFileFilter(filter);
@@ -66,6 +67,7 @@ public class XFile {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setCurrentDirectory(new File(userDocs));
         fileChooser.setDialogTitle("Chọn nơi lưu file");
+        fileChooser.setSelectedFile(new File(fileName));
         
         int result = fileChooser.showSaveDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
