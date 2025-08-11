@@ -921,7 +921,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         Date checkOut = XDate.parse(txtCheckout.getText(), "HH:mm:ss dd-MM-yyyy");
 
         if (checkIn == null) {
-            XDialog.alert("Ngày giờ bạn nhập bị sai");
+            XDialog.error("Ngày giờ bạn nhập bị sai");
             return null;
         }
         bill.setId(Long.parseLong(txtId.getText()));

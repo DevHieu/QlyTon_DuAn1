@@ -85,7 +85,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         user.setPassword(txtPassword.getText());
         String sdt = txtPhoneNumber.getText().trim();
         if (sdt.isEmpty()) {
-            XDialog.alert("Số điện thoại không được để trống!", "Lỗi");
+            XDialog.error("Số điện thoại không được để trống!", "Lỗi");
             return null; // Prevent saving if sdt is empty
         }
         user.setPhoneNumber(sdt);
@@ -150,12 +150,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
                     String username = items.get(i).getUsername();
 
                     if (username.equals(XAuth.user.getUsername())) {
-                        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+                        XDialog.error("Không thể xóa tài khoản đang đăng nhập!");
                         continue;
                     }
 
                     if (dao.hasTransaction(username)) {
-                        XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
+                        XDialog.error("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
                         continue;
                     }
 
@@ -207,12 +207,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         String username = txtUsername.getText();
 
         if (username.equals(XAuth.user.getUsername())) {
-            XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+            XDialog.error("Không thể xóa tài khoản đang đăng nhập!");
             return;
         }
 
         if (dao.hasTransaction(username)) {
-            XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
+            XDialog.error("Không thể xóa người dùng này vì có các giao dịch liên quan!");
             return;
         }
 

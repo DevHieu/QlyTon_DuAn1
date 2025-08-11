@@ -845,7 +845,7 @@ public class ProductTypeManagerJDialog extends javax.swing.JDialog implements Pr
     @Override
     public boolean isValidInput() {
         if (ckbDoDayMacDinh.isSelected() && txtSize.getText().equals("")) {
-            XDialog.alert("Độ dài mặc định không được bỏ trống");
+            XDialog.error("Độ dài mặc định không được bỏ trống");
             return false;
         }
 
