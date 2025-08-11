@@ -246,14 +246,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         btnMovePrevious.setEnabled(editable && rowCount > 0);
         btnMoveNext.setEnabled(editable && rowCount > 0);
         btnMoveLast.setEnabled(editable && rowCount > 0);
-
-        if (XAuth.user.getUsername().equals(txtUsername.getText())) {
-            rdoManager.setEnabled(false);
-            rdoEmployee.setEnabled(false);
-            rdoOperating.setEnabled(false);
-            rdoStop.setEnabled(false);
-
-        }
+        
+        boolean currentAdmin = XAuth.user.getUsername().equals(txtUsername.getText());
+            rdoManager.setEnabled(!currentAdmin);
+            rdoEmployee.setEnabled(!currentAdmin);
+            rdoOperating.setEnabled(!currentAdmin);
+            rdoStop.setEnabled(!currentAdmin);
     }
 
     @Override
@@ -777,7 +775,9 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
 
     private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
         // TODO add your handling code here:
-        this.edit();
+        if (evt.getClickCount() == 2) {
+            this.edit();
+        }
     }//GEN-LAST:event_tblUserMouseClicked
 
     private void btnMoveLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveLastActionPerformed

@@ -1177,31 +1177,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDepositKeyReleased
         // TODO add your handling code here:
-        try {
-            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
-            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
-            if (overallText.isEmpty()) {
-                return; // Nếu text rỗng thì không làm gì
-            }
-            double overall = Double.parseDouble(overallText);
-
-            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
-            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
-            if (depositText.isEmpty()) {
-                return; // Nếu text rỗng thì không làm gì
-            }
-            double value = Double.parseDouble(depositText);
-
-            if (value > overall) {
-                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
-                txtDeposit.setText(String.valueOf(txtDeposit.getValue())); // hiển thị về lại giá trị trước đó
-            }
-
-            this.billTotalChange(overall);
-            isBillChanging = true;
-        } catch (NumberFormatException e) {
-            // Bỏ qua lỗi parse nếu text không phải số
-        }
+        this.isDepositValid();
     }//GEN-LAST:event_txtDepositKeyReleased
 
     private void rdoCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoCashActionPerformed
@@ -1750,7 +1726,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 item.getProductName(),
                 moneyFormat.format(item.getUnitPrice()),
                 (int) item.getQuantity(),
-                (item.getLength() != 0 ? String.format("%.2f m",  item.getLength()) : item.getDefaultLength() != 0 ? String.format("%.2f m", item.getDefaultLength()) :"-"),
+                (item.getLength() != 0 ? String.format("%.2f m", item.getLength()) : item.getDefaultLength() != null ? String.format("%.2f m", item.getDefaultLength()) : "-"),
                 String.format("%.0f%%", item.getDiscount()),
                 moneyFormat.format(itemTotal),
                 false
@@ -1989,11 +1965,14 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         if (XDialog.confirm("Bạn có chắc chắn muốn xóa mặt hàng này?")) {
             BillDetails item = billDetailsList.get(row);
             double totalQuantity = this.getTotalQuantity(item.getLength(), item.getQuantity(), item.getDefaultLength());
-            productDao.returnProduct(item.getProductId(), totalQuantity);
-            billDetailDao.deleteById(item.getId());
+            if (billDetailDao.isBillDetailExisted(item.getId())) {
+                productDao.returnProduct(item.getProductId(), totalQuantity);
+                billDetailDao.deleteById(item.getId());
+            }
             billDetailsList.remove(row);
             this.fillBillDetail();
             this.applyFilters(); //load lại danh sách product nếu có trừ số lượng sản phẩm
+            this.isDepositValid(); //check tiền đặt cọc có lớn hơn không
         }
     }
 
@@ -2395,5 +2374,33 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
 
         return false;
+    }
+
+    private void isDepositValid() {
+        try {
+            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
+            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
+            if (overallText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double overall = Double.parseDouble(overallText);
+
+            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
+            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
+            if (depositText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double value = Double.parseDouble(depositText);
+
+            if (value > overall) {
+                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
+                txtDeposit.setText("0"); // hiển thị về 0
+            }
+
+            this.billTotalChange(overall);
+            isBillChanging = true;
+        } catch (NumberFormatException e) {
+            // Bỏ qua lỗi parse nếu text không phải số
+        }
     }
 }
