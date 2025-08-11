@@ -49,7 +49,7 @@ public class XFile {
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
-                XDialog.alert("Lưu thất bại");
+                XDialog.error("Lưu thất bại");
             }
         }
     }

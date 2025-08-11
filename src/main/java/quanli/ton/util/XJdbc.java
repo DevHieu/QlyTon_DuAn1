@@ -85,9 +85,9 @@ public class XJdbc {
         catch (SQLIntegrityConstraintViolationException ex) {
             if (ex.getMessage().contains("foreign key")) {
                 System.out.println(sql);
-                XDialog.alert("Không thể xóa vì dữ liệu đang được dùng", "Lỗi khóa ngoại");
+                XDialog.error("Không thể xóa vì dữ liệu đang được dùng", "Lỗi khóa ngoại");
             } else {
-                XDialog.alert("Id đã tồn tại. Vui lòng chọn id khác", "Lỗi trùng khóa");
+                XDialog.error("Id đã tồn tại. Vui lòng chọn id khác", "Lỗi trùng khóa");
             }
             throw new RuntimeException(ex.getMessage());
         }

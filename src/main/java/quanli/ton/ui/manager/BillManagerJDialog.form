@@ -441,7 +441,7 @@
                           <Component id="btnDelete" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnClear" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="221" max="32767" attributes="0"/>
+                          <EmptySpace pref="223" max="32767" attributes="0"/>
                           <Component id="btnMoveFirst" min="-2" pref="52" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnMovePrevious" min="-2" pref="64" max="-2" attributes="0"/>
@@ -601,7 +601,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="C&#x1ead;p nh&#x1ead;p"/>
+                    <Property name="text" type="java.lang.String" value="C&#x1ead;p nh&#x1ead;t"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnUpdateActionPerformed"/>
