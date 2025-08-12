@@ -61,7 +61,7 @@ public class XQrcode {
         String amt = amount > 0 ? tlv("54", String.valueOf(amount)) : "";
         String country = tlv("58", "VN");
         String mName = tlv("59", accountName);
-        String mCity = tlv("60", "HANOI");
+        String mCity = tlv("60", "HO CHI MINH");
         String additional = tlv("62", tlv("08", addInfo)); // ID 08 trong template 62 = description
 
         // ghép rồi thêm CRC placeholder '6304'

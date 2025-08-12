@@ -20,10 +20,10 @@ import quanli.ton.dao.BillDetailDAO;
  */
 public class BillDetailDAOImpl implements BillDetailDAO {
     // Thêm ImportPrice vào INSERT
-    String createSql = "INSERT INTO BillDetails(BillId, ProductId, UnitPrice, ImportPrice, Discount, Quantity, Length) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    String createSql = "INSERT INTO BillDetails(BillId, ProductId, UnitPrice, ImportPrice, Discount, Quantity, Length, DefaultLength) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     
     // Thêm ImportPrice vào UPDATE
-    String updateSql = "UPDATE BillDetails SET BillId=?, ProductId=?, UnitPrice=?, ImportPrice=?, Discount=?, Quantity=?, Length=? WHERE Id=?";
+    String updateSql = "UPDATE BillDetails SET BillId=?, ProductId=?, UnitPrice=?, ImportPrice=?, Discount=?, Quantity=?, Length=?, DefaultLength=? WHERE Id=?";
     
     String deleteSql = "DELETE FROM BillDetails WHERE Id=?";
     
@@ -62,7 +62,8 @@ public class BillDetailDAOImpl implements BillDetailDAO {
             entity.getImportPrice(),  // Thêm ImportPrice
             entity.getDiscount(),
             entity.getQuantity(),
-            entity.getLength()
+            entity.getLength(),
+            entity.getDefaultLength()
         };
         XJdbc.executeUpdate(createSql, values);
         return entity;
@@ -78,6 +79,7 @@ public class BillDetailDAOImpl implements BillDetailDAO {
             entity.getDiscount(),
             entity.getQuantity(),
             entity.getLength(),
+            entity.getDefaultLength(),
             entity.getId()
         };
         XJdbc.executeUpdate(updateSql, values);

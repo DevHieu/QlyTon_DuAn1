@@ -1265,7 +1265,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void jLayeredPane1MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jLayeredPane1MouseClicked
         // TODO add your handling code here:
-        System.out.println(tabMain.getSelectedIndex());
     }// GEN-LAST:event_jLayeredPane1MouseClicked
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSearchActionPerformed
@@ -1419,6 +1418,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             java.util.logging.Logger.getLogger(QlyTonJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        
         // </editor-fold>
         // </editor-fold>
         // </editor-fold>
