@@ -24,8 +24,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Paint;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.UIManager;
 import javax.swing.table.JTableHeader;
@@ -33,18 +33,16 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import quanli.ton.util.XFile;
-import quanli.ton.util.XPdf;
 
 /**
  *
  * @author Admin
  */
 public class RevenueManager extends javax.swing.JDialog implements RevenueController {
-
-    private javax.swing.JPanel jPanelChart;
 
     /**
      * Creates new form RevenueManager
@@ -105,20 +103,45 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         donutChart.repaint();
     }
 
-    private ChartPanel createDonutChartPanel(List<Revenue.ByCategory> items) {
+private ChartPanel createDonutChartPanel(List<Revenue.ByCategory> items) {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        items.forEach(item -> dataset.setValue(item.getCategory(), item.getQuantity()));
+        items.forEach(item -> dataset.setValue(item.getCategory(), item.getRevenue()));
 
         JFreeChart chart = ChartFactory.createPieChart(
-                "Số lượng bán ra", dataset, true, true, false);
+                "Doanh thu từng loại", dataset, true, true, false);
+
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setOutlineVisible(false); // bỏ viền ngoài
+
+        // Màu sắc tùy chỉnh
+        Paint[] colors = {
+            new Color(0x4E79A7),
+            new Color(0xF28E2B),
+            new Color(0xE15759),
+            new Color(0x76B7B2),
+            new Color(0x59A14F),
+            new Color(0xEDC948),
+            new Color(0xB07AA1)
+        };
+        int i = 0;
+        for (Object keyObj : dataset.getKeys()) {
+            Comparable<?> key = (Comparable<?>) keyObj;
+            plot.setSectionPaint(key, colors[i % colors.length]);
+            i++;
+        }
+
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})"));
+        plot.setLabelFont(new Font("SansSerif", Font.BOLD, 12));
+        plot.setLabelPaint(Color.DARK_GRAY);
+        plot.setLabelBackgroundPaint(new Color(50, 50, 50, 20)); // nền nhạt cho 
+        plot.setLabelShadowPaint(null);
 
         // Đặt legend sang bên trái
+        chart.setTitle((TextTitle) null);
         chart.getLegend().setPosition(RectangleEdge.LEFT);
         chart.setBackgroundPaint(Color.WHITE);               // nền toàn biểu đồ
         chart.getPlot().setBackgroundPaint(Color.WHITE);
-
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})"));
 
         return new ChartPanel(chart);
     }
@@ -218,6 +241,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                 PlotOrientation.VERTICAL, false, true, false);
 
         // Cải thiện hiển thị
+        chart.setTitle((TextTitle) null);
         CategoryPlot plot = chart.getCategoryPlot();
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
 
@@ -298,6 +322,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jLabel8 = new javax.swing.JLabel();
         lblProfit = new javax.swing.JLabel();
         btnTypeExport = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
         RevenueByEmployee = new javax.swing.JPanel();
         btnEmployeeExport = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -318,6 +343,7 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         lblTotalAmountUser = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel11 = new javax.swing.JLabel();
 
@@ -487,6 +513,10 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel5.setText("Doanh thu từng loại");
+
         javax.swing.GroupLayout RevenueByTypeLayout = new javax.swing.GroupLayout(RevenueByType);
         RevenueByType.setLayout(RevenueByTypeLayout);
         RevenueByTypeLayout.setHorizontalGroup(
@@ -504,7 +534,11 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(donutChart, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(donutChart, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByTypeLayout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(51, 51, 51))))
                     .addGroup(RevenueByTypeLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnTypeExport, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -514,15 +548,19 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
             RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByTypeLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addGroup(RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(RevenueByTypeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(RevenueByTypeLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(donutChart, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(31, 31, 31))
+                    .addGroup(RevenueByTypeLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(donutChart, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnTypeExport, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -609,6 +647,10 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Tổng quan:");
 
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 102, 102));
+        jLabel9.setText("Top 5 nhân viên xuất sắc nhất");
+
         javax.swing.GroupLayout RevenueByEmployeeLayout = new javax.swing.GroupLayout(RevenueByEmployee);
         RevenueByEmployee.setLayout(RevenueByEmployeeLayout);
         RevenueByEmployeeLayout.setHorizontalGroup(
@@ -627,22 +669,28 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
                                 .addGap(6, 6, 6)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BarChat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByEmployeeLayout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(37, 37, 37)))))
                 .addContainerGap())
         );
         RevenueByEmployeeLayout.setVerticalGroup(
             RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByEmployeeLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(RevenueByEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(RevenueByEmployeeLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, RevenueByEmployeeLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BarChat, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -801,9 +849,11 @@ public class RevenueManager extends javax.swing.JDialog implements RevenueContro
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

@@ -942,6 +942,14 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
 
     @Override
     public boolean isValidInput() {
+        if (txtPassword.getText().equals("")) {
+            XDialog.error("Mật khẩu không được bỏ trống");
+        }
+        
+        if (txtRepeatPassword.getText().equals("")) {
+            XDialog.error("Vui lòng xác nhận mật khẩu");
+        }
+        
         if (!txtPassword.getText().equals(txtRepeatPassword.getText())) {
             XDialog.error("Vui lòng đảm bảo mật khẩu và xác nhận mật khẩu giống nhau.");
             return false;
@@ -951,12 +959,9 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
             XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
             return false;
         }
-
+        
         return XStr.isBlank(txtUsername, "Tên đăng nhập không được bỏ trống")
                 && XStr.isBlank(txtPhoneNumber, "Số điện thoại không được bỏ trống")
-                && XStr.isBlank(txtFullname, "Họ tên không được bỏ trống")
-                && XStr.isBlank(txtPassword, "Mật khẩu không được bỏ trống")
-                && XStr.isBlank(txtRepeatPassword, "Vui lòng xác nhận mật khẩu");
-
+                && XStr.isBlank(txtFullname, "Họ tên không được bỏ trống");
     }
 }
