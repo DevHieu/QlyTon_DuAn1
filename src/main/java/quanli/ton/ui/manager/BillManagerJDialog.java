@@ -842,7 +842,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 d.getProductName(),
                 moneyFormat.format(d.getUnitPrice()),
                 String.format("%.0f%%", d.getDiscount()),
-                (d.getLength() != 0 ? String.format("%.2f", d.getQuantity()) + "m" : "-"),
+                (d.getLength() != 0 ? String.format("%.2f", d.getLength()) + "m" : "-"),
                 d.getQuantity(),
                 moneyFormat.format(total)
             };

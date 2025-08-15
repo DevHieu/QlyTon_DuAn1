@@ -20,7 +20,6 @@ import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,7 +68,6 @@ import quanli.ton.util.XDialog;
 import quanli.ton.util.XIcon;
 import quanli.ton.util.XPdf;
 import quanli.ton.util.XFile;
-import quanli.ton.ui.LoginJDialog;
 import quanli.ton.util.XStr;
 import quanli.ton.util.XQrcode;
 import quanli.ton.dao.BillDAO;
@@ -1959,6 +1957,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         BillDetails detail = billDetailsList.get(row);
         detail.setQuantity(newValue);
         this.fillBillDetail();
+        this.isDepositValid();
     }
 
     public void deleteBillDetailColumn(int row) {
@@ -2262,18 +2261,34 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         model.setRowCount(0);
 
         String keyWord = txtSearch.getText();
+        
+        if (keyWord.equals("")) {
+           XDialog.error("Bạn chưa nhập thông tin cần tìm. Vui lòng nhập lại!");
+           return;
+        }
+        
         Integer cboSearch = cboSearchType.getSelectedIndex();
         billList.clear();
         switch (cboSearch) {
             case 0:
-                Bills bill = billDao.findOperatingById(Long.valueOf(keyWord));
+                try {
+                    Bills bill = billDao.findOperatingById(Long.valueOf(keyWord));
                 if (bill != null) {
                     billList.add(bill);
+                } else {
+                    XDialog.alert("Đơn hàng không tồn tại hoặc đã ở trạng thái hoàn thành/hủy");
                 }
                 this.fillBillsToTable();
+                } catch (NumberFormatException e) {
+                    XDialog.error("Mã hóa đơn phải là 1 số. Vui lòng nhập lại!");
+                    return;
+                }
                 break;
             case 1:
                 billList = billDao.findOperatingAllOfCustomerId(keyWord);
+                if (billList.size() <= 0) {
+                    XDialog.alert("Số điện thoại chưa có đơn hàng nào đang xử lý hoặc đơn đã hoàn thành/hủy");
+                } 
                 this.fillBillsToTable();
                 break;
             default:
@@ -2395,6 +2410,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             if (value > overall) {
                 XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
                 txtDeposit.setText("0"); // hiển thị về 0
+                txtDeposit.setValue(0); // Trả giá trị của deposit về 0
             }
 
             this.billTotalChange(overall);

@@ -20,8 +20,6 @@ import quanli.ton.util.XStr;
  */
 public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi từ JFrame sang JDialog
 
-    private ProductsDAO productsDAO = new ProductsDAOimpl();
-
     @Setter
     String id;
     @Setter
@@ -81,9 +79,9 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
         jPanel1 = new javax.swing.JPanel();
         jSeparator2 = new javax.swing.JSeparator();
         jButton1 = new javax.swing.JButton();
-        txtQuantity = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
         txtPriceImport = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtQuantity = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -115,24 +113,24 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
             }
         });
 
-        txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtQuantity.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
-        txtQuantity.setPreferredSize(new java.awt.Dimension(100, 30));
-        txtQuantity.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtQuantityActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel5.setText("Giá nhập hàng:");
-
         txtPriceImport.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtPriceImport.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtPriceImport.setPreferredSize(new java.awt.Dimension(100, 30));
         txtPriceImport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPriceImportActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Giá nhập hàng:");
+
+        txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtQuantity.setBorder(javax.swing.BorderFactory.createCompoundBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 102, 102), 1, true), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtQuantity.setPreferredSize(new java.awt.Dimension(100, 30));
+        txtQuantity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtQuantityActionPerformed(evt);
             }
         });
 
@@ -180,9 +178,9 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
                         .addGap(48, 48, 48)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtPriceImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(71, 71, 71)
-                                .addComponent(txtQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(txtPriceImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -234,8 +232,8 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
                     .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPriceImport, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPriceImport, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -257,28 +255,27 @@ public class ImportgoodsJDialog extends javax.swing.JDialog { // Đã đổi t�
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtPriceImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceImportActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPriceImportActionPerformed
-
     private void txtQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantityActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtQuantityActionPerformed
 
+    private void txtPriceImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceImportActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPriceImportActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        String productId = txtId.getText(); // Id Hàng
-        int quantityToAdd;
+        double quantityToAdd;
         double newImportPrice;
 
         if (!isValidInput()) {
             return;
         }
 
-        quantityToAdd = Integer.parseInt(txtPriceImport.getText()); // Số Lượng
+        quantityToAdd = Double.parseDouble(txtQuantity.getText()); // Số Lượng
         importQuantity = quantityToAdd;
 
-        newImportPrice = Double.parseDouble(txtQuantity.getText()); // Giá Nhập Vào
+        newImportPrice = Double.parseDouble(txtPriceImport.getText()); // Giá Nhập Vào
         importPrice = newImportPrice;
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed

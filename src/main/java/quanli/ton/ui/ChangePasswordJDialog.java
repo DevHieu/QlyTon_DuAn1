@@ -11,6 +11,7 @@ import quanli.ton.dao.impl.UserDAOImpl;
 import quanli.ton.util.XAuth;
 import quanli.ton.util.XDialog;
 import quanli.ton.dao.UserDAO;
+import quanli.ton.util.XStr;
 
 /**
  *
@@ -36,6 +37,9 @@ public class ChangePasswordJDialog extends javax.swing.JDialog implements Change
 
     @Override
     public void save() {
+        if (!isVaidInput()) {
+            return;
+        }
         String username = txtUsername.getText();
         String password = new String(txtCurrentPassword.getPassword());
         String newpass = new String(txtNewPassword.getPassword());
@@ -64,6 +68,12 @@ public class ChangePasswordJDialog extends javax.swing.JDialog implements Change
             txtNewPassword.setText("");
             txtConfirm.setText("");
         }
+    }
+    
+    private boolean isVaidInput() {
+        return XStr.isBlank(txtCurrentPassword, "Vui lòng điền mật khẩu hiện tại!")
+                && XStr.isBlank(txtNewPassword, "Vui lòng điền mật khẩu mới!")
+                && XStr.isBlank(txtConfirm, "Vui lòng điền xác nhận mật khẩu!");
     }
 
     /**
@@ -329,4 +339,6 @@ public class ChangePasswordJDialog extends javax.swing.JDialog implements Change
     private javax.swing.JPasswordField txtNewPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
+    
 }

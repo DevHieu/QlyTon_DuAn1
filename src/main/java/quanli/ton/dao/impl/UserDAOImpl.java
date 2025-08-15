@@ -20,7 +20,7 @@ public class UserDAOImpl implements UserDAO {
     String updateSql = "UPDATE USERS SET Password = ?, Enabled = ?, Fullname = ?, Photo = ?, Gender = ?, Manager = ?, PhoneNumber = ? WHERE Username = ?";
     String deleteSql = "DELETE FROM USERS WHERE Username = ?";
     String findAllSql = "SELECT * FROM USERS";
-    String findByIdSql = "SELECT * FROM USERS WHERE Username = ?";
+    String findByIdSql = "SELECT * FROM USERS WHERE BINARY  Username = ?";
 
     @Override
     public User create(User entity) {
