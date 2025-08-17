@@ -316,7 +316,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         btnUpdate.setBackground(new java.awt.Color(0, 102, 102));
         btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
-        btnUpdate.setText("Cập nhập");
+        btnUpdate.setText("Cập nhật");
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUpdateActionPerformed(evt);
@@ -481,7 +481,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 .addComponent(btnDelete)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClear)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 223, Short.MAX_VALUE)
                 .addComponent(btnMoveFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMovePrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -637,7 +637,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 765, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
         );
 
         pack();
@@ -842,7 +842,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 d.getProductName(),
                 moneyFormat.format(d.getUnitPrice()),
                 String.format("%.0f%%", d.getDiscount()),
-                (d.getLength() != 0 ? String.format("%.2f", d.getQuantity()) + "m" : "-"),
+                (d.getLength() != 0 ? String.format("%.2f", d.getLength()) + "m" : "-"),
                 d.getQuantity(),
                 moneyFormat.format(total)
             };
@@ -921,15 +921,21 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
         Date checkOut = XDate.parse(txtCheckout.getText(), "HH:mm:ss dd-MM-yyyy");
 
         if (checkIn == null) {
-            XDialog.alert("Ngày giờ bạn nhập bị sai");
+            XDialog.error("Ngày giờ bạn nhập bị sai");
             return null;
         }
+        
         bill.setId(Long.parseLong(txtId.getText()));
         bill.setCustomerId(txtPhoneNumber.getText());
         bill.setCheckin(checkIn);
-        bill.setCheckout(checkOut);
         bill.setUsername(txtUsername.getText());
         bill.setStatus(rdoProcessing.isSelected() ? Bills.Status.PROCESSING.ordinal() : rdoComplete.isSelected() ? Bills.Status.COMPLETED.ordinal() : Bills.Status.CANCELED.ordinal());
+        
+        if (bill.getStatus() != 1) {
+            bill.setCheckout(null);
+        } else {
+            bill.setCheckout(checkOut != null ? checkOut : new Date());
+        }
         return bill;
     }
 
@@ -994,11 +1000,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
 
             Bills bill = this.getForm();
-            dao.create(bill);
-
-            XDialog.notify("Tạo hóa đơn thành công!");
-            this.fillToTable();
-            this.clear();
+            if (dao.create(bill) != null) {
+                XDialog.notify("Tạo hóa đơn thành công!");
+                this.fillToTable();
+                this.clear();
+            }
         } catch (Exception e) {
             XDialog.error("Lỗi khi tạo hóa đơn: " + e.getMessage());
             e.printStackTrace();
@@ -1091,7 +1097,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 if ((Boolean) tblBills.getValueAt(i, 6)) {
                     long id = items.get(i).getId();
                     dao.cancleBill(id);
-                    List<BillDetails> list =billDetailDao.findByBillId(id);
+                    List<BillDetails> list = billDetailDao.findByBillId(id);
                     this.changeBillStatus(2, list);
                 }
             }

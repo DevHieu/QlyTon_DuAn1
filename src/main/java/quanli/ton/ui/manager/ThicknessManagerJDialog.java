@@ -88,7 +88,7 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
                     dao.deleteById(items.get(i).getId());
                 }
             }
-            this.fillToTable();
+           cboType2.setSelectedIndex(0);
         }
     }
 
@@ -136,7 +136,6 @@ public class ThicknessManagerJDialog extends javax.swing.JDialog implements Thic
 
         txtId.setText(String.valueOf(entity.getId()));
         txtThickness.setText(entity.getThick());
-        System.out.println(prodItems.size());
 
         if (cboType.getItemCount() > 0) {
             cboType.setSelectedIndex(index);

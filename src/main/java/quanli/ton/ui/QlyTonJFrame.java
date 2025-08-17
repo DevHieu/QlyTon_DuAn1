@@ -20,10 +20,10 @@ import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -69,7 +69,6 @@ import quanli.ton.util.XDialog;
 import quanli.ton.util.XIcon;
 import quanli.ton.util.XPdf;
 import quanli.ton.util.XFile;
-import quanli.ton.ui.LoginJDialog;
 import quanli.ton.util.XStr;
 import quanli.ton.util.XQrcode;
 import quanli.ton.dao.BillDAO;
@@ -120,6 +119,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     @Override
     public void init() {
+        Locale.setDefault(Locale.US);
         setLocationRelativeTo(null); // căn giữa màn hình
         this.setIconImage(XIcon.getIcon("/icons/logoTonHoaMai_trang-Photoroom.png").getImage());
 
@@ -231,6 +231,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         jLabel32 = new javax.swing.JLabel();
         rdoCash = new javax.swing.JRadioButton();
         rdoTransfer = new javax.swing.JRadioButton();
+        jLabel1 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         cboThickness = new javax.swing.JComboBox<>();
         cboProductType = new javax.swing.JComboBox<>();
@@ -763,6 +764,8 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             }
         });
 
+        jLabel1.setText("VNĐ");
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
@@ -789,16 +792,16 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                         .addGap(9, 9, 9)
                         .addComponent(jLabel12)
                         .addGap(50, 50, 50)
-                        .addComponent(sldDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(sldDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDiscountPercent))
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addGap(9, 9, 9)
                         .addComponent(jLabel13)
                         .addGap(57, 57, 57)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGap(245, 245, 245)
-                                .addComponent(txtDiscountPercent))))
+                        .addComponent(txtDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1))
                     .addGroup(jPanel8Layout.createSequentialGroup()
                         .addGap(9, 9, 9)
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -853,15 +856,15 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 .addGap(14, 14, 14)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
-                    .addComponent(sldDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(5, 5, 5)
+                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(sldDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtDiscountPercent)))
+                .addGap(8, 8, 8)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtDiscountPercent)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel13)
-                            .addComponent(txtDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jLabel13)
+                    .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtDeposit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)))
                 .addGap(12, 12, 12)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel14)
@@ -1168,37 +1171,13 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private void lbStockMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbStockMouseClicked
         // TODO add your handling code here:
         if (!this.showStockManagementDialog(this)) {
-            XDialog.alert("Số lượng hàng tồn vẫn đảm bảo");
+            XDialog.notify("Số lượng hàng tồn vẫn đảm bảo");
         }
     }//GEN-LAST:event_lbStockMouseClicked
 
     private void txtDepositKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDepositKeyReleased
         // TODO add your handling code here:
-        try {
-            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
-            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
-            if (overallText.isEmpty()) {
-                return; // Nếu text rỗng thì không làm gì
-            }
-            double overall = Double.parseDouble(overallText);
-
-            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
-            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
-            if (depositText.isEmpty()) {
-                return; // Nếu text rỗng thì không làm gì
-            }
-            double value = Double.parseDouble(depositText);
-
-            if (value > overall) {
-                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
-                txtDeposit.setText(moneyFormat.format(txtDeposit.getValue())); // hiển thị về lại giá trị trước đó
-            }
-
-            this.billTotalChange(overall);
-            isBillChanging = true;
-        } catch (NumberFormatException e) {
-            // Bỏ qua lỗi parse nếu text không phải số
-        }
+        this.isDepositValid();
     }//GEN-LAST:event_txtDepositKeyReleased
 
     private void rdoCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoCashActionPerformed
@@ -1212,6 +1191,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnProductSearchActionPerformed
         // TODO add your handling code here:
         String textInput = txtProductSearch.getText();
+        tabMain.setSelectedIndex(0);
         cboProductType.setSelectedIndex(0);
         cboThickness.removeAll();
         if (textInput.equals("")) {
@@ -1286,7 +1266,6 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     private void jLayeredPane1MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jLayeredPane1MouseClicked
         // TODO add your handling code here:
-        System.out.println(tabMain.getSelectedIndex());
     }// GEN-LAST:event_jLayeredPane1MouseClicked
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSearchActionPerformed
@@ -1440,6 +1419,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             java.util.logging.Logger.getLogger(QlyTonJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        
         // </editor-fold>
         // </editor-fold>
         // </editor-fold>
@@ -1465,6 +1445,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private javax.swing.JComboBox<String> cboSearchType;
     private javax.swing.JComboBox<String> cboThickness;
     private javax.swing.JComboBox<String> cboTimeRange;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1746,7 +1727,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 item.getProductName(),
                 moneyFormat.format(item.getUnitPrice()),
                 (int) item.getQuantity(),
-                (item.getLength() != 0 ? String.format("%.2f m", item.getLength()) : "-"),
+                (item.getLength() != 0 ? String.format("%.2f m", item.getLength()) : item.getDefaultLength() != null ? String.format("%.2f m", item.getDefaultLength()) : "-"),
                 String.format("%.0f%%", item.getDiscount()),
                 moneyFormat.format(itemTotal),
                 false
@@ -1798,7 +1779,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
 
         if (billDetailsList.isEmpty() && currentBill.getStatus() != 2) { // Đơn hàng hủy thì cho lưu không có hàng
-            XDialog.alert("Chưa có mặt hàng nào trong đơn hàng");
+            XDialog.error("Chưa có mặt hàng nào trong đơn hàng");
             return false;
         }
 
@@ -1823,8 +1804,10 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
             if (!existed) { //Tạo mới
                 item.setBillId(currentBill.getId()); // Lấy id của currentBill
                 billDetailDao.create(item); // Tạo mới thay vì update
-                productDao.sellProduct(item.getProductId(), totalQuantity);
-            } else if (bill.getStatus() == 0) { // Trạng thái đang xử lí
+                if (bill.getStatus() != 2) { //Nếu tạo đơn mới mà ở trạng thái ngoài 'hủy' thì mới bán
+                    productDao.sellProduct(item.getProductId(), totalQuantity);
+                }
+            } else if (bill.getStatus() != 2) { // Trạng thái đang xử lí
                 double oldQuantity = billDetailDao.getOldQuantity(item.getId());
                 double newQuantity = this.getTotalQuantity(item.getLength(), item.getQuantity(), item.getDefaultLength());
                 double delta = newQuantity - oldQuantity;
@@ -1838,7 +1821,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                 }
 
                 billDetailDao.update(item);
-            } else if (bill.getStatus() == 2) { // Xử lí khi hủy đơn
+            } else { // Xử lí khi hủy đơn
                 productDao.returnProduct(item.getProductId(), totalQuantity);
             }
         });
@@ -1896,7 +1879,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
                         }
                     }
                 } catch (Exception e) {
-                    XDialog.alert("Lỗi xuất phiếu giao hàng: " + e.getMessage());
+                    XDialog.error("Lỗi xuất phiếu giao hàng: " + e.getMessage());
                 }
             }
         }
@@ -1977,17 +1960,21 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         BillDetails detail = billDetailsList.get(row);
         detail.setQuantity(newValue);
         this.fillBillDetail();
+        this.isDepositValid();
     }
 
     public void deleteBillDetailColumn(int row) {
         if (XDialog.confirm("Bạn có chắc chắn muốn xóa mặt hàng này?")) {
             BillDetails item = billDetailsList.get(row);
             double totalQuantity = this.getTotalQuantity(item.getLength(), item.getQuantity(), item.getDefaultLength());
-            productDao.returnProduct(item.getProductId(), totalQuantity);
-            billDetailDao.deleteById(item.getId());
+            if (billDetailDao.isBillDetailExisted(item.getId())) {
+                productDao.returnProduct(item.getProductId(), totalQuantity);
+                billDetailDao.deleteById(item.getId());
+            }
             billDetailsList.remove(row);
             this.fillBillDetail();
             this.applyFilters(); //load lại danh sách product nếu có trừ số lượng sản phẩm
+            this.isDepositValid(); //check tiền đặt cọc có lớn hơn không
         }
     }
 
@@ -2277,18 +2264,34 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         model.setRowCount(0);
 
         String keyWord = txtSearch.getText();
+        
+        if (keyWord.equals("")) {
+           XDialog.error("Bạn chưa nhập thông tin cần tìm. Vui lòng nhập lại!");
+           return;
+        }
+        
         Integer cboSearch = cboSearchType.getSelectedIndex();
         billList.clear();
         switch (cboSearch) {
             case 0:
-                Bills bill = billDao.findOperatingById(Long.valueOf(keyWord));
+                try {
+                    Bills bill = billDao.findOperatingById(Long.valueOf(keyWord));
                 if (bill != null) {
                     billList.add(bill);
+                } else {
+                    XDialog.alert("Đơn hàng không tồn tại hoặc đã ở trạng thái hoàn thành/hủy");
                 }
                 this.fillBillsToTable();
+                } catch (NumberFormatException e) {
+                    XDialog.error("Mã hóa đơn phải là 1 số. Vui lòng nhập lại!");
+                    return;
+                }
                 break;
             case 1:
                 billList = billDao.findOperatingAllOfCustomerId(keyWord);
+                if (billList.size() <= 0) {
+                    XDialog.alert("Số điện thoại chưa có đơn hàng nào đang xử lý hoặc đơn đã hoàn thành/hủy");
+                } 
                 this.fillBillsToTable();
                 break;
             default:
@@ -2389,5 +2392,34 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
         }
 
         return false;
+    }
+
+    private void isDepositValid() {
+        try {
+            // Lấy giá trị từ txtOverall và chuyển sang kiểu Double
+            String overallText = txtOverall.getText().replaceAll("[^\\d.]", "");
+            if (overallText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double overall = Double.parseDouble(overallText);
+
+            // Lấy giá trị từ txtDeposit và chuyển sang kiểu Double
+            String depositText = txtDeposit.getText().replaceAll("[^\\d.]", "");
+            if (depositText.isEmpty()) {
+                return; // Nếu text rỗng thì không làm gì
+            }
+            double value = Double.parseDouble(depositText);
+
+            if (value > overall) {
+                XDialog.alert("Số tiền đặt cọc cao hơn so với tổng số tiền");
+                txtDeposit.setText("0"); // hiển thị về 0
+                txtDeposit.setValue(0); // Trả giá trị của deposit về 0
+            }
+
+            this.billTotalChange(overall);
+            isBillChanging = true;
+        } catch (NumberFormatException e) {
+            // Bỏ qua lỗi parse nếu text không phải số
+        }
     }
 }

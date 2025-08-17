@@ -85,7 +85,7 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         user.setPassword(txtPassword.getText());
         String sdt = txtPhoneNumber.getText().trim();
         if (sdt.isEmpty()) {
-            XDialog.alert("Số điện thoại không được để trống!", "Lỗi");
+            XDialog.error("Số điện thoại không được để trống!", "Lỗi");
             return null; // Prevent saving if sdt is empty
         }
         user.setPhoneNumber(sdt);
@@ -150,12 +150,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
                     String username = items.get(i).getUsername();
 
                     if (username.equals(XAuth.user.getUsername())) {
-                        XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+                        XDialog.error("Không thể xóa tài khoản đang đăng nhập!");
                         continue;
                     }
 
                     if (dao.hasTransaction(username)) {
-                        XDialog.alert("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
+                        XDialog.error("Không thể xóa người dùng '" + username + "' vì có các giao dịch liên quan!");
                         continue;
                     }
 
@@ -207,12 +207,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         String username = txtUsername.getText();
 
         if (username.equals(XAuth.user.getUsername())) {
-            XDialog.alert("Không thể xóa tài khoản đang đăng nhập!");
+            XDialog.error("Không thể xóa tài khoản đang đăng nhập!");
             return;
         }
 
         if (dao.hasTransaction(username)) {
-            XDialog.alert("Không thể xóa người dùng này vì có các giao dịch liên quan!");
+            XDialog.error("Không thể xóa người dùng này vì có các giao dịch liên quan!");
             return;
         }
 
@@ -246,14 +246,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
         btnMovePrevious.setEnabled(editable && rowCount > 0);
         btnMoveNext.setEnabled(editable && rowCount > 0);
         btnMoveLast.setEnabled(editable && rowCount > 0);
-
-        if (XAuth.user.getUsername().equals(txtUsername.getText())) {
-            rdoManager.setEnabled(false);
-            rdoEmployee.setEnabled(false);
-            rdoOperating.setEnabled(false);
-            rdoStop.setEnabled(false);
-
-        }
+        
+        boolean currentAdmin = XAuth.user.getUsername().equals(txtUsername.getText());
+            rdoManager.setEnabled(!currentAdmin);
+            rdoEmployee.setEnabled(!currentAdmin);
+            rdoOperating.setEnabled(!currentAdmin);
+            rdoStop.setEnabled(!currentAdmin);
     }
 
     @Override
@@ -777,7 +775,9 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
 
     private void tblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUserMouseClicked
         // TODO add your handling code here:
-        this.edit();
+        if (evt.getClickCount() == 2) {
+            this.edit();
+        }
     }//GEN-LAST:event_tblUserMouseClicked
 
     private void btnMoveLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveLastActionPerformed
@@ -942,6 +942,16 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
 
     @Override
     public boolean isValidInput() {
+        if (txtPassword.getText().equals("")) {
+            XDialog.error("Mật khẩu không được bỏ trống");
+            return false;
+        }
+        
+        if (txtRepeatPassword.getText().equals("")) {
+            XDialog.error("Vui lòng xác nhận mật khẩu");
+            return false;
+        }
+        
         if (!txtPassword.getText().equals(txtRepeatPassword.getText())) {
             XDialog.error("Vui lòng đảm bảo mật khẩu và xác nhận mật khẩu giống nhau.");
             return false;
@@ -951,12 +961,9 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
             XDialog.error("Số điện thoại không được quá 10 ký tự. Vui lòng nhập lại");
             return false;
         }
-
+        
         return XStr.isBlank(txtUsername, "Tên đăng nhập không được bỏ trống")
                 && XStr.isBlank(txtPhoneNumber, "Số điện thoại không được bỏ trống")
-                && XStr.isBlank(txtFullname, "Họ tên không được bỏ trống")
-                && XStr.isBlank(txtPassword, "Mật khẩu không được bỏ trống")
-                && XStr.isBlank(txtRepeatPassword, "Vui lòng xác nhận mật khẩu");
-
+                && XStr.isBlank(txtFullname, "Họ tên không được bỏ trống");
     }
 }

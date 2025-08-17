@@ -18,7 +18,7 @@ import quanli.ton.ui.manager.BillManagerJDialog;
 import quanli.ton.ui.manager.CustomerManagerJDialog;
 import quanli.ton.ui.manager.ProductManagerJDialog;
 import quanli.ton.ui.manager.ProductTypeManagerJDialog;
-import quanli.ton.ui.manager.RevenueManager;
+import quanli.ton.ui.manager.RevenueManagerJDialog;
 import quanli.ton.ui.manager.ThicknessManagerJDialog;
 import quanli.ton.ui.manager.UserManagerJDialog;
 import quanli.ton.util.XDialog;
@@ -103,7 +103,7 @@ public interface QlyTonController {
     }
 
     default void showRevenueManagerJDialog(JFrame frame) {
-        this.showJDialog(new RevenueManager(frame, true));
+        this.showJDialog(new RevenueManagerJDialog(frame, true));
     }
 
     default void showUserManagerJDialog(JFrame frame) {

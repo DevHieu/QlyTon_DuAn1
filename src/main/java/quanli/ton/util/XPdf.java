@@ -21,6 +21,7 @@ import quanli.ton.dao.impl.ProductTypeDAOImpl;
 import quanli.ton.entity.BillDetails;
 import quanli.ton.entity.Bills;
 import quanli.ton.entity.Customer;
+import quanli.ton.entity.Product;
 
 /**
  * Utility class để xuất dữ liệu ra file PDF (iTextPDF 8.0.0)
@@ -318,7 +319,7 @@ public class XPdf {
     /**
      * Lấy thông tin sản phẩm theo ID
      */
-    private static quanli.ton.entity.Product getProductById(String productId) {
+    private static Product getProductById(String productId) {
         try {
             ProductsDAO productDao = new ProductsDAOimpl();
             quanli.ton.entity.Product product = productDao.findById(productId);
