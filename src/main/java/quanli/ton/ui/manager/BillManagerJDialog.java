@@ -924,12 +924,18 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             XDialog.error("Ngày giờ bạn nhập bị sai");
             return null;
         }
+        
         bill.setId(Long.parseLong(txtId.getText()));
         bill.setCustomerId(txtPhoneNumber.getText());
         bill.setCheckin(checkIn);
-        bill.setCheckout(checkOut);
         bill.setUsername(txtUsername.getText());
         bill.setStatus(rdoProcessing.isSelected() ? Bills.Status.PROCESSING.ordinal() : rdoComplete.isSelected() ? Bills.Status.COMPLETED.ordinal() : Bills.Status.CANCELED.ordinal());
+        
+        if (bill.getStatus() != 1) {
+            bill.setCheckout(null);
+        } else {
+            bill.setCheckout(checkOut != null ? checkOut : new Date());
+        }
         return bill;
     }
 
@@ -994,11 +1000,11 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
             }
 
             Bills bill = this.getForm();
-            dao.create(bill);
-
-            XDialog.notify("Tạo hóa đơn thành công!");
-            this.fillToTable();
-            this.clear();
+            if (dao.create(bill) != null) {
+                XDialog.notify("Tạo hóa đơn thành công!");
+                this.fillToTable();
+                this.clear();
+            }
         } catch (Exception e) {
             XDialog.error("Lỗi khi tạo hóa đơn: " + e.getMessage());
             e.printStackTrace();
@@ -1091,7 +1097,7 @@ public class BillManagerJDialog extends javax.swing.JDialog implements BillManag
                 if ((Boolean) tblBills.getValueAt(i, 6)) {
                     long id = items.get(i).getId();
                     dao.cancleBill(id);
-                    List<BillDetails> list =billDetailDao.findByBillId(id);
+                    List<BillDetails> list = billDetailDao.findByBillId(id);
                     this.changeBillStatus(2, list);
                 }
             }

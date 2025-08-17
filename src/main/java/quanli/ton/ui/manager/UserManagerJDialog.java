@@ -944,10 +944,12 @@ public class UserManagerJDialog extends javax.swing.JDialog implements UserManag
     public boolean isValidInput() {
         if (txtPassword.getText().equals("")) {
             XDialog.error("Mật khẩu không được bỏ trống");
+            return false;
         }
         
         if (txtRepeatPassword.getText().equals("")) {
             XDialog.error("Vui lòng xác nhận mật khẩu");
+            return false;
         }
         
         if (!txtPassword.getText().equals(txtRepeatPassword.getText())) {

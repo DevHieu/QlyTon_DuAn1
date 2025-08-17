@@ -477,6 +477,22 @@ public class ProductManagerJDialog extends javax.swing.JDialog implements Produc
 
     @Override
     public boolean isValidInput() {
+
+        if (txtQuantity.getText().trim().isEmpty() || Double.parseDouble(txtQuantity.getText()) <= 0) {
+            XDialog.error("Số lượng của sản phẩm phải lớn hơn 0");
+            return false;
+        }
+
+        if (txtCostPrice.getText().trim().isEmpty() || Double.parseDouble(txtCostPrice.getText()) <= 0) {
+            XDialog.error("Giá nhập của sản phẩm phải lớn hơn 0");
+            return false;
+        }
+
+        if (txtUnitPrice.getText().trim().isEmpty() || Double.parseDouble(txtUnitPrice.getText()) <= 0) {
+            XDialog.error("Đơn giá của sản phẩm phải lớn hơn 0");
+            return false;
+        }
+
         return XStr.isBlank(txtId, "Mã sản phẩm không được để trống")
                 && XStr.isBlank(txtName, "Tên sản phẩm không được để trống")
                 && XStr.isBlank(txtQuantity, "Số lượng không được để trống")

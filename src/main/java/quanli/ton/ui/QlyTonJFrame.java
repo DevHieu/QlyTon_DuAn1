@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -118,6 +119,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
 
     @Override
     public void init() {
+        Locale.setDefault(Locale.US);
         setLocationRelativeTo(null); // căn giữa màn hình
         this.setIconImage(XIcon.getIcon("/icons/logoTonHoaMai_trang-Photoroom.png").getImage());
 
@@ -1189,6 +1191,7 @@ public class QlyTonJFrame extends javax.swing.JFrame implements QlyTonController
     private void btnProductSearchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnProductSearchActionPerformed
         // TODO add your handling code here:
         String textInput = txtProductSearch.getText();
+        tabMain.setSelectedIndex(0);
         cboProductType.setSelectedIndex(0);
         cboThickness.removeAll();
         if (textInput.equals("")) {

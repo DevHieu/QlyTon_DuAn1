@@ -42,12 +42,12 @@ import quanli.ton.util.XFile;
  *
  * @author Admin
  */
-public class RevenueManager extends javax.swing.JDialog implements RevenueController {
+public class RevenueManagerJDialog extends javax.swing.JDialog implements RevenueController {
 
     /**
      * Creates new form RevenueManager
      */
-    public RevenueManager(java.awt.Frame parent, boolean modal) {
+    public RevenueManagerJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         open();
@@ -815,15 +815,16 @@ private ChartPanel createDonutChartPanel(List<Revenue.ByCategory> items) {
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf()); // Dùng thư viện FlatLaf
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RevenueManager.class.getName()).log(java.util.logging.Level.SEVERE, null,
+            java.util.logging.Logger.getLogger(RevenueManagerJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null,
                     ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                RevenueManager dialog = new RevenueManager(new javax.swing.JFrame(), true);
+                RevenueManagerJDialog dialog = new RevenueManagerJDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
